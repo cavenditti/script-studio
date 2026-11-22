@@ -100,10 +100,20 @@ test('special initial vowels use main-letter stroke weight and full-size outline
     assert.ok(!svg.includes('stroke-width="4.2"'));assert.match(E.render(key).svg,/data-initial-vowel/);
   }
 });
+test('Y, è and ò initials use one clean outline shared by palette and export',()=>{
+  const paths=svg=>[...svg.matchAll(/<path d="([^"]+)"/g)].map(match=>match[1]);
+  for(const key of ['y','è','ò']){assert.equal(E.initials[key].paths.length,1,key);assert.match(E.initialVowel(key,'#000'),/stroke-linejoin="miter"/);assert.deepEqual(paths(E.preview(key,'initial')),paths(E.initialVowel(key,'#000')));}
+});
 test('eight optional marks attach through vowels and remain distinct',()=>{
   const shapes=new Set();
   for(let i=1;i<=8;i++){const c=E.compose(`di{${i}}n`);assert.deepEqual(c.items[0].marks,[String(i)]);assert.equal(c.items[1].marks.length,0);const r=E.render(`di{${i}}n`);assert.equal(r.marks,1);assert.match(r.svg,new RegExp(`data-mark="${i}"`));shapes.add(E.mark(String(i),0,0,'#000'));}
   assert.equal(shapes.size,8);
+});
+test('approved tone meanings remain independent of primary and secondary stress',()=>{
+  assert.deepEqual(Object.values(E.marks).map(m=>m.ipa),['˦','˨','˦˨','˨˦','˧','˨˦˨','˦˨˦','ˌ']);
+  assert.ok(Object.values(E.marks).slice(0,7).every(m=>m.kind==='tone'));
+  assert.equal(E.marks['8'].kind,'stress');assert.equal(E.marks['8'].stress,2);
+  const base=E.compose("kə'{3}").items[0];assert.equal(base.stress,true);assert.deepEqual(base.vowels,['h']);assert.deepEqual(base.marks,['3']);
 });
 test('marks attach to initial vowels and warn when unattached',()=>{
   assert.deepEqual(E.compose('a{5}ma').items[0].marks,['5']);assert.deepEqual(E.render('{1}din').orphanMarks,['{1}']);

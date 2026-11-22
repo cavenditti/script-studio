@@ -1,6 +1,7 @@
 const {parseHTML}=require('linkedom');
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const path=require('node:path');const project=path.resolve(__dirname,'..');const E=require(path.join(project,'src/engine.js'));
+const P=require(path.join(project,'src/phonetics.js'));
 const html=fs.readFileSync(path.join(project,'dist/index.html'),'utf8');
 const app=fs.readFileSync(path.join(project,'src/app.js'),'utf8');
 let uuid=0;
@@ -10,7 +11,7 @@ function boot(markup=html,stored=new Map(),storageBlocked=false){
   for(const s of document.querySelectorAll('select')){let value=s.querySelector('option').getAttribute('value');Object.defineProperty(s,'value',{get(){return value},set(v){value=v}});}
   for(const el of document.querySelectorAll('input[type=checkbox]'))el.checked=el.hasAttribute('checked');
   const field=document.getElementById('source');field.selectionStart=field.selectionEnd=0;field.focus=()=>{};field.setRangeText=(str,start,end)=>{field.value=field.value.slice(0,start)+str+field.value.slice(end);field.selectionStart=field.selectionEnd=start+str.length};
-  const context={document,ScriptEngine:E,Blob,console,crypto:{randomUUID:()=>`copy-${++uuid}`},URL:{createObjectURL:b=>{downloads.push(b);return 'blob:test'},revokeObjectURL(){}},setTimeout:(fn,delay)=>{timers.push({fn,delay});return timers.length},clearTimeout(){},localStorage:{getItem:key=>{if(storageBlocked)throw new Error('blocked');return stored.get(key)||null},setItem:(key,value)=>{if(storageBlocked)throw new Error('blocked');stored.set(key,value)}},window:{addEventListener:(event,fn)=>events[event]=fn}};
+  const context={document,ScriptEngine:E,ScriptPhonetics:P,Blob,console,crypto:{randomUUID:()=>`copy-${++uuid}`},URL:{createObjectURL:b=>{downloads.push(b);return 'blob:test'},revokeObjectURL(){}},setTimeout:(fn,delay)=>{timers.push({fn,delay});return timers.length},clearTimeout(){},localStorage:{getItem:key=>{if(storageBlocked)throw new Error('blocked');return stored.get(key)||null},setItem:(key,value)=>{if(storageBlocked)throw new Error('blocked');stored.set(key,value)}},window:{addEventListener:(event,fn)=>events[event]=fn}};
   vm.runInNewContext(app,context,{filename:'app.js'});
   const click=id=>document.getElementById(id).dispatchEvent(new window.Event('click'));
   const input=value=>{field.value=value;field.dispatchEvent(new window.Event('input'))};
@@ -18,7 +19,10 @@ function boot(markup=html,stored=new Map(),storageBlocked=false){
 }
 (async()=>{
   const first=boot();assert.equal(first.document.querySelectorAll('.glyph-button').length,39);assert.match(first.document.getElementById('rendered').innerHTML,/<svg/);assert.equal(first.document.getElementById('reference-chart').getAttribute('src').startsWith('data:image/jpeg;base64,'),true);
+  assert.equal(first.document.querySelectorAll('.vowel-button').length,11);for(const button of first.document.querySelectorAll('.vowel-button'))assert.equal(button.querySelectorAll('svg').length,2);
   assert.equal(first.document.getElementById('spacing'),null);assert.equal(first.api.documentData().options.spacing,.85);
+  assert.equal(first.document.getElementById('panel-vowels').hidden,true);first.click('tab-vowels');assert.equal(first.document.getElementById('panel-vowels').hidden,false);assert.equal(first.document.getElementById('panel-consonants').hidden,true);assert.match(first.document.getElementById('phonetic-legend').textContent,/close-mid/);first.click('tab-marks');assert.equal(first.document.getElementById('panel-marks').hidden,false);assert.match(first.document.getElementById('phonetic-legend').textContent,/secondary stress/);assert.match(first.document.getElementById('mark-palette').textContent,/Falling/);first.click('tab-consonants');
+  assert.equal(first.document.querySelector('.page-intro'),null);assert.equal(first.document.querySelector('.specimen-note'),null);
   first.input('kèna');first.flush();assert.equal(JSON.parse(first.stored.get('carlo-script-studio-v1')).text,'kèna');
   const reload=boot(html,first.stored);assert.equal(reload.field.value,'kèna');
   reload.click('clear');assert.equal(reload.field.value,'');reload.click('clear');assert.equal(reload.field.value,'kèna');

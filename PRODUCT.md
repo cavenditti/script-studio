@@ -25,7 +25,9 @@ Unused neighbouring rails continue farther through a switching letter instead of
 
 Square-ending letters use one clean cap contained inside the cell's advance edge; adjacent switches must not produce protrusions or notches at the cap corners.
 
-The eight bottom-right accent/tone variants are available within the letter band. Carlo requested provisional row/column labels instead of assigning meanings. Text notation is `{1}` through `{8}` after the base syllable; ordering is top row left to right, then bottom row.
+The eight bottom-right accent/tone variants are available within the letter band. Carlo approved these meanings in order: high /˦/, low /˨/, falling /˦˨/, rising /˨˦/, mid /˧/, rise–fall /˨˦˨/, fall–rise /˦˨˦/, secondary stress /ˌ/. The existing external bar is primary stress /ˈ/. Tone and stress are independent and can combine. Text notation is `{1}` through `{8}` after the base syllable; ordering is top row left to right, then bottom row.
+
+Interface revision: remove excessive copy, put the alphabet in Consonants/Vowels/Marks tabs, and add compact phonetic groups and optional IPA explanations. Keep writing, originals, documents, offline copies, and exports available. Appearance is secondary and collapsed. Carlo confirmed c = /tʃ/, g = /dʒ/, gh = /ɡ/, h = /ə/, and Y = /y/. Each vowel entry displays the diacritic beside the word-initial form, with contextual insertion unchanged. Special Y is one joined outline with square upper corners; è is one initial form, not a doubled sketch; ò keeps an open counter with no overlapping inner bar.
 
 Implementation choices: a dependency-free browser editor, local draft storage, reusable document files, SVG/PNG export, original-reference viewer, and direct phonetic-label input. This is transcription, not a pronunciation translator. Drawings and connections require Carlo's review.
 
@@ -33,4 +35,4 @@ Implementation choices: a dependency-free browser editor, local draft storage, r
 `references/alphabet.jpg` and `references/sample.jpg` are untouched copies of the attachments.
 
 ## Open Decisions
-Ambiguous small labels, precise curves, and reconstructed word-initial outlines remain open to refinement. Accent and tone meanings remain unassigned. No invented script name, word meanings, or pronunciation claims.
+Precise curves and reconstructed word-initial outlines remain open to refinement. Additional IPA sounds are candidates for discussion only; no new base letters have been added. No script name, word meanings, or sample translations have been invented.

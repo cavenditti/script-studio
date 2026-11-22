@@ -27,10 +27,10 @@
   const V = {
     a: { label:'a', path:'M-10 2Q-10-4-4-4H10', initial:'M-6-5V5Q-6 10 0 10H6V-5Z' },
     e: { label:'e', path:'M-10 2H5Q10 2 10-5', initial:'M-7-5H5V10M-7-5V1H5' },
-    'è': { label:'è / ɛ', path:'M-10 2H5Q10 2 10-3L4-9', initial:'M-10-4H10V6H3V-1M-10-4V6H-3V-1', aliases:['ɛ'] },
+    'è': { label:'è / ɛ', path:'M-10 2H5Q10 2 10-3L4-9', initial:'M-10-4H10V6H-10V1', aliases:['ɛ'] },
     o: { label:'o', path:'M-10 2L0-7L10 2', initial:'M-7-5H7M-7-5V6H7' },
-    'ò': { label:'ò / ɔ', path:'M-10-6L0 3L10-6', initial:'M-7-7H3Q10-7 10 1Q10 8 2 8H-7V1H1', aliases:['ɔ'] },
-    h: { label:'h', path:'M3-5C-6-7-6 5 3 4', thin:true },
+    'ò': { label:'ò / ɔ', path:'M-10-6L0 3L10-6', initial:'M-7 1V-7H2Q10-7 10 1Q10 8 2 8H-7', aliases:['ɔ'] },
+    h: { label:'h', path:'M3-5C-6-7-6 5 3 4', thin:true, aliases:['ə'] },
     i: { label:'i', circle:3.4, initialCarrier:'j' },
     u: { label:'u', circle:3.8, open:true },
     'æ': { label:'æ', path:'M-12 4Q-10-2-3-2H7L11-8' },
@@ -42,23 +42,23 @@
   const INITIALS = {
     a:{width:52,paths:['M8 24V8H24Q40 8 40 16Q40 24 24 24Z']},
     e:{width:52,paths:['M40 32V8H8V14Q8 24 26 24']},
-    'è':{width:72,paths:['M8 8H28V24H8V16','M38 8H58V24H38V16']},
+    'è':{width:52,paths:['M8 8H40V24H8V16'],join:'miter'},
     o:{width:52,paths:['M40 8H20Q8 8 8 20V24H40']},
-    'ò':{width:52,paths:['M8 0V8H22Q40 8 40 16Q40 24 22 24H8V16H18']},
-    y:{width:56,paths:['M8 8H24V18','M8 8V22Q8 32 20 32Q30 32 34 20Q36 16 44 16']},
+    'ò':{width:52,paths:['M8 16V8H24Q40 8 40 16Q40 24 24 24H8'],join:'miter'},
+    y:{width:56,paths:['M24 18V8H8V22Q8 32 20 32Q30 32 34 20Q36 16 44 16'],join:'miter'},
     i:{width:108,paths:C.j.paths,dot:[34,16,3.4]}
   };
   const downLeft='M-2-8H6C3-2 0 2-6 3V-2Q-3-3-2-8Z';
   const upLeft='M-2 8H6C3 2 0-2-6-3V2Q-3 3-2 8Z';
   const MARKS = {
-    '1':{label:'R1 C1',paths:[downLeft]},
-    '2':{label:'R1 C2',paths:[upLeft]},
-    '3':{label:'R1 C3',paths:[downLeft],mirror:true},
-    '4':{label:'R1 C4',paths:[upLeft],mirror:true},
-    '5':{label:'R2 C1',dot:true},
-    '6':{label:'R2 C2',pair:'right'},
-    '7':{label:'R2 C3',pair:'left'},
-    '8':{label:'R2 C4',bar:true}
+    '1':{label:'R1 C1',name:'High',ipa:'˦',kind:'tone',pitch:[4],paths:[downLeft]},
+    '2':{label:'R1 C2',name:'Low',ipa:'˨',kind:'tone',pitch:[2],paths:[upLeft]},
+    '3':{label:'R1 C3',name:'Falling',ipa:'˦˨',kind:'tone',pitch:[4,2],paths:[downLeft],mirror:true},
+    '4':{label:'R1 C4',name:'Rising',ipa:'˨˦',kind:'tone',pitch:[2,4],paths:[upLeft],mirror:true},
+    '5':{label:'R2 C1',name:'Mid',ipa:'˧',kind:'tone',pitch:[3],dot:true},
+    '6':{label:'R2 C2',name:'Rise–fall',ipa:'˨˦˨',kind:'tone',pitch:[2,4,2],pair:'right'},
+    '7':{label:'R2 C3',name:'Fall–rise',ipa:'˦˨˦',kind:'tone',pitch:[4,2,4],pair:'left'},
+    '8':{label:'R2 C4',name:'Secondary',ipa:'ˌ',kind:'stress',stress:2,bar:true}
   };
   const entry={j:'loop',c:'top',p:'top',d:'top','ş':'top',k:'bottom',b:'bottom',t:'bottom','ž':'bottom',g:'down',n:'down',l:'down',s:'down',gh:'up',m:'up',r:'up',z:'up',f:'top',v:'bottom',w:'down'};
   const ending={j:'lowerHook',c:'lowerHook',p:'upperHook',d:'straight','ş':'closed',k:'lowerHook',b:'upperHook',t:'straight','ž':'closed',g:'lowerHook',n:'upperHook',l:'straight',s:'closed',gh:'lowerHook',m:'upperHook',r:'straight',z:'closed',f:'bridge',v:'bridge',w:'upperBridge'};
@@ -109,6 +109,7 @@
   }
   function preview(key,type) {
     if(type==='mark')return `<svg viewBox="0 -4 80 40" aria-hidden="true"><path d="M4 8H72V24H4" fill="none" stroke="currentColor" stroke-width="8"/>${mark(key,38,16,'currentColor')}</svg>`;
+    if(type==='initial')return `<svg viewBox="-8 -8 124 60" aria-hidden="true">${INITIALS[key]?`<g transform="translate(${(108-INITIALS[key].width)/2} 0)">${initialVowel(key,'currentColor')}</g>`:vowel(key,45,16,'currentColor')}</svg>`;
     return `<svg viewBox="-12 -15 125 60" aria-hidden="true">${type==='vowel'?vowel(key,45,8,'currentColor'):glyph(key,'currentColor')}</svg>`;
   }
   function mark(key,x,y,ink) {
@@ -121,7 +122,7 @@
   }
   function initialVowel(key,ink) {
     const g=INITIALS[key];if(!g)return '';
-    return g.paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="8" stroke-linecap="butt" stroke-linejoin="round"/>`).join('')+(g.dot?`<circle cx="${g.dot[0]}" cy="${g.dot[1]}" r="${g.dot[2]}" fill="${xml(ink)}"/>`:'');
+    return g.paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="8" stroke-linecap="butt" stroke-linejoin="${g.join||'round'}"/>`).join('')+(g.dot?`<circle cx="${g.dot[0]}" cy="${g.dot[1]}" r="${g.dot[2]}" fill="${xml(ink)}"/>`:'');
   }
   function cell(key,width,joined,ink,connector=0,routing='switch') {
     const left=entry[key],right=ending[key],closed=right==='closed',cap=closed?width-4:width-36;

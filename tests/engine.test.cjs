@@ -29,8 +29,8 @@ test('explicit newlines and word wrapping increase the output height',()=>{
   assert.equal(E.render('ka\nma').lines,2);
   const r=E.render('ka ma na la ra ta'.repeat(10),{width:300});assert.ok(r.lines>10);assert.ok(r.height>1000);
 });
-test('transparent joins use real geometry without opaque seams',()=>{
-  const r=E.render('din',{transparent:true});assert.ok(!r.svg.includes('<rect width="100%"'));assert.ok(!r.svg.includes('<mask'));assert.ok(!r.svg.includes('fill="#ffffff"'));assert.equal(r.joins[0].continuous,true);
+test('transparent joins keep real curves and alpha clearances on through rails',()=>{
+  const r=E.render('din',{transparent:true});assert.ok(!r.svg.includes('<rect width="100%"'));assert.match(r.svg,/<mask /);assert.ok(!r.svg.includes('fill="#ffffff"'));assert.equal(r.joins[0].continuous,true);
 });
 test('din connects the upper incoming rail smoothly into n’s lower rail',()=>{
   const r=E.render('din');assert.equal(r.joins.length,1);assert.equal(r.joins[0].flow,'upper-to-lower');assert.equal(r.joins[0].continuous,true);
@@ -40,6 +40,37 @@ test('all nine inverting letters connect to the correct incoming rail',()=>{
   for(const key of ['g','n','l','s','gh','m','r','z','w']) {
     const r=E.render('di'+key);assert.equal(r.joins[0].toKey,key);assert.equal(r.joins[0].continuous,true,key);
     assert.equal(r.joins[0].flow,['gh','m','r','z'].includes(key)?'lower-to-upper':'upper-to-lower',key);
+  }
+});
+test('unused rails continue through a genuine switch up to its clearance',()=>{
+  for(const key of ['g','n','l','s','gh','m','r','z','w']) {
+    const r=E.render('di'+key);assert.equal(r.placements[1].throughPaths.length,2,key);
+    assert.ok(r.placements[1].throughPaths.includes('M0 8H24'));assert.ok(r.placements[1].throughPaths.includes('M0 24H24'));
+  }
+  assert.equal(E.render('n').placements[0].throughPaths.length,0);
+  assert.equal(E.render('din',{joined:false}).placements[1].throughPaths.length,0);
+});
+test('inactive switches continue the available rail straight without an S curve',()=>{
+  for(const text of ['for','vor','gor']) {
+    const r=E.render(text);assert.equal(r.joins[0].flow,'upper-straight',text);assert.equal(r.joins[0].switched,false);assert.equal(r.joins[0].continuous,true);
+    assert.match(r.placements[1].paths[0],/^M0 8H/);assert.equal(r.placements[1].throughPaths.length,0);
+  }
+  for(const text of ['pin','nin','min']) {
+    const r=E.render(text);assert.equal(r.joins[0].flow,'lower-straight',text);assert.equal(r.joins[0].switched,false);assert.equal(r.joins[0].continuous,true);
+    assert.match(r.placements[1].paths[0],/^M0 24H/);assert.equal(r.placements[1].throughPaths.length,0);
+  }
+});
+test('spacing is fixed at the requested 85 percent even for legacy options',()=>{
+  assert.equal(E.defaults.spacing,.85);
+  assert.equal(E.render('din').placements[0].width,85);
+  assert.equal(E.render('din',{spacing:1.45}).placements[0].width,85);
+});
+test('square end caps fill both corners and remain inside the advance edge',()=>{
+  for(const key of ['ş','ž','s','z'])for(const width of [54.4,100]) {
+    const shape=E.cell(key,width,true,'#000');assert.equal(shape.closedCap.x+shape.closedCap.width,width,key);
+    assert.equal(shape.closedCap.y,4);assert.equal(shape.closedCap.y+shape.closedCap.height,28);
+    assert.match(shape.svg,/data-square-cap="true"/);
+    const joined=E.render(key+'n');assert.equal(joined.placements[1].x,joined.placements[0].width);
   }
 });
 test('word and line boundaries and detached mode do not create rail joins',()=>{

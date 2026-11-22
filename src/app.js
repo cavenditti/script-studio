@@ -4,8 +4,8 @@
   const source=$('source');let current,saveTimer,toastTimer,canStore=true,clearedDraft=null;
   // Illustrative phonetic labels, not a claimed transcription of the original.
   const demo='ghera shoma\nkaru vèna';
-  const controlIds=['size','spacing','initial','ink','joined','guides','transparent'];
-  const options=()=>({size:Number($('size').value)/100,spacing:Number($('spacing').value)/100,initial:$('initial').value,ink:$('ink').value,joined:$('joined').checked,guides:$('guides').checked,transparent:$('transparent').checked,width:Math.max(300,Math.min(1000,Math.round($('paper').clientWidth||1000))),background:$('ink').value==='#ffffff'?'#1b292c':'#ffffff'});
+  const controlIds=['size','initial','ink','joined','guides','transparent'];
+  const options=()=>({size:Number($('size').value)/100,spacing:.85,initial:$('initial').value,ink:$('ink').value,joined:$('joined').checked,guides:$('guides').checked,transparent:$('transparent').checked,width:Math.max(300,Math.min(1000,Math.round($('paper').clientWidth||1000))),background:$('ink').value==='#ffffff'?'#1b292c':'#ffffff'});
   const documentData=()=>({format:'carlo-script-studio',version:1,text:source.value,options:options()});
   function toast(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,3800);}
   function saveDraft(){try{localStorage.setItem(storageKey,JSON.stringify(documentData()));$('draft-status').textContent='Draft saved in this browser';}catch{canStore=false;$('draft-status').textContent='Save a document to keep your work';}}
@@ -17,7 +17,7 @@
     $('paper').classList.toggle('dark-paper',$('ink').value==='#ffffff');
     $('input-count').textContent=`${Array.from(source.value).length} characters`;
     $('render-count').textContent=source.value.trim()?`${current.consonants} consonants · ${current.vowels} vowels`:'Live composition';
-    $('size-value').value=$('size').value+'%';$('spacing-value').value=$('spacing').value+'%';
+    $('size-value').value=$('size').value+'%';
     const warnings=[];
     if(current.unknown.length)warnings.push(`No assigned signs for: ${current.unknown.join(', ')}. These stay visible in rust; use the chart’s labels to replace them.`);
     if(current.orphanMarks.length)warnings.push(`Place ${current.orphanMarks.join(', ')} after a consonant or initial vowel to attach the mark.`);
@@ -31,7 +31,7 @@
     source.value=data.text;
     const o=data.options||{};
     for(const id of ['joined','guides','transparent'])if(typeof o[id]==='boolean')$(id).checked=o[id];
-    for(const [id,range] of [['size',[.6,1.8]],['spacing',[.85,1.45]]])if(typeof o[id]==='number'&&Number.isFinite(o[id]))$(id).value=Math.min(range[1],Math.max(range[0],o[id]))*100;
+    if(typeof o.size==='number'&&Number.isFinite(o.size))$('size').value=Math.min(1.8,Math.max(.6,o.size))*100;
     for(const id of ['initial','ink'])if([...$(id).options].some(item=>item.value===o[id]))$(id).value=o[id];
   }
   for(const [collection,id,type] of [[E.consonants,'consonant-palette','consonant'],[E.vowels,'vowel-palette','vowel'],[E.marks,'mark-palette','mark']]){

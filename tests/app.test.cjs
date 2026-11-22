@@ -14,10 +14,11 @@ function boot(markup=html,stored=new Map(),storageBlocked=false){
   vm.runInNewContext(app,context,{filename:'app.js'});
   const click=id=>document.getElementById(id).dispatchEvent(new window.Event('click'));
   const input=value=>{field.value=value;field.dispatchEvent(new window.Event('input'))};
-  return {document,window,downloads,stored,field,click,input,flush:()=>{for(const t of timers.splice(0))if(t.delay===400)t.fn()},pagehide:()=>events.pagehide()};
+  return {document,window,api:context.window.ScriptStudio,downloads,stored,field,click,input,flush:()=>{for(const t of timers.splice(0))if(t.delay===400)t.fn()},pagehide:()=>events.pagehide()};
 }
 (async()=>{
   const first=boot();assert.equal(first.document.querySelectorAll('.glyph-button').length,39);assert.match(first.document.getElementById('rendered').innerHTML,/<svg/);assert.equal(first.document.getElementById('reference-chart').getAttribute('src').startsWith('data:image/jpeg;base64,'),true);
+  assert.equal(first.document.getElementById('spacing'),null);assert.equal(first.api.documentData().options.spacing,.85);
   first.input('kèna');first.flush();assert.equal(JSON.parse(first.stored.get('carlo-script-studio-v1')).text,'kèna');
   const reload=boot(html,first.stored);assert.equal(reload.field.value,'kèna');
   reload.click('clear');assert.equal(reload.field.value,'');reload.click('clear');assert.equal(reload.field.value,'kèna');
@@ -30,6 +31,7 @@ function boot(markup=html,stored=new Map(),storageBlocked=false){
   reopen.input('din{8}');assert.match(reopen.document.getElementById('rendered').innerHTML,/data-mark="8"/);
   reopen.input('{1}din');assert.match(reopen.document.getElementById('render-warning').textContent,/Place \{1\}/);
   reopen.input('');assert.equal(reopen.document.getElementById('export-png').disabled,true);
-  assert.throws(()=>reopen.window.ScriptStudio.applyDocument({format:'carlo-script-studio',version:1,text:'a'.repeat(100001)}));
+  assert.throws(()=>reopen.api.applyDocument({format:'carlo-script-studio',version:1,text:'a'.repeat(100001)}),/100,000/);
+  reopen.api.applyDocument({format:'carlo-script-studio',version:1,text:'for',options:{spacing:1.45}});assert.equal(reopen.api.documentData().options.spacing,.85);
   console.log('PASS: app boot, embedded references, autosave/reload, clear/undo, offline export, offline reload, blocked-storage fallback, SVG export, unknown signs, empty state, document limit.');
 })().catch(e=>{console.error(e);process.exitCode=1});

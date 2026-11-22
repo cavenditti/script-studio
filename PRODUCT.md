@@ -21,6 +21,10 @@ Confirmed revision: g, n, l, s and w take the upper incoming rail down into the 
 
 Outside legs must remain visible in joined words, interrupting their own rail. Straight left entries continue the preceding rail wherever possible. These are distinct from rail inversion; never flatten an outside leg into an uninterrupted horizontal line.
 
+Unused neighbouring rails continue farther through a switching letter instead of stopping at its left edge. A curve is needed only when an incoming line actually changes rails: when the intended incoming rail is absent and the available rail already aligns with the destination, continue straight. Preserve a thin clearance at true switches. Spacing is fixed at 85 percent; remove the spacing control and ignore older saved spacing values.
+
+Square-ending letters use one clean cap contained inside the cell's advance edge; adjacent switches must not produce protrusions or notches at the cap corners.
+
 The eight bottom-right accent/tone variants are available within the letter band. Carlo requested provisional row/column labels instead of assigning meanings. Text notation is `{1}` through `{8}` after the base syllable; ordering is top row left to right, then bottom row.
 
 Implementation choices: a dependency-free browser editor, local draft storage, reusable document files, SVG/PNG export, original-reference viewer, and direct phonetic-label input. This is transcription, not a pronunciation translator. Drawings and connections require Carlo's review.

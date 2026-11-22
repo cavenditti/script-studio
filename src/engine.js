@@ -65,7 +65,7 @@
   const aliases = {};
   for (const [key,g] of [...Object.entries(C),...Object.entries(V)]) { aliases[key] = key; (g.aliases||[]).forEach(a=>aliases[a]=key); }
   const xml = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
-  const defaults = { size:1, spacing:1, joined:true, initial:'special', guides:false, ink:'#161c20', background:'#ffffff', transparent:false, width:1000 };
+  const defaults = { size:1, spacing:.85, joined:true, initial:'special', guides:false, ink:'#161c20', background:'#ffffff', transparent:false, width:1000 };
   function tokenize(text) {
     const chars = Array.from(String(text).normalize('NFC').toLowerCase());
     const out=[];
@@ -99,7 +99,7 @@
   }
   function glyph(key, ink='#161c20', halo='#ffffff', withHalo=false) {
     const g=C[key]; if(!g)return '';
-    const strokes=(color,width)=>g.paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(color)}" stroke-width="${width}" stroke-linecap="butt" stroke-linejoin="round"/>`).join('');
+    const strokes=(color,width)=>g.paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(color)}" stroke-width="${width}" stroke-linecap="butt" stroke-linejoin="${ending[key]==='closed'?'miter':'round'}"/>`).join('');
     return (withHalo?strokes(halo,10.5):'')+strokes(ink,8);
   }
   function vowel(key, x, y, ink, initial=false) {
@@ -123,26 +123,39 @@
     const g=INITIALS[key];if(!g)return '';
     return g.paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="8" stroke-linecap="butt" stroke-linejoin="round"/>`).join('')+(g.dot?`<circle cx="${g.dot[0]}" cy="${g.dot[1]}" r="${g.dot[2]}" fill="${xml(ink)}"/>`:'');
   }
-  function cell(key,width,joined,ink,connector=0) {
-    const left=entry[key],right=ending[key],closed=right==='closed',cap=closed?width:width-36;
-    const upperEnd=right==='upperHook'||right==='upperBridge'?cap:width;
-    const lowerEnd=right==='lowerHook'||right==='bridge'?cap:width;
+  function cell(key,width,joined,ink,connector=0,routing='switch') {
+    const left=entry[key],right=ending[key],closed=right==='closed',cap=closed?width-4:width-36;
+    const upperEnd=closed||right==='upperHook'||right==='upperBridge'?cap:width;
+    const lowerEnd=closed||right==='lowerHook'||right==='bridge'?cap:width;
     let paths=[];
     const upperTail=right==='upperHook'?`H${cap-10}Q${cap} 8 ${cap} 16`:right==='upperBridge'?`H${cap}V24`:`H${upperEnd}`;
     const lowerTail=right==='lowerHook'?`H${cap-10}Q${cap} 24 ${cap} 16`:right==='bridge'?`H${cap}V8`:`H${lowerEnd}`;
     if(left==='loop')paths=[`M${width} 8H10C-3 8-3 24 10 24${lowerTail}`];
-    else if(left==='down')paths=[`${joined?'M0 8C12 8 12 24 24 24':'M0 0Q0 24 24 24'}${lowerTail}`,`M24 8${upperTail}`];
-    else if(left==='up')paths=[`${joined?'M0 24C12 24 12 8 24 8':'M0 32Q0 8 24 8'}${upperTail}`,`M24 24${lowerTail}`];
+    else if(left==='down')paths=[`${joined?(routing==='straight'?'M0 24':'M0 8C12 8 12 24 24 24'):'M0 0Q0 24 24 24'}${lowerTail}`,`M${joined&&routing==='straight'?0:24} 8${upperTail}`];
+    else if(left==='up')paths=[`${joined?(routing==='straight'?'M0 8':'M0 24C12 24 12 8 24 8'):'M0 32Q0 8 24 8'}${upperTail}`,`M${joined&&routing==='straight'?0:24} 24${lowerTail}`];
     else if(left==='top')paths=[`M0 0Q1 8 12 8${upperTail}`,`${joined?`M${-connector} 24`:'M16 24'}${lowerTail}`];
     else paths=[`${joined?`M${-connector} 8`:'M16 8'}${upperTail}`,`M0 32Q1 24 12 24${lowerTail}`];
-    if(closed)paths.push(`M${width} 8V24`);
-    return {paths,svg:paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="8" stroke-linecap="butt" stroke-linejoin="round"/>`).join(''),outputs:{upper:['straight','lowerHook','closed','bridge'].includes(right),lower:['straight','upperHook','closed','upperBridge'].includes(right)},entry:left};
+    // A filled cap owns the entire square, including both outside corners.
+    // Its right edge is the advance edge, so the next glyph cannot overlap it.
+    const closedCap=closed?{x:width-8,y:4,width:8,height:24}:null;
+    const capSvg=closed?`<rect x="${closedCap.x}" y="4" width="8" height="24" fill="${xml(ink)}" data-square-cap="true"/>`:'';
+    return {paths,closedCap,svg:paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="8" stroke-linecap="butt" stroke-linejoin="round"/>`).join('')+capSvg,outputs:{upper:['straight','lowerHook','closed','bridge'].includes(right),lower:['straight','upperHook','closed','upperBridge'].includes(right)},entry:left,switchPath:joined&&routing!=='straight'?(left==='down'?'M0 8C12 8 12 24 24 24':left==='up'?'M0 24C12 24 12 8 24 8':null):null};
+  }
+  function railContinuation(shape,incoming,ink,id) {
+    if(!shape.switchPath)return {svg:'',paths:[]};
+    const source=shape.entry==='down'?'upper':'lower',other=source==='upper'?'lower':'upper';
+    // The newly starting rail reaches back; the unused incoming rail reaches
+    // forward. Only the real switch gets a clearance, using alpha, not paint.
+    const paths=[`M0 ${source==='upper'?8:24}H24`];
+    if(incoming[other])paths.push(`M0 ${other==='upper'?8:24}H24`);
+    const svg=`<defs><mask id="${id}" maskUnits="userSpaceOnUse" x="-8" y="0" width="40" height="32"><rect x="-8" y="0" width="40" height="32" fill="white"/><path d="${shape.switchPath}" stroke="black" stroke-width="10.5" fill="none"/></mask></defs><g mask="url(#${id})" data-through-rails="${paths.length}">${paths.map(d=>`<path d="${d}" stroke="${xml(ink)}" stroke-width="8" fill="none"/>`).join('')}</g>`;
+    return {svg,paths};
   }
   function render(text, options={}) {
     const o={...defaults,...options};
     const width=Math.max(300,Math.min(2400,Number(o.width)||1000));
     const size=Math.max(.45,Math.min(2.5,Number(o.size)||1));
-    const spacing=Math.max(.6,Math.min(2,Number(o.spacing)||1));
+    const spacing=.85;
     const source=compose(text), margin=44, max=(width-2*margin)/size;
     const line=110,gap=o.joined?0:20*spacing;
     // Keep words together; only words wider than the page split by glyph.
@@ -168,14 +181,18 @@
         if(t.type==='consonant') {
           // End each cell exactly where the next starts. Inverting letters
           // consume the incoming rail with a horizontal-tangent S curve.
-          const connected=!!(o.joined&&previous),shape=cell(t.key,natural,connected,o.ink,leading/fit);
+          const connected=!!(o.joined&&previous),inverting=['down','up'].includes(entry[t.key]);
+          const wanted=entry[t.key]==='down'?'upper':'lower',destination=wanted==='upper'?'lower':'upper';
+          const routing=connected&&inverting&&!previous.outputs[wanted]&&previous.outputs[destination]?'straight':'switch';
+          const shape=cell(t.key,natural,connected,o.ink,leading/fit,routing);
+          const through=connected?railContinuation(shape,previous.outputs,o.ink,`through-${placements.length}`):{svg:'',paths:[]};
           if(connected&&['down','up'].includes(shape.entry)) {
-            const track=shape.entry==='down'?'upper':'lower',startY=track==='upper'?8:24;
+            const track=routing==='straight'?destination:wanted,startY=track==='upper'?8:24;
             const from={x:previous.end,y:y+startY*previous.scale},to={x,y:y+startY*fit};
-            joins.push({fromKey:previous.key,toKey:t.key,flow:shape.entry==='down'?'upper-to-lower':'lower-to-upper',from,to,continuous:previous.outputs[track]&&Math.abs(from.x-to.x)<.001&&Math.abs(from.y-to.y)<.001});
+            joins.push({fromKey:previous.key,toKey:t.key,flow:routing==='straight'?`${track}-straight`:shape.entry==='down'?'upper-to-lower':'lower-to-upper',switched:routing!=='straight',from,to,continuous:previous.outputs[track]&&Math.abs(from.x-to.x)<.001&&Math.abs(from.y-to.y)<.001});
           }
-          paint.push(`<g transform="translate(${x} ${y}) scale(${fit})" data-letter="${xml(t.key)}">${shape.svg}${t.vowels.map((v,i)=>vowel(v,28+i*26,-12,o.ink)).join('')}${t.marks.map((m,i)=>mark(m,40+i*28,16,o.ink)).join('')}${t.stress?`<path d="M18-29h10" fill="none" stroke="${xml(o.ink)}" stroke-width="3"/>`:''}</g>`);
-          placements.push({key:t.key,x,y,width:w,scale:fit,vowels:t.vowels.length,marks:t.marks.length,paths:shape.paths,entry:shape.entry,entryGap:leading});
+          paint.push(`<g transform="translate(${x} ${y}) scale(${fit})" data-letter="${xml(t.key)}">${through.svg}${shape.svg}${t.vowels.map((v,i)=>vowel(v,28+i*26,-12,o.ink)).join('')}${t.marks.map((m,i)=>mark(m,40+i*28,16,o.ink)).join('')}${t.stress?`<path d="M18-29h10" fill="none" stroke="${xml(o.ink)}" stroke-width="3"/>`:''}</g>`);
+          placements.push({key:t.key,x,y,width:w,scale:fit,vowels:t.vowels.length,marks:t.marks.length,paths:shape.paths,closedCap:shape.closedCap,entry:shape.entry,entryGap:leading,routing,throughPaths:through.paths});
           previous={key:t.key,end:x+w,scale:fit,outputs:shape.outputs};
         } else if(t.type==='vowel') {
           const special=o.initial==='special'&&INITIALS[t.key];

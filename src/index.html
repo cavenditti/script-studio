@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#1b292c">
+  <meta name="description" content="An editor for Carlo's original writing system. Compose with the alphabet, see live script, and export vector artwork.">
+  <title>Script Studio</title>
+  <style>/* STYLES */</style>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#" aria-label="Script Studio home"><svg viewBox="-5 -5 110 46" width="54" height="30" aria-hidden="true"><path d="M0 32Q0 8 12 8H54Q64 8 64 16M16 24H100" fill="none" stroke="currentColor" stroke-width="8"/></svg><span>Script Studio</span></a>
+    <div class="header-actions"><span class="draft-status" id="draft-status" role="status">Draft stays in this browser</span><button class="text-button" id="open-reference">Your originals</button><button class="text-button" id="download-app" title="Download a self-contained copy to use offline">Keep an offline copy</button></div>
+  </header>
+
+  <main>
+    <div class="page-intro"><h1>Your words.<br><em>Your alphabet.</em></h1><p>A place to write in the script you created. <br>Type the chart’s letter labels and watch the forms come together.</p></div>
+
+    <section class="workbench" aria-label="Script editor">
+      <div class="composer">
+        <div class="section-header"><label for="source">Write</label><span id="input-count">0 characters</span></div>
+        <textarea id="source" maxlength="100000" aria-describedby="typing-hint" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Start with the letter labels from your chart…"></textarea>
+        <p class="typing-hint" id="typing-hint"><span id="example-note">Illustrative text. Replace it with your own.<br></span>Use <b>gh</b>, <b>sh</b> for ş, and <b>zh</b> for ž. Vowels sit above the preceding consonant.</p>
+        <div class="source-actions"><button id="save-document" class="text-button">Save document</button><button id="open-document" class="text-button">Open document</button><input type="file" id="document-file" accept=".json,application/json" hidden><button id="clear" class="text-button quiet">Clear</button></div>
+        <div class="alphabet">
+          <div class="section-header"><h2>Alphabet</h2><span>Click to insert</span></div>
+          <div class="palette-label">Consonants</div><div id="consonant-palette" class="palette consonant-palette" role="group" aria-label="Insert consonants"></div>
+          <div class="palette-label">Vowels</div><div id="vowel-palette" class="palette vowel-palette" role="group" aria-label="Insert vowels"></div>
+          <div class="palette-label">Accents &amp; tones</div><div id="mark-palette" class="palette mark-palette" role="group" aria-label="Insert accents and tones"></div>
+          <p class="typing-hint">R1 and R2 match the two rows at the chart’s bottom right. Click after a consonant or vowel, or type <b>{1}</b> to <b>{8}</b>. Meanings are yours to assign.</p>
+          <details class="typing-details"><summary>Typing notes &amp; joining rules</summary><div><p>This is a transcription tool: type sounds using your chart’s labels, rather than ordinary English spelling. Each vowel is drawn over the consonant that precedes it. At the beginning of a word, choose a consonant-sized special form or an inline sign.</p><p>Try <b>din</b>: the upper rail bends into the lower rail at <b>n</b>. The letters <b>g n l s w</b> bend downward; <b>gh m r z</b> bend upward. Outside legs stay visible and interrupt their rail, while a straight left-hand entry continues the previous rail wherever possible. Distinctive hooks and terminal strokes remain part of each letter.</p><p><b>è</b> and <b>ɛ</b> share a sign, as do <b>ò</b> and <b>ɔ</b>. The chart’s Y-shaped label is entered as <b>y</b>; this reading needs your review. An apostrophe adds the stress bar above the preceding syllable.</p><p>Accent and tone variants are numbered left to right across the upper row, then the lower row. For example, <b>di{1}n</b> marks <b>d</b>; <b>din{8}</b> marks <b>n</b>. They modify the preceding consonant, including its vowels, or an initial vowel. Their meanings remain open.</p><p>Punctuation and digits retain their Latin forms. Unsupported letters stay visible in rust so you can correct them.</p></div></details>
+        </div>
+      </div>
+
+      <div class="output">
+        <div class="output-header"><div class="section-header"><h2>Your script</h2><span id="render-count">Live composition</span></div><div class="export-actions"><button id="export-svg" class="button secondary" title="Export scalable vector artwork">Export SVG</button><button id="export-png" class="button primary">Export PNG</button></div></div>
+        <div class="paper-shell"><div class="paper" id="paper"><div id="rendered" aria-live="off"></div><div class="empty-preview" id="empty-preview"><svg viewBox="-5 -5 110 46" aria-hidden="true"><path d="M0 32Q0 8 12 8H54Q64 8 64 16M16 24H100" fill="none" stroke="currentColor" stroke-width="8"/></svg><p>Your first line starts here.</p><span>Type a word or choose a letter below.</span></div></div></div>
+        <p class="render-warning" id="render-warning" role="status" hidden></p>
+        <div class="settings" aria-label="Composition settings">
+          <div class="range-control"><label for="size">Letter size <output id="size-value">100%</output></label><input id="size" type="range" min="60" max="180" step="5" value="100"></div>
+          <div class="range-control"><label for="spacing">Spacing <output id="spacing-value">100%</output></label><input id="spacing" type="range" min="85" max="145" step="5" value="100"></div>
+          <div class="select-control"><label for="initial">Initial vowels</label><select id="initial"><option value="special">Special forms</option><option value="inline">Inline signs</option></select></div>
+          <div class="select-control"><label for="ink">Ink</label><select id="ink"><option value="#161c20">Charcoal</option><option value="#000000">Black</option><option value="#254f68">Deep blue</option><option value="#ffffff">White</option></select></div>
+          <div class="check-controls"><label><input id="joined" type="checkbox" checked> Join letters</label><label><input id="guides" type="checkbox"> Show guides</label><label><input id="transparent" type="checkbox"> Transparent export</label></div>
+        </div>
+        <div class="specimen-note"><span class="specimen-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5H20V19H4ZM8 9H16M8 13H13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span><p>The alphabet is yours to refine.<br><span>The original chart is always one click away.</span></p><button class="text-button" id="show-chart">See the chart</button></div>
+      </div>
+    </section>
+    <footer><p>Made from your original drawings.</p><span>Text and settings are saved in this browser.</span></footer>
+  </main>
+
+  <dialog id="references" aria-labelledby="reference-title"><div class="dialog-header"><h2 id="reference-title">Your original drawings</h2><button id="close-reference" class="text-button">Close</button></div><div class="reference-content"><figure><img id="reference-chart" src="../references/alphabet.jpg" alt="Original writing-system chart supplied by Carlo, showing consonants, vowel marks, initial vowel variants, and optional accent and tone forms."><figcaption>The alphabet. The eight bottom-right signs are available as R1 C1 through R2 C4. Their meanings remain open. Special initial vowels use the main letters’ scale and stroke weight.</figcaption></figure><figure><img id="reference-sample" src="../references/sample.jpg" alt="Carlo’s original connected-script specimen."><figcaption>Your original connected-script specimen. Its transcription is not yet known.</figcaption></figure></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script id="document-data" type="application/json">null</script>
+  <script>/* ENGINE */</script>
+  <script>/* APP */</script>
+</body>
+</html>

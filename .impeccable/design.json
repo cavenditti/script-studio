@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-22T13:42:00+00:00",
+  "title": "Design System: Script Studio",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Muted teal"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep charcoal"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "White paper"
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Pale canvas"
+      }
+    },
+    "shadows": [
+      {
+        "name": "paper",
+        "value": "0 6px 18px #1b292c0b",
+        "purpose": "Separate artwork paper from its surround."
+      },
+      {
+        "name": "dialog",
+        "value": "0 18px 80px #152d3d33",
+        "purpose": "Separate the reference dialog from the page."
+      },
+      {
+        "name": "toast",
+        "value": "0 6px 20px #152d3d22",
+        "purpose": "Lift transient status above the editor."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background .15s, color .15s",
+        "purpose": "Button hover changes; disabled by prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-min",
+        "value": "1500px"
+      },
+      {
+        "name": "compact-max",
+        "value": "1050px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary export button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main export action; source-derived and browser-checked.",
+      "html": "<button class=\"ds-primary\">Export PNG</button>",
+      "css": ".ds-primary{font:550 .875rem 'Avenir Next',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--accent,#295c65);color:#fff;border:1px solid transparent;border-radius:6px;padding:10px 14px;cursor:pointer;transition:background .15s,color .15s}.ds-primary:hover{background:#1a454d}.ds-primary:focus-visible{outline:2px solid var(--accent,#295c65);outline-offset:4px}.ds-primary:disabled{opacity:.45;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Secondary export button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Alternative vector export action.",
+      "html": "<button class=\"ds-secondary\">Export SVG</button>",
+      "css": ".ds-secondary{font:550 .875rem 'Avenir Next',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:var(--ink,#1b292c);border:1px solid #cdd9da;border-radius:6px;padding:10px 14px;cursor:pointer;transition:background .15s,color .15s}.ds-secondary:hover{background:var(--soft,#edf3f3)}.ds-secondary:focus-visible{outline:2px solid var(--accent,#295c65);outline-offset:4px}.ds-secondary:disabled{opacity:.45;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-secondary{transition:none}}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "refersTo": "text-button",
+      "description": "Low-emphasis document and reference actions.",
+      "html": "<button class=\"ds-text\">Save document</button>",
+      "css": ".ds-text{font:550 .875rem 'Avenir Next',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:transparent;border:0;padding:7px 0;color:var(--accent,#295c65);text-align:left;cursor:pointer;transition:background .15s,color .15s}.ds-text:hover{color:#123b43;text-decoration:underline;text-underline-offset:4px}.ds-text:focus-visible{outline:2px solid var(--accent,#295c65);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-text{transition:none}}"
+    },
+    {
+      "name": "Writing field",
+      "kind": "input",
+      "refersTo": "text-input",
+      "description": "Editable transcription input.",
+      "html": "<label class=\"ds-label\" for=\"ds-source\">Write</label><textarea class=\"ds-input\" id=\"ds-source\" maxlength=\"100000\" spellcheck=\"false\">ghera shoma</textarea>",
+      "css": ".ds-label{display:block;margin-bottom:14px;font:650 .9375rem 'Avenir Next',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink,#1b292c)}.ds-input{display:block;width:100%;box-sizing:border-box;min-height:151px;max-height:480px;resize:vertical;background:#f7f9f9;border:1px solid #d0d9d9;border-radius:8px;color:var(--ink,#1b292c);font:1.15rem/1.6 'Avenir Next',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:14px;caret-color:var(--accent,#295c65)}.ds-input:focus{border-color:var(--accent,#295c65)}.ds-input:focus-visible{outline:2px solid var(--accent,#295c65);outline-offset:4px}"
+    },
+    {
+      "name": "Consonant palette button",
+      "kind": "button",
+      "refersTo": "glyph-button",
+      "description": "Inline vector sign with its insertion label.",
+      "html": "<button class=\"ds-glyph\" aria-label=\"Insert m\"><svg viewBox=\"-12 -15 125 60\" aria-hidden=\"true\"><path d=\"M0 32Q0 8 12 8H54Q64 8 64 16M16 24H100\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/></svg><span>m</span></button>",
+      "css": ".ds-glyph{padding:7px 3px 5px;border:1px solid transparent;background:#f5f7f7;border-radius:5px;color:var(--ink,#1b292c);min-height:53px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:background .15s,color .15s}.ds-glyph svg{width:100%;height:25px;overflow:visible}.ds-glyph span{font:.8125rem 'Avenir Next',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--muted,#566569)}.ds-glyph:hover{background:#e4eeee;border-color:#b7cdcf;color:#174b54}.ds-glyph:focus-visible{outline:2px solid var(--accent,#295c65);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-glyph{transition:none}}"
+    },
+    {
+      "name": "Header brand",
+      "kind": "nav",
+      "description": "Compact brand link with a script-derived vector emblem.",
+      "html": "<a class=\"ds-brand\" href=\"#\" aria-label=\"Script Studio home\"><svg viewBox=\"-5 -5 110 46\" width=\"54\" height=\"30\" aria-hidden=\"true\"><path d=\"M0 32Q0 8 12 8H54Q64 8 64 16M16 24H100\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/></svg><span>Script Studio</span></a>",
+      "css": ".ds-brand{display:flex;gap:15px;align-items:center;font:650 16px 'Avenir Next',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:-.02em;text-decoration:none;white-space:nowrap;color:var(--ink,#1b292c)}.ds-brand svg{color:var(--accent,#295c65)}.ds-brand:focus-visible{outline:2px solid var(--accent,#295c65);outline-offset:4px}"
+    },
+    {
+      "name": "Accent and tone palette",
+      "kind": "custom",
+      "refersTo": "glyph-button",
+      "description": "Eight positional variants in two rows of four; syntax {1}–{8}, meanings unassigned.",
+      "html": "<div class=\"ds-marks\" role=\"group\" aria-label=\"Insert accents and tones\"><button class=\"ds-mark\" aria-label=\"Insert R1 C1\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"1\"><path d=\"M-2-8H6C3-2 0 2-6 3V-2Q-3-3-2-8Z\" fill=\"currentColor\"/></g></svg><span>R1 C1</span></button><button class=\"ds-mark\" aria-label=\"Insert R1 C2\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"2\"><path d=\"M-2 8H6C3 2 0-2-6-3V2Q-3 3-2 8Z\" fill=\"currentColor\"/></g></svg><span>R1 C2</span></button><button class=\"ds-mark\" aria-label=\"Insert R1 C3\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"3\"><path d=\"M-2-8H6C3-2 0 2-6 3V-2Q-3-3-2-8Z\" transform=\"scale(-1 1)\" fill=\"currentColor\"/></g></svg><span>R1 C3</span></button><button class=\"ds-mark\" aria-label=\"Insert R1 C4\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"4\"><path d=\"M-2 8H6C3 2 0-2-6-3V2Q-3 3-2 8Z\" transform=\"scale(-1 1)\" fill=\"currentColor\"/></g></svg><span>R1 C4</span></button><button class=\"ds-mark\" aria-label=\"Insert R2 C1\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"5\"><circle r=\"2.4\" fill=\"currentColor\"/></g></svg><span>R2 C1</span></button><button class=\"ds-mark\" aria-label=\"Insert R2 C2\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"6\"><path d=\"M-2 8H6C3 2 0-2-6-3V2Q-3 3-2 8Z\" transform=\"translate(-5 0) scale(-1 1)\" fill=\"currentColor\"/><path d=\"M-2-8H6C3-2 0 2-6 3V-2Q-3-3-2-8Z\" transform=\"translate(5 0) scale(-1 1)\" fill=\"currentColor\"/></g></svg><span>R2 C2</span></button><button class=\"ds-mark\" aria-label=\"Insert R2 C3\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"7\"><path d=\"M-2-8H6C3-2 0 2-6 3V-2Q-3-3-2-8Z\" transform=\"translate(-5 0) scale(-1 1)\" fill=\"currentColor\"/><path d=\"M-2 8H6C3 2 0-2-6-3V2Q-3 3-2 8Z\" transform=\"translate(5 0) scale(-1 1)\" fill=\"currentColor\"/></g></svg><span>R2 C3</span></button><button class=\"ds-mark\" aria-label=\"Insert R2 C4\"><svg viewBox=\"0 -4 80 40\" aria-hidden=\"true\"><path d=\"M4 8H72V24H4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\"/><g transform=\"translate(38 16)\" data-mark=\"8\"><path d=\"M0-8V8\" stroke=\"currentColor\" stroke-width=\"7\"/></g></svg><span>R2 C4</span></button></div>",
+      "css": ".ds-marks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.ds-mark{padding:7px 3px 5px;border:1px solid transparent;background:#f5f7f7;border-radius:5px;color:var(--ink,#1b292c);min-height:53px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:background .15s,color .15s}.ds-mark svg{width:100%;height:25px;overflow:visible}.ds-mark span{font:.8125rem \"Avenir Next\",-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;color:var(--muted,#566569)}.ds-mark:hover{background:#e4eeee;border-color:#b7cdcf;color:#174b54}.ds-mark:focus-visible{outline:2px solid var(--accent,#295c65);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-mark{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "overview": "This document records the implemented CSS in `src/style.css` and the current script-rendering controls. Desktop and mobile browser checks have been completed, including 375px and 390px viewports, mark insertion, and transparent PNG export. The current desktop and 375px captures are saved under `.impeccable/review/`. These technical and layout checks do not establish Carlo’s acceptance of the reconstructed glyphs, joins, or mark placement; that remains open.\n\nThe interface pairs a serif introduction with compact system-font controls. Pale surfaces frame the script artwork, while a muted teal identifies actions. The existing implementation is the authority for the values below; no creative identity has been approved separately.",
+    "dos": [
+      "Do preserve the distinction between script artwork, input controls, and supporting reference material.",
+      "Do reuse the implemented palette, local font stacks, focus outline, and reduced-motion behavior.",
+      "Do keep reference photographs at their original aspect ratios."
+    ],
+    "donts": [
+      "Don't describe technical browser checks as Carlo’s approval of reconstructed glyphs or linguistic meanings.",
+      "Don't require external fonts or icon packages for the standalone editor.",
+      "Don't apply UI styling changes to the original glyph drawings or photographs."
+    ]
+  }
+}

@@ -76,23 +76,38 @@ test('square end caps fill both corners and remain inside the advance edge',()=>
 test('word and line boundaries and detached mode do not create rail joins',()=>{
   assert.equal(E.render('di n').joins.length,0);assert.equal(E.render('di\nn').joins.length,0);assert.equal(E.render('din',{joined:false}).joins.length,0);
 });
-test('outside upper legs remain visible while the lower straight rail connects',()=>{
+test('outside upper legs branch from an existing continuous rail',()=>{
   for(const key of ['c','p','d','ş','f']) {
     const r=E.render('di'+key),before=r.placements[0],after=r.placements[1];
     assert.match(after.paths[0],/^M0 0Q1 8 12 8/,key);
-    assert.ok(after.x>before.x+before.width,key+' interrupts the upper rail');
+    assert.ok(after.x>before.x+before.width,key+' leaves room for the outside leg');
     assert.equal(after.x-after.entryGap,before.x+before.width,key+' connects the straight lower entry');
     assert.match(after.paths[1],/^M-8 24/,key);
+    assert.deepEqual(after.throughPaths,['M-8 8H12'],key+' continues the upper rail through the leg');
   }
 });
-test('outside lower legs remain visible while the upper straight rail connects',()=>{
+test('outside lower legs branch from an existing continuous rail',()=>{
   for(const key of ['k','b','t','ž','v']) {
     const r=E.render('di'+key),before=r.placements[0],after=r.placements[1];
     assert.match(after.paths[1],/^M0 32Q1 24 12 24/,key);
-    assert.ok(after.x>before.x+before.width,key+' interrupts the lower rail');
+    assert.ok(after.x>before.x+before.width,key+' leaves room for the outside leg');
     assert.equal(after.x-after.entryGap,before.x+before.width,key+' connects the straight upper entry');
     assert.match(after.paths[0],/^M-8 8/,key);
+    assert.deepEqual(after.throughPaths,['M-8 24H12'],key+' continues the lower rail through the leg');
   }
+});
+test('n–t and mirrored joins continue only rails supplied by the previous letter',()=>{
+  for(const [before,following,track] of [['n',['k','b','t','ž','v'],'lower'],['gh',['c','p','d','ş','f'],'upper']]) {
+    for(const next of following){
+      const r=E.render(before+next,{transparent:true}),[left,right]=r.placements;
+      assert.equal(right.x-right.entryGap,left.x+left.width);
+      assert.equal(right.throughPaths.length,1,before+next);
+      assert.match(r.svg,new RegExp(`data-branch-rail="${track}"`));
+      assert.ok(!r.svg.includes('<mask '),before+next+' keeps the branch rail unmasked');
+    }
+  }
+  for(const text of ['gt','pc','n t','n\nt'])assert.equal(E.render(text).placements[1].throughPaths.length,0,text);
+  assert.equal(E.render('nt',{joined:false}).placements[1].throughPaths.length,0);
 });
 test('special initial vowels use main-letter stroke weight and full-size outlines',()=>{
   for(const key of ['a','e','è','o','ò','y','i']) {

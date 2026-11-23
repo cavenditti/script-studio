@@ -142,7 +142,14 @@
     const capSvg=closed?`<rect x="${closedCap.x}" y="4" width="8" height="24" fill="${xml(ink)}" data-square-cap="true"/>`:'';
     return {paths,closedCap,svg:paths.map(d=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="8" stroke-linecap="butt" stroke-linejoin="round"/>`).join('')+capSvg,outputs:{upper:['straight','lowerHook','closed','bridge'].includes(right),lower:['straight','upperHook','closed','upperBridge'].includes(right)},entry:left,switchPath:joined&&routing!=='straight'?(left==='down'?'M0 8C12 8 12 24 24 24':left==='up'?'M0 24C12 24 12 8 24 8':null):null};
   }
-  function railContinuation(shape,incoming,ink,id) {
+  function railContinuation(shape,incoming,ink,id,connector=0) {
+    // An outside leg branches from an existing rail instead of breaking it.
+    // Keep the leg's full curve; bridge only when that incoming rail exists.
+    if(['top','bottom'].includes(shape.entry)) {
+      const track=shape.entry==='top'?'upper':'lower',y=track==='upper'?8:24;
+      const paths=incoming[track]?[`M${-connector} ${y}H12`]:[];
+      return {paths,svg:paths.map(d=>`<path d="${d}" stroke="${xml(ink)}" stroke-width="8" fill="none" data-branch-rail="${track}"/>`).join('')};
+    }
     if(!shape.switchPath)return {svg:'',paths:[]};
     const source=shape.entry==='down'?'upper':'lower',other=source==='upper'?'lower':'upper';
     // The newly starting rail reaches back; the unused incoming rail reaches
@@ -186,7 +193,7 @@
           const wanted=entry[t.key]==='down'?'upper':'lower',destination=wanted==='upper'?'lower':'upper';
           const routing=connected&&inverting&&!previous.outputs[wanted]&&previous.outputs[destination]?'straight':'switch';
           const shape=cell(t.key,natural,connected,o.ink,leading/fit,routing);
-          const through=connected?railContinuation(shape,previous.outputs,o.ink,`through-${placements.length}`):{svg:'',paths:[]};
+          const through=connected?railContinuation(shape,previous.outputs,o.ink,`through-${placements.length}`,leading/fit):{svg:'',paths:[]};
           if(connected&&['down','up'].includes(shape.entry)) {
             const track=routing==='straight'?destination:wanted,startY=track==='upper'?8:24;
             const from={x:previous.end,y:y+startY*previous.scale},to={x,y:y+startY*fit};

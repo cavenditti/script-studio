@@ -19,7 +19,7 @@ Confirmed by Carlo: vowel signs sit over the preceding consonant. Initial vowels
 
 Confirmed revision: g, n, l, s and w take the upper incoming rail down into the lower rail; gh, m, r and z take the lower rail upward. Joins should be smooth and as continuous as the letter forms allow. The special initial vowel forms use main-consonant size and stroke weight; their small reference-sheet size was only drafting.
 
-Outside legs must remain visible in joined words, interrupting their own rail. Straight left entries continue the preceding rail wherever possible. These are distinct from rail inversion; never flatten an outside leg into an uninterrupted horizontal line.
+Outside legs must remain visible in joined words. When the preceding consonant supplies the same rail, continue that rail straight through and let the outside leg branch from it: the lower n–t group is one continuous line with the dropping leg still visible. Apply the mirrored rule to upper legs. Missing incoming rails stay open. Straight left entries also continue the preceding rail wherever possible. These are distinct from rail inversion; never erase an outside leg when continuing its rail.
 
 Unused neighbouring rails continue farther through a switching letter instead of stopping at its left edge. A curve is needed only when an incoming line actually changes rails: when the intended incoming rail is absent and the available rail already aligns with the destination, continue straight. Preserve a thin clearance at true switches. Spacing is fixed at 85 percent; remove the spacing control and ignore older saved spacing values.
 

@@ -374,11 +374,31 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     'œ':['M5 6V29H16V11H31'],
     h:['M27 7C5-1 2 36 27 29']
   };
+  // Harbor's reduced components. Each consonant keeps the stroke that carries
+  // its stem; a detached secondary stroke is dropped where the letter stays
+  // distinct without it, or joined into the stem stroke where it does not.
+  // Every component is therefore one connected shape (i keeps its dot).
+  // Derived with scripts/derive-harbor-forms.cjs, then l, r and w tidied by hand.
+  const harborForms={
+    c:['M5 1V8H29'],
+    p:['M5 1V8H19Q28 8 28 18'],
+    k:['M5 35V28H18Q27 28 27 18'],
+    b:['M5 35V28H30'],
+    g:['M5 1V21Q5 29 13 29H19Q27 29 27 19'],
+    n:['M5 1V21Q5 29 13 29H30'],
+    l:['M5 1V29H29','M16 29V8'],
+    gh:['M5 35V16Q5 8 13 8H30'],
+    m:['M5 35V16Q5 8 13 8H20Q28 8 28 18'],
+    r:['M5 35V8H29','M16 8V28'],
+    w:['M5 1V29H29V8']
+  };
+  // Closed vowel outlines keep tighter corners so a stays distinct from u.
+  const softenRadius={a:3};
   // The Harbor reform borrows the alphabet's sound forms, not its linear layout.
   // Components keep one constant scale and fuse by contact: each joins the
   // previous one in its row where their strokes first meet, and each row joins
   // the row above the same way. Shared rails become one stroke.
-  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:12,touch:-2,outer:8.4,inner:3.6,shareBins:4,joinMin:1.5,joinMax:22,joinClear:2.2,joinAim:.05,soften:7,maxOnset:3,maxNucleus:2,maxCoda:3});
+  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:12,touch:-2,outer:8.4,inner:3.6,shareBins:4,joinMin:1.5,joinMax:22,joinClear:2.2,joinAim:.05,connected:1.5,soften:7,maxOnset:3,maxNucleus:2,maxCoda:3});
   const n=x=>String(Math.round(x*100)/100),xml=E.xml;
   const path=(d,ink,width=3.4,extra='')=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"${extra}/>`;
   function letter(key,ink){
@@ -438,7 +458,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
   const harborCache=new Map();
   function harbor(key){
     if(harborCache.has(key))return harborCache.get(key);
-    const subs=key==='∅'?segments(EMPTY):soften((alphabet[key]||[]).flatMap(segments),blockMetrics.soften);
+    const subs=key==='∅'?segments(EMPTY):soften((harborForms[key]||alphabet[key]||[]).flatMap(segments),softenRadius[key]??blockMetrics.soften);
     const pts=[],ends=[];
     for(const sp of subs){
       pts.push(sp.start);
@@ -524,9 +544,9 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     };
     for(const t of tokens){if(t.type==='boundary')flush();else chunk.push(t);}flush();return result;
   }
-  // Organic ligatures: a free stroke end that points toward a neighbouring
-  // component and stops just short of it continues in a curve until it meets
-  // that component. At most one join per neighbouring pair, in block units.
+  // Organic ligatures: when two neighbouring components do not already touch,
+  // a free stroke end that points toward the other and stops just short of it
+  // continues in a curve until it meets it. At most one join per pair.
   function joins(components,S){
     const m=blockMetrics,out=[];
     const groups={onset:[],nucleus:[],coda:[]};for(const c of components)groups[c.kind].push(c);
@@ -535,7 +555,9 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     if(groups.onset.length)pairs.push([groups.onset,groups.nucleus]);
     if(groups.coda.length)pairs.push([groups.nucleus,groups.coda]);
     const ends=c=>c.key==='∅'?[]:harbor(c.key).ends.map(e=>({at:[c.x+e.at[0]*S,c.y+e.at[1]*S],dir:e.dir}));
+    const touching=(A,B)=>A.some(a=>B.some(b=>a.points.some(p=>b.points.some(q=>Math.hypot(p[0]-q[0],p[1]-q[1])<m.connected*S))));
     for(const [A,B] of pairs){
+      if(touching(A,B))continue;
       let best=null;
       for(const [from,to] of [[A,B],[B,A]])for(const a of from)for(const e of ends(a))for(const b of to){
         let p=null,dist=Infinity;for(const q of b.points){const d=Math.hypot(q[0]-e.at[0],q[1]-e.at[1]);if(d<dist){dist=d;p=q;}}
@@ -650,7 +672,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     if(type==='mark')return hidden(compact(render('a{'+key+'}',{width:300,transparent:true,ink:'currentColor'},system)));
     return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${system==='blocks'?harborPreview(key):letter(key,'currentColor')}</svg>`;
   }
-  const api={alphabet,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={alphabet,harborForms,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
 </script>
@@ -677,7 +699,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     {id:'ridge-alpha',name:'Ridge Alphabet',era:'750 onward',parent:'ridge',branch:'Northern alphabetic branch',material:'Independent letters for names, loans and public reading',mode:'alphabet',system:'alphabet',stroke:3.4,detached:true,
       change:'The long guide rails disappear. Consonants become compact free-standing letters, and every vowel gains an equally full baseline letter.',reason:'Ridge teachers promote the old initial-vowel forms to ordinary vowels and detach the diagnostic joints of consonants from their two-rail scaffolding.',retained:'One full letter records each typed consonant or vowel, including gh, c and g as single sounds; tone and stress remain explicit.'},
     {id:'harbor',name:'Harbor Blocks',era:'850 onward',parent:'island',influences:['ridge-alpha'],branch:'Maritime syllable-block branch',material:'Compact syllable seals and manuscript monograms',mode:'blocks',system:'blocks',stroke:3.4,detached:true,
-      change:'A fused syllable sign replaces the word ribbon: initial consonants above, vowels in the middle, final consonants below, overlapping and joined by shared rails and short curved ligatures, then drawn as one outlined pictogram. Every row reads left to right.',reason:'Island syllable seals are regularized by a teaching reform. It borrows recognizable sound forms from Ridge Alphabet, while keeping the syllable as the unit of writing.',retained:'Up to three initials, two vowels and three finals fuse into one sign. Tone sits beside the sign and primary stress above it. · sets a boundary; oversized groups use a readable bracketed spell-out.'}
+      change:'A fused syllable sign of simplified one-shape components replaces the word ribbon: initial consonants above, vowels in the middle, final consonants below, overlapping and joined by shared rails and short curved ligatures, then drawn as one outlined pictogram. Every row reads left to right.',reason:'Island syllable seals are regularized by a teaching reform. It borrows recognizable sound forms from Ridge Alphabet, while keeping the syllable as the unit of writing.',retained:'Up to three initials, two vowels and three finals fuse into one sign. Tone sits beside the sign and primary stress above it. · sets a boundary; oversized groups use a readable bracketed spell-out.'}
   ];
   const get=id=>profiles.find(p=>p.id===id)||profiles.find(p=>p.id==='classical');
   const number=n=>String(Math.round(n*100)/100);

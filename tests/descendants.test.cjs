@@ -70,11 +70,11 @@ test('Harbor fuses components by contact inside a constant body',()=>{
     if(rows.coda)assert.ok(near(rows.nucleus,rows.coda)<=5,text+' coda fused');
   }
   // A consonant rail and a flat vowel top become one shared stroke.
-  const pa=D.block(parsed('pa')[0],'#000');assert.ok(Math.abs(pa.components[1].y-(pa.components[0].y+21*m.scale))<.01);
+  const da=D.block(parsed('da')[0],'#000');assert.ok(Math.abs(da.components[1].y-(da.components[0].y+21*m.scale))<.01);
   for(const text of ['strlant','aei','antsrl'])assert.equal(D.block(parsed(text)[0],'#000').escape,true);
   const r=H.render('plant drènt',{hand:'harbor',width:300});assert.equal(r.lines,1);
 });
-test('Harbor softens corners, bridges near stroke ends and merges each syllable into one pictogram',()=>{
+test('Harbor softens corners, bridges only separated components and merges each syllable into one pictogram',()=>{
   const m=D.blockMetrics;
   for(const key of ['t','s','è','l','a'])assert.match(D.harbor(key).d,/Q/);
   assert.equal(D.harbor('a').ends.length,0);assert.ok(D.harbor('p').ends.length>=2);
@@ -88,11 +88,27 @@ test('Harbor softens corners, bridges near stroke ends and merges each syllable 
       assert.ok(b.components.some(c=>c.points.some(([x,y])=>Math.hypot(x-j.to[0],y-j.to[1])<.01)));
     }
   }
-  assert.ok(count>=2,'organic joins appear in ordinary syllables');
+  // Reduced components overlap their neighbours, so ligatures are rare; each one ends on a stroke.
   // One outline union per syllable: ink at the outer width, masked at the inner width.
   const r=H.render('plant pa',{hand:'harbor'});assert.equal((r.svg.match(/data-pictogram="true"/g)||[]).length,2);
   const ids=[...r.svg.matchAll(/<mask id="([^"]+)"/g)].map(x=>x[1]);assert.equal(new Set(ids).size,2);for(const id of ids)assert.ok(r.svg.includes(`mask="url(#${id})"`));
   assert.ok(m.outer>m.inner);assert.match(r.svg,new RegExp(`stroke-width="${m.inner}"`));
+});
+test('Harbor reduced components are single connected shapes that stay distinct',()=>{
+  const keys=Object.keys(D.alphabet),haus=(A,B)=>{const d=(P,Q)=>Math.max(...P.map(p=>Math.min(...Q.map(q=>Math.hypot(p[0]-q[0],p[1]-q[1])))));return Math.max(d(A,B),d(B,A));};
+  for(const key of Object.keys(D.harborForms)){
+    assert.ok(D.alphabet[key],key);
+    const before=D.alphabet[key].join('').split('M').length,after=D.harborForms[key].join('').split('M').length;assert.ok(after<=before,key+' has no more strokes');
+    // Connected: every sampled point links to the rest through neighbours closer than 1.5 units.
+    const pts=D.ink(key),seen=new Set([0]),queue=[0];
+    while(queue.length){const i=queue.pop();pts.forEach((q,j)=>{if(!seen.has(j)&&Math.hypot(q[0]-pts[i][0],q[1]-pts[i][1])<1.5){seen.add(j);queue.push(j);}});}
+    assert.equal(seen.size,pts.length,key+' is one shape');
+  }
+  const consonants=Object.keys(E.consonants);
+  for(let i=0;i<consonants.length;i++)for(let j=i+1;j<consonants.length;j++)assert.ok(haus(D.ink(consonants[i]),D.ink(consonants[j]))>=6,consonants[i]+'/'+consonants[j]);
+  for(let i=0;i<keys.length;i++)for(let j=i+1;j<keys.length;j++)assert.ok(haus(D.ink(keys[i]),D.ink(keys[j]))>=3,keys[i]+'/'+keys[j]);
+  // Ligatures appear only between components that do not already touch.
+  for(const text of ['pa','na','plant','ghrai','tun'])for(const l of D.block(parsed(text)[0],'#000').ligatures)assert.ok(l.from&&l.to);
 });
 test('Harbor palette components retain full-size sound shapes with a tight optical frame',()=>{
   for(const key of Object.keys(D.alphabet)){

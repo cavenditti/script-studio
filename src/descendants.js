@@ -53,13 +53,24 @@
     r:['M5 35V8H29','M16 8V28'],
     w:['M5 1V29H29V8']
   };
+  // Cluster signs. Inside a consonant cluster every consonant is written as one
+  // unbranched stroke, so a cluster reads as a collection of single strokes.
+  // Each keeps the stem direction and a trace of its letter; all twenty stay at
+  // least 7 letter units apart.
+  const harborStrokes={
+    j:'M28 6H11C0 6 0 29 11 29H23V20',c:'M5 1V8H29',p:'M5 1V8H19Q28 8 28 18',d:'M29 8H6V28',
+    'ş':'M5 1V8H28V28H8',k:'M5 35V28H18Q27 28 27 18',b:'M5 35V28H30',t:'M29 28H6V8H29',
+    'ž':'M8 8H28V28H5V35',g:'M5 1V21Q5 29 13 29H19Q27 29 27 19',n:'M5 1V21Q5 29 13 29H30',
+    l:'M5 1V29H16V8',s:'M5 1V29H28V8H16',gh:'M5 35V16Q5 8 13 8H30',m:'M5 35V16Q5 8 13 8H20Q28 8 28 18',
+    r:'M5 35V8H16V28',z:'M5 35V8H28V29H16',f:'M5 1V8H20V28H8',v:'M5 35V28H20V8H30',w:'M5 1V29H29V8'
+  };
   // Closed vowel outlines keep tighter corners so a stays distinct from u.
   const softenRadius={a:3};
   // The Harbor reform borrows the alphabet's sound forms, not its linear layout.
   // Components keep one constant scale and fuse by contact: each joins the
   // previous one in its row where their strokes first meet, and each row joins
   // the row above the same way. Shared rails become one stroke.
-  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:12,touch:-2,outer:8.4,inner:3.6,shareBins:4,joinMin:1.5,joinMax:22,joinClear:2.2,joinAim:.05,connected:1.5,soften:7,maxOnset:3,maxNucleus:2,maxCoda:3});
+  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:12,touch:-2,outer:8.4,inner:3.6,shareBins:4,joinMin:1.5,joinMax:22,joinClear:2.2,joinAim:.05,connected:1.5,clusterScale:.62,clusterGap:3,clusterNest:2,soften:7,maxOnset:3,maxNucleus:2,maxCoda:3});
   const n=x=>String(Math.round(x*100)/100),xml=E.xml;
   const path=(d,ink,width=3.4,extra='')=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"${extra}/>`;
   function letter(key,ink){
@@ -117,9 +128,12 @@
   // Harbor component geometry: softened paths, sampled centrelines and free
   // stroke ends with their outward direction (for organic joins).
   const harborCache=new Map();
+  // `key` is a sound key, '∅', or 'stroke:'+key for a cluster sign.
   function harbor(key){
     if(harborCache.has(key))return harborCache.get(key);
-    const subs=key==='∅'?segments(EMPTY):soften((harborForms[key]||alphabet[key]||[]).flatMap(segments),softenRadius[key]??blockMetrics.soften);
+    const sound=key.startsWith('stroke:')?key.slice(7):key;
+    const source=key==='∅'?null:key.startsWith('stroke:')?[harborStrokes[sound]]:harborForms[key]||alphabet[key]||[];
+    const subs=key==='∅'?segments(EMPTY):soften(source.flatMap(segments),softenRadius[sound]??blockMetrics.soften);
     const pts=[],ends=[];
     for(const sp of subs){
       pts.push(sp.start);
@@ -150,8 +164,8 @@
   // `prev`. Between rows, facing strokes that run parallel for at least eight
   // units become one shared stroke; otherwise components stop a small gap
   // apart, which an organic ligature can bridge. Nesting is limited so a component never slides inside its neighbour.
-  function contact(prev,next,axis){
-    const m=blockMetrics,other=1-axis,far=new Map(),near=new Map();
+  function contact(prev,next,axis,o={}){
+    const m={...blockMetrics,...o},other=1-axis,far=new Map(),near=new Map();
     for(const p of prev){const b=Math.round(p[other]/2);far.set(b,Math.max(far.get(b)??-Infinity,p[axis]));}
     for(const p of next){const b=Math.round(p[other]/2);near.set(b,Math.min(near.get(b)??Infinity,p[axis]));}
     const plain=extent(prev,axis)[1]-extent(next,axis)[0]+m.touch,gaps=[];
@@ -169,9 +183,13 @@
   // Fuse one row left to right, centred on x=0 in letter units.
   function fuseRow(tokens,kind){
     const parts=[];let union=[];
-    for(const t of tokens){const pts=ink(t.key);const dx=parts.length?contact(union,pts,0):0;parts.push({key:t.key,kind,dx,dy:0});union=union.concat(shift(pts,dx,0));}
+    // A row of two or more consonants is a cluster and uses single-stroke signs.
+    // Cluster signs are drawn smaller and stand a little apart, so the row
+    // reads as a collection of separate strokes rather than one knot.
+    const m=blockMetrics,cluster=kind!=='nucleus'&&tokens.length>1,f=cluster?m.clusterScale:1;
+    for(const t of tokens){const form=cluster?'stroke:'+t.key:t.key,pts=ink(form).map(([x,y])=>[x*f,y*f]);const dx=parts.length?contact(union,pts,0,cluster?{touch:m.clusterGap,nest:0}:{}):0;parts.push({key:t.key,form,kind,f,dx,dy:0});union=union.concat(shift(pts,dx,0));}
     if(parts.length){const [a,b]=extent(union,0),c=(a+b)/2;parts.forEach(p=>p.dx-=c);union=shift(union,-c,0);}
-    return {parts,union};
+    return {parts,union,cluster};
   }
   function units(text){
     const tokens=E.tokenize(text).map(t=>t.type==='unknown'&&t.raw==='·'?{...t,type:'boundary'}:t);
@@ -215,7 +233,7 @@
     for(const row of Object.values(groups))for(let i=1;i<row.length;i++)pairs.push([[row[i-1]],[row[i]]]);
     if(groups.onset.length)pairs.push([groups.onset,groups.nucleus]);
     if(groups.coda.length)pairs.push([groups.nucleus,groups.coda]);
-    const ends=c=>c.key==='∅'?[]:harbor(c.key).ends.map(e=>({at:[c.x+e.at[0]*S,c.y+e.at[1]*S],dir:e.dir}));
+    const ends=c=>c.key==='∅'?[]:harbor(c.form).ends.map(e=>({at:[c.x+e.at[0]*S*c.f,c.y+e.at[1]*S*c.f],dir:e.dir}));
     const touching=(A,B)=>A.some(a=>B.some(b=>a.points.some(p=>b.points.some(q=>Math.hypot(p[0]-q[0],p[1]-q[1])<m.connected*S))));
     for(const [A,B] of pairs){
       if(touching(A,B))continue;
@@ -254,22 +272,23 @@
       return {width:34,height:m.height,body:'',escape:true,tiles:items,components:[],ligatures:[]};
     }
     const onset=fuseRow(s.onset,'onset'),nucleus=fuseRow(s.nucleus.length?s.nucleus:[{key:'∅'}],'nucleus'),coda=fuseRow(s.coda,'coda');
-    const oy=onset.parts.length?-contact(onset.union,nucleus.union,1):0,cy=coda.parts.length?contact(nucleus.union,coda.union,1):0;
+    const rowJoin=row=>row.cluster?{touch:0,nest:m.clusterNest}:{};
+    const oy=onset.parts.length?-contact(onset.union,nucleus.union,1,rowJoin(onset)):0,cy=coda.parts.length?contact(nucleus.union,coda.union,1,rowJoin(coda)):0;
     onset.parts.forEach(p=>p.dy=oy);coda.parts.forEach(p=>p.dy=cy);
     const parts=[...onset.parts,...nucleus.parts,...coda.parts];
-    const all=parts.flatMap(p=>shift(ink(p.key),p.dx,p.dy)),[minX,maxX]=extent(all,0);
+    const all=parts.flatMap(p=>shift(ink(p.form).map(([x,y])=>[x*p.f,y*p.f]),p.dx,p.dy)),[minX,maxX]=extent(all,0);
     const S=m.scale,left=m.pad-minX*S,glyphWidth=(maxX-minX)*S+2*m.pad;
     const place=p=>({x:left+p.dx*S,y:m.nucleusY+p.dy*S});
-    const components=parts.map(p=>{const at=place(p);return {key:p.key,kind:p.kind,x:at.x,y:at.y,points:ink(p.key).map(([x,y])=>[at.x+x*S,at.y+y*S])};});
+    const components=parts.map(p=>{const at=place(p);return {key:p.key,form:p.form,kind:p.kind,f:p.f,x:at.x,y:at.y,points:ink(p.form).map(([x,y])=>[at.x+x*S*p.f,at.y+y*S*p.f])};});
     // The syllable becomes one pictogram: every component and ligature is
     // stroked together at the outline width, then the inner stroke width is
     // masked out. Overlapping strokes therefore merge into a single contour
     // instead of crossing.
     const ligatures=joins(components,S);
     const geometry=tagged=>components.map(c=>{
-      const at=`transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})"`;
+      const at=`transform="translate(${n(c.x)} ${n(c.y)}) scale(${n(S*c.f)})"`+(c.f!==1?` stroke-width="${n((tagged?m.outer:m.inner)/c.f)}"`:'');
       if(c.key==='∅')return `<path ${at} d="${EMPTY}"${tagged?' data-empty-nucleus="true"':''}/>`;
-      return `<path ${at} d="${harbor(c.key).d}"${tagged?` data-${c.kind}-part="${xml(c.key)}"`:''}/>`+(c.key==='i'?`<circle ${at} cx="17" cy="15" r="1.2"/>`:'');
+      return `<path ${at} d="${harbor(c.form).d}"${tagged?` data-${c.kind}-part="${xml(c.key)}"${c.form!==c.key?' data-cluster-stroke="true"':''}`:''}/>`+(c.key==='i'?`<circle ${at} cx="17" cy="15" r="1.2"/>`:'');
     }).join('')+`<g transform="scale(${S})">`+ligatures.map(j=>`<path d="M${n(j.from[0]/S)} ${n(j.from[1]/S)}Q${n(j.control[0]/S)} ${n(j.control[1]/S)} ${n(j.to[0]/S)} ${n(j.to[1]/S)}"${tagged?' data-ligature="true"':''}/>`).join('')+'</g>';
     let body=pictogram(geometry(true),geometry(false),inkColor,idBase);
     const markX=glyphWidth+8;
@@ -333,6 +352,6 @@
     if(type==='mark')return hidden(compact(render('a{'+key+'}',{width:300,transparent:true,ink:'currentColor'},system)));
     return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${system==='blocks'?harborPreview(key):letter(key,'currentColor')}</svg>`;
   }
-  const api={alphabet,harborForms,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={alphabet,harborForms,harborStrokes,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

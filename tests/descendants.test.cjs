@@ -62,7 +62,7 @@ test('Harbor fuses components by contact inside a constant body',()=>{
     for(const c of b.components)for(const [,y] of c.points)assert.ok(y>-1&&y<m.height+1,text+' stays in body');
     const rows={};for(const c of b.components)(rows[c.kind]??=[]).push(c);
     // Each row reads left to right, and consecutive components touch or share a stroke.
-    for(const row of Object.values(rows))for(let i=1;i<row.length;i++){assert.ok(row[i].x>row[i-1].x);assert.ok(gap(row[i-1],row[i])<=Math.max(0,m.touch)*m.scale+1.2,text+' row fused');}
+    for(const row of Object.values(rows))for(let i=1;i<row.length;i++){assert.ok(row[i].x>row[i-1].x);const clustered=row[i].form!==row[i].key;assert.ok(gap(row[i-1],row[i])<=(clustered?m.clusterGap:Math.max(0,m.touch))*m.scale+1.2,text+' row fused');if(clustered)assert.ok(gap(row[i-1],row[i])>m.clusterGap*m.scale*.5,text+' cluster strokes stand apart');}
     // Rows join: onset to nucleus, nucleus to coda. Limited nesting can leave
     // a hairline where the closest strokes would otherwise interleave.
     const near=(U,V)=>Math.min(...U.flatMap(a=>V.map(c=>gap(a,c))));
@@ -109,6 +109,15 @@ test('Harbor reduced components are single connected shapes that stay distinct',
   for(let i=0;i<keys.length;i++)for(let j=i+1;j<keys.length;j++)assert.ok(haus(D.ink(keys[i]),D.ink(keys[j]))>=3,keys[i]+'/'+keys[j]);
   // Ligatures appear only between components that do not already touch.
   for(const text of ['pa','na','plant','ghrai','tun'])for(const l of D.block(parsed(text)[0],'#000').ligatures)assert.ok(l.from&&l.to);
+});
+test('Harbor clusters become collections of distinct single-stroke signs',()=>{
+  const haus=(A,B)=>{const d=(P,Q)=>Math.max(...P.map(p=>Math.min(...Q.map(q=>Math.hypot(p[0]-q[0],p[1]-q[1])))));return Math.max(d(A,B),d(B,A));};
+  const keys=Object.keys(E.consonants);assert.deepEqual(Object.keys(D.harborStrokes).sort(),keys.sort());
+  for(const k of keys)assert.equal((D.harborStrokes[k].match(/M/g)||[]).length,1,k+' is one unbranched stroke');
+  for(let i=0;i<keys.length;i++)for(let j=i+1;j<keys.length;j++)assert.ok(haus(D.ink('stroke:'+keys[i]),D.ink('stroke:'+keys[j]))>=7,keys[i]+'/'+keys[j]);
+  const plant=H.render('plant',{hand:'harbor'}).svg;assert.equal((plant.match(/data-cluster-stroke="true"/g)||[]).length,4);
+  assert.equal((H.render('pa tun',{hand:'harbor'}).svg.match(/data-cluster-stroke/g)||[]).length,0);
+  const b=D.block(parsed('strant')[0],'#000');for(const c of b.components)if(c.kind!=='nucleus')assert.equal(c.f,D.blockMetrics.clusterScale);
 });
 test('Harbor palette components retain full-size sound shapes with a tight optical frame',()=>{
   for(const key of Object.keys(D.alphabet)){

@@ -34,5 +34,8 @@ Implementation choices: a dependency-free browser editor, local draft storage, r
 ## Evidence on Hand
 `references/alphabet.jpg` and `references/sample.jpg` are untouched copies of the attachments.
 
+## Provisional Script History
+A user-authorized fictional setting adds two proposed ancestors, three descendant branches, and a later contact-influenced print hand. Classical is the original, unchanged renderer. Historical hand selection is saved with documents and works offline. The history explorer compares graphic changes; it does not translate input, apply sound changes, or assign meanings to the original specimen. Language design stays outside the committed product.
+
 ## Open Decisions
 Precise curves and reconstructed word-initial outlines remain open to refinement. Additional IPA sounds are candidates for discussion only; no new base letters have been added. No script name, word meanings, or sample translations have been invented.

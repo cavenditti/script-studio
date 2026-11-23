@@ -27,6 +27,12 @@ These meanings were explicitly approved by Carlo. For example, `ka'{3}` has prim
 
 The text starts with a clearly identified illustrative sample. It is not a transcription of the original image. Browser drafts save locally. Save/Open document preserves text and settings in `.script.json`. Export SVG for scalable artwork, or PNG for a high-resolution image, optionally transparent. Reference images are embedded unchanged. Unsupported letters remain visible in rust; punctuation and digits keep their Latin forms.
 
+## A possible script family
+
+Seven fictional historical hands are available under **Appearance → Historical hand**. Click the current hand’s name beside Preview to explore the branching history. Classical preserves the original rendering; the other hands change joining habits, curves, return hooks, closing bars and round marks. Your text and the approved sound/mark values stay unchanged. Documents and offline copies remember the selected hand.
+
+Read the [script history](docs/script-evolution.md), [family tree](docs/evolution/family-tree.svg), and [comparative atlas](docs/evolution/atlas.svg). This is a provisional fictional genealogy, not a decipherment or a translation system.
+
 ## Fidelity and open questions
 
 Consonant outlines and accent/tone shapes are reconstructed vector paths from the supplied chart. Vowel attachment, inversion, and prosodic meanings follow Carlo's confirmed rules. Exact outline curves and special initial forms still need his review. Y uses one continuous initial outline with square upper corners. The è initial uses one form rather than combining the two small draft alternatives; ò has an open counter without an overlapping inner bar. Palette and exported composition share these outlines. No script name or sample translation has been invented.
@@ -41,7 +47,8 @@ The most useful next candidates are /ø/ (the close-mid rounded partner of exist
 
 ```sh
 python3 build.py
-node --test tests/engine.test.cjs tests/phonetics.test.cjs
+node --test tests/engine.test.cjs tests/phonetics.test.cjs tests/evolution.test.cjs
+node scripts/build-evolution.cjs
 python3 -m http.server 8765 --directory dist --bind 127.0.0.1
 ```
 
@@ -54,4 +61,4 @@ npm install --prefix /tmp/script-studio-qa linkedom
 NODE_PATH=/tmp/script-studio-qa/node_modules node tests/app.test.cjs
 ```
 
-Validation completed: 27 rendering tests plus 2 phonetic metadata checks. Regression checks cover continuous rails with branching outside legs, missing-rail boundaries, the single-outline Y, shared preview/export geometry, paired vowel previews, confirmed tones and stress, and the schwa alias. DOM integration checks cover tab switching, draft restoration, offline copies, blocked-storage fallback, clearing/undo, mark attachment, SVG export, and input limits. Browser checks cover desktop/mobile layouts, keyboard tab navigation, IPA-labelled insertion, marks, Appearance disclosure, and transparent PNG export. Composition wraps to the preview width so mobile lettering retains its stroke size. Creator acceptance of the reconstructed letter forms remains separate from technical checks.
+Validation completed: 27 base-rendering tests, 2 phonetic metadata checks, and 6 evolution checks. The latter cover unchanged Classical output, an acyclic descent tree, inherited versus borrowed features, retained text/marks, historical joining rules, and carrier-dot placement. Regression checks cover continuous rails with branching outside legs, missing-rail boundaries, the single-outline Y, shared preview/export geometry, paired vowel previews, confirmed tones and stress, and the schwa alias. DOM integration checks cover tab switching, draft restoration, offline copies, blocked-storage fallback, clearing/undo, mark attachment, SVG export, and input limits. Browser checks cover desktop/mobile layouts, keyboard tab navigation, IPA-labelled insertion, marks, Appearance disclosure, and transparent PNG export. Composition wraps to the preview width so mobile lettering retains its stroke size. Creator acceptance of the reconstructed letter forms remains separate from technical checks.

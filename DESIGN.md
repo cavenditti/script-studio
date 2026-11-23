@@ -46,6 +46,16 @@ typography:
   serif-title:
     fontFamily: "Georgia, serif"
     fontSize: "1.25rem"
+  history-stage-title:
+    fontFamily: "Georgia, serif"
+    fontSize: "2rem"
+    fontWeight: 400
+    lineHeight: 1.2
+  history-stage-title-mobile:
+    fontFamily: "Georgia, serif"
+    fontSize: "1.75rem"
+    fontWeight: 400
+    lineHeight: 1.2
 rounded:
   glyph: "5px"
   control: "6px"
@@ -81,6 +91,11 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.glyph}"
     padding: "6px 3px"
+  history-node:
+    backgroundColor: "{colors.palette}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    padding: "12px 8px"
 ---
 
 # Design System: Script Studio
@@ -89,7 +104,9 @@ components:
 
 The compact shell puts writing and preview directly below the header. There is no hero, repeated footer, output count, or specimen note. Short Save/Open and SVG/PNG actions keep the workspace concise. Grouped alphabet tabs and two collapsed disclosures provide explanation and appearance controls when needed.
 
-The implementation in `src/style.css`, `src/index.html`, `src/app.js`, and `src/phonetics.js` is the authority. Current desktop and 375px screenshots in `.impeccable/review/` show the paired Vowels palette and repaired initial outlines; `marks.jpg` records the approved prosody palette. Browser checks exercised keyboard tab selection, IPA and mark insertion, Appearance controls, and transparent PNG export; mobile client and scroll widths were both 375px. Source tests cover the shared preview/export outlines, 11 paired buttons with 22 SVGs, approved prosody, and the schwa alias. Technical checks remain separate from creator acceptance of precise reconstructed curves.
+The implementation in `src/style.css`, `src/index.html`, `src/app.js`, `src/phonetics.js`, and `src/evolution.js` is the authority. Current desktop and 375px screenshots in `.impeccable/review/` show the paired Vowels palette and repaired initial outlines; `marks.jpg` records the approved prosody palette. Browser checks exercised keyboard tab selection, IPA and mark insertion, Appearance controls, and transparent PNG export; mobile client and scroll widths were both 375px. Source tests cover the shared preview/export outlines, 11 paired buttons with 22 SVGs, approved prosody, and the schwa alias. Technical checks remain separate from creator acceptance of precise reconstructed curves.
+
+Refreshed `evolution-desktop.jpg`, `evolution-mobile.jpg`, `evolution-editor.jpg`, and `evolution-mobile-tree.jpg` in `.impeccable/review/` record the history extension. The 390 × 844px `evolution-mobile-viewport.jpg` and browser checks confirm the intro remains visible on reopening, the stage heading precedes branch/date metadata, and the modal has no horizontal overflow (337px client and scroll widths). Opening returns to scroll position 0 with focus on Close. These checks establish interaction and layout behavior, not acceptance of the provisional genealogy or every allograph.
 
 ## Colors
 
@@ -97,7 +114,7 @@ The accent identifies actions, selected-tab underlines, links, and focus outline
 
 ## Typography
 
-Body, compact brand heading, controls, group headings, and typing keys use the local sans-serif stack. The brand is the page’s h1; there is no display-serif introduction. At mobile widths its size becomes 1rem. The textarea uses 1.15rem text with a line height of 1.6. Georgia remains for dialog titles and the empty-state message.
+Body, compact brand heading, controls, group headings, and typing keys use the local sans-serif stack. The brand is the page’s h1; there is no display-serif introduction. At mobile widths its size becomes 1rem. The textarea uses 1.15rem text with a line height of 1.6. Georgia remains for dialog titles and the empty-state message. The history explorer adds a local stage-title role, regular-weight Georgia with a 1.2 line height; use `history-stage-title` on desktop and `history-stage-title-mobile` at 480px and below. It introduces no new page-level display treatment.
 
 **Phonetic labels** use the purpose-specific `phonetic-label` token: Charis SIL, Doulos SIL, then Georgia/serif. This stack supports the IPA symbols shown on sound buttons, with no network font dependency. A smaller sans-serif typing key appears only when it differs from the IPA label, for example ɛ above è. All current chart keys have confirmed IPA values. Mark names use the regular sans-serif caption treatment, with their IPA contour or stress sign below in the `prosody-ipa` font role.
 
@@ -111,13 +128,17 @@ Consonants, Vowels, and Marks occupy one tab panel at a time. Consonant groups u
 
 Artwork width follows measured paper width, clamped to 300–1000px, and recomposes on resize. Script spacing remains fixed at 85%; legacy saved spacing is ignored and there is no spacing slider. Attached vowels and marks can reserve extra width. The latest browser-exported initial-vowel PNG is 2721 × 816px with transparent and opaque alpha values; browser interaction restored the prior draft after checking the temporary specimen.
 
+The history dialog is at most 1180px wide, with 24px content padding and a two-column tree/detail layout (1.15:1, 32px gap). At 850px and below, the detail moves above the tree and content padding becomes 20px. At 480px and below, the tree becomes an indented vertical list with left rules and right-aligned miniature specimens. These are local explorer breakpoints; the editor layout remains unchanged.
+
 ## Elevation & Depth
 
 Tonal surfaces and thin dividers provide most separation. Paper uses `0 6px 18px #1b292c0b`; dialogs use `0 18px 80px #152d3d33` with a `#10252c80` backdrop; toasts use `0 6px 20px #152d3d22`. No raised hover animation is implemented.
 
 ## Shapes
 
-Rounded containers enclose the workspace and reference dialog. Smaller radii distinguish paper surrounds, text fields, controls, and glyph buttons as recorded in the frontmatter. The artwork itself remains sharp vector strokes; UI corner shapes do not alter glyph geometry. Main consonants and the available full-size special initial vowels use 8-unit strokes. Special Y is a single continuous outline with mitered upper corners; è uses one outline rather than a doubled sketch; ò is an open mirrored loop with no overlapping internal bar. The initial previews use the same generator as artwork export. Where no special initial exists, the second preview shows the inline fallback. Genuine joined rail switches use tangent S curves: g/n/l/s/w descend from the upper rail; gh/m/r/z rise from the lower rail. Unused neighbouring rails continue through the switching region, leaving only a thin clearance around the actual curve. Alpha masks affect these rail extensions only; the curve remains unmasked and no opaque white seam is painted.
+Rounded containers enclose the workspace and native dialogs. Smaller radii distinguish paper surrounds, text fields, controls, and glyph buttons as recorded in the frontmatter. The artwork itself remains sharp vector strokes; UI corner shapes do not alter glyph geometry. Main consonants and the available full-size special initial vowels use 8-unit strokes. Special Y is a single continuous outline with mitered upper corners; è uses one outline rather than a doubled sketch; ò is an open mirrored loop with no overlapping internal bar. The initial previews use the same generator as artwork export. Where no special initial exists, the second preview shows the inline fallback. Genuine joined rail switches use tangent S curves: g/n/l/s/w descend from the upper rail; gh/m/r/z rise from the lower rail. Unused neighbouring rails continue through the switching region, leaving only a thin clearance around the actual curve. Alpha masks affect these rail extensions only; the curve remains unmasked and no opaque white seam is painted.
+
+These geometry rules describe Classical, which remains the original rendering. Optional historical hands alter joining and actual outline geometry through the separate historical profile layer; they do not replace Classical.
 
 If the required incoming rail is absent and the available rail already aligns with the destination, the entry continues straight: `for`/`vor` keep the upper rail, while `pin`/`nin` keep the lower rail. Outside legs retain 8 units of entry space and reach 10 units outward from their rail, with their curve endpoints 2 units farther out than before. Attached vowel diacritics and the external stress bar sit 3 units closer to the consonants. When the preceding consonant supplies their rail, an unmasked straight continuation fills that space and the leg branches from the continuous rail, as in lower `nt`; the same rule applies to upper legs. Missing incoming rails stay open. Their other straight entry reaches back to the preceding rail where possible. Square-ending consonants use filled caps inside the glyph’s advance edge, ending exactly at that edge with corners spanning y=4–28 in glyph coordinates. These are current implementation rules, with creator acceptance still open.
 
@@ -145,12 +166,20 @@ The native IPA & typing disclosure gives explanations for the active palette, di
 
 The external apostrophe bar marks primary stress /ˈ/. Tone and stress are independent and can combine, for example `ka'{3}`. Palette names and IPA values are visible; original chart positions and typing syntax remain in hover titles and the guide. These explanations supplement the artwork without adding persistent prose to the workspace.
 
+### Script-history explorer
+
+The current hand appears as a compact text action beside Preview; it opens a native modal with the existing sticky header, Close action, backdrop, and focus treatment. Opening selects the active hand and resets the dialog scroll to the top. The Historical hand selector spans both columns in Appearance. Seven provisional hands share the current typing keys; palette previews and exports follow the selected hand, while detached traditions disable Join letters.
+
+Tree nodes reuse palette surfaces, line borders, control radii, and miniature vector specimens. Hover uses the existing soft surface and palette hover border; the selected node uses an accent border and the existing pale-teal palette hover fill, with `aria-pressed` exposing selection. Nodes are at least 102px high on desktop and 84px at narrow widths. A separate Explore a stage selector offers the same profiles. The native dialog and ordinary buttons retain their standard keyboard behavior.
+
+Each detail begins with the stage heading, then branch/date metadata, a shared-key comparison specimen, material, and Use this hand. A definition list explains what changes, why, and what survives. Browsing a stage leaves the editor hand unchanged until Use this hand applies it and closes the dialog. The descent tree and contact explanation distinguish inheritance from graphic borrowing; dates and branches remain explicitly fictional and provisional. Missing or unrecognized saved hands resolve to Classical. Hand selection persists in drafts, saved documents, and offline copies.
+
 ## Do's and Don'ts
 
 - **Do** keep the main writing flow compact and place extended explanations in the existing disclosures.
 - **Do** retain typing keys when displayed IPA differs, and keep candidate additions distinct from implemented mappings.
 - **Do** reuse local font stacks, selected-tab states, focus outlines, and reduced-motion behavior.
-- **Do** keep original photographs at their aspect ratios and preserve the existing glyph geometry.
+- **Do** keep original photographs at their aspect ratios and preserve the original Classical glyph geometry.
 - **Don't** treat phonetic presentation groups as changes to transliteration keys or pronunciation rules.
 - **Don't** describe browser checks as creator acceptance of every reconstructed curve.
 - **Don't** require external fonts or icon packages for the standalone editor.

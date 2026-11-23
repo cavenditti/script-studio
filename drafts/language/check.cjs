@@ -16,4 +16,30 @@ assert.equal(L.lexicon.length,31);assert.equal(L.roots.size,31);
 for(const entry of L.lexicon){assert.equal(entry.places.length,entry.arity);for(const stage of L.stages){const form=L.reflex(entry.proto,stage);assert.ok(form);assert.deepEqual(E.render(form).unknown,[],form);}}
 assert.equal(L.reflex('tuni','classical'),'tyni');assert.equal(L.reflex('loni','delta'),'len');assert.equal(L.reflex('kani','island'),'kani');assert.equal(L.reflex('tja','ridge'),'tsa');assert.equal(L.reflex('tas','delta'),'ta{3}');assert.equal(L.reflex('tja','ridge-alpha'),'sa');assert.equal(L.reflex('tuni','harbor'),'tun');assert.equal(L.reflex('nori','harbor'),'nol');
 for(const text of [A,B,N,Z,'fa we pa tyni ta na sara ti na lena','su ni ke pa lœni ta ni pa dar ta na sara ti na lena tu ni','ma pa tyni ta na sara ti na lena','mu mi pa tyni ta mi ti na lena']){L.parse(text);assert.deepEqual(E.render(text).unknown,[]);}
-console.log('PASS: 31 roots × 9 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility.');
+const T=require('./typology.cjs');
+// Same truth value on many random finite models: the Island word and the Classical formula make the same promise.
+const preds={tun:1,lœni:1,tyni:2,dar:3};const people=['sara','lena','e1','e2'];
+function randomModel(seed){let x=seed;const r=()=>(x=(x*1103515245+12345)%2147483648)/2147483648;const P={};for(const [k,n] of Object.entries(preds)){P[k]=[];const tuples=n===1?people.map(a=>[a]):n===2?people.flatMap(a=>people.map(b=>[a,b])):people.flatMap(a=>people.flatMap(b=>people.map(c=>[a,b,c])));for(const t of tuples)if(r()<(n===3?.08:.4))P[k].push(t);}return {domain:people,predicates:P};}
+const same=(a,b)=>{for(let s=1;s<=300;s++){const m=randomModel(s);if(L.evaluate(a,m)!==L.evaluate(b,m))return false;}return true;};
+const one=text=>{const r=T.parseIsland(text);assert.equal(r.length,1,text);return r[0];};
+for(const [isl,cls] of [['rutunta lontuni',A],['sulonti rutunta tuni',B],['no rutunta lontuni',N],['rutunta lontuniwu',Z],['nasarata nalenati londar','su ni ke pa lœni ta ni pa dar ta na sara ti na lena tu ni'],['nalenati nasarata tuni','pa tyni ta na sara ti na lena']])assert.ok(same(one(isl),L.parse(cls)),isl);
+assert.ok(!same(one('rutunta lontuni'),one('sulonti rutunta tuni')));
+assert.equal(L.logical(one('rutunta lontuni')),L.logical(L.parse(A)));
+assert.equal(L.logical(one('nasarata nalenati tuniwe')),L.logical(L.parse('we pa tyni ta na sara ti na lena')));
+assert.equal(L.logical(one('ma nasarata nalenati tunitewa')),L.logical(L.parse('ma wa te pa tyni ta na sara ti na lena')));
+assert.equal(T.parseIsland('nasarata şa').length,2);
+for(const bad of ['nasarata tuni','nasarata nasarati lontuni','rutunta tuni','nasara tuni','rutuniti nalenata tuni'])assert.throws(()=>T.parseIsland(bad),bad);
+// Market Ridge: positional places, free invariant operators, homophones resolved by argument count.
+assert.equal(L.logical(T.parseMarket('ru mi ki tun mi su ni ke lèn ni tin mi ni')),L.logical(L.parse(A)));
+assert.equal(L.logical(T.parseMarket('tin na sara na lena')),L.logical(L.parse('pa tyni ta na sara ti na lena')));
+assert.equal(T.parseMarket('nèr na sara').root,'nèr');assert.equal(T.parseMarket('nèr na sara na lena').root,'nœri');
+for(const bad of ['tin na sara','tin mi na lena','ru mi ru mi tun mi'])assert.throws(()=>T.parseMarket(bad),bad);
+// Delta ribbons: segmentation recovers words; the known clash is reported, not hidden.
+assert.deepEqual(T.segmentDelta(T.joinDelta('sara tin lena'),['sara','lena']),[['sara','tin','lena']]);
+assert.equal(T.segmentDelta('saravunalena',['sara','lena']).length,2);
+// Harbor fusion from Island words.
+assert.equal(T.harborWord([{text:'tuni'}]),'tun');assert.equal(T.harborWord([{text:'tuni'},{text:'we',suffix:true}]),'tuniw');
+assert.equal(T.harborWord([{text:'tuni'},{text:'te',suffix:true},{text:'we',suffix:true}]),'tunitew');assert.equal(T.harborWord([{text:'lon'},{text:'dar'}]),'londal');
+assert.deepEqual(T.varieties.map(v=>v.id).sort(),[...L.stages].sort());
+for(const text of ['patunitanasaratinalena','tini nasarata nalenati','saratinlena','nasarata nalenati tuniwe','rutunta lontuniwe','tin na sara na lena','nasarata nalenati tuniw'])assert.deepEqual(E.render(text).unknown,[],text);
+console.log('PASS: 31 roots × 9 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility; Island and Market Ridge equivalence to Classical on 300 random models; Delta segmentation; Harbor fusion.');

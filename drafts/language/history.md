@@ -39,7 +39,7 @@ The first two ruled levels were counting and alignment aids. Repeated returning 
 
 Shared innovation E1: `/w/ → /v/ / _u` within a lexical word: `*wuna → vuna` “bind”. The other sample roots retain their citation segments at this stage. This limited change is intentional: adopting ink does not require a wholesale new phonology.
 
-Logical expressions remain analytic. Performance conventions help listeners identify the scope of a prefix before a written punctuation system develops. Curves and round stops enter the script as copyists change tools. The agreement register spreads between communities; that is contact-mediated standardization, not necessarily proof that every local speaker descends from a single engineered dialect.
+Logical expressions remain analytic. Scribes write a whole formula as one continuous ink line, without word spaces. Performance conventions help listeners identify the scope of a prefix before a written punctuation system develops. Curves and round stops enter the script as copyists change tools. The agreement register spreads between communities; that is contact-mediated standardization, not necessarily proof that every local speaker descends from a single engineered dialect.
 
 ### classical: Classical Talar, 0 to 300
 
@@ -53,7 +53,7 @@ Thus `*tuni → tyni`, `*loni → lœni`, `*kani → kæni`, `*ner → nèr`, `*
 
 The three fronted vowels are surface distinctions in this small dataset. A larger corpus, paradigms, loans and changes that erase their conditioning environments are needed to determine when all become independently contrastive. The writing school can record phonetic distinctions before a later phonemic analysis is settled.
 
-The school fixes named participant places and explicit logical scopes in contracts. The script's flowing rail joins become standard. The existing high/low/contour notation can encode reading pitch, contrast and reported intention, while the external bar marks stress. It does not replace the scope words in a legal formula.
+The school fixes named participant places and explicit logical scopes in contracts, and introduces word spacing so that each scope word can be audited. The script's flowing rail joins become standard. The existing high/low/contour notation can encode reading pitch, contrast and reported intention, while the external bar marks stress. It does not replace the scope words in a legal formula.
 
 ## The three daughter branches
 
@@ -84,7 +84,7 @@ Examples: `tyni → tin`, `lœni → len`, `kæni → ken`, `mata → mara`, `pa
 
 Normalized everyday example: `sara tin lena` = Sara perceives Lena. In a contract, `pa tin ta na sara ti na lena` restores explicit places. The formal variant is a maintained register, not the only “correct” Delta language. Negation reduces to a preverbal clitic in quick speech; the full `no` scope construction survives in teaching and dispute resolution.
 
-**Writing:** Delta Cursive opens return bowls into obliques. Newly contrastive falling tone cannot be dropped safely from ambiguous lexical forms. A quick hand is therefore capable of **more obligatory marks** than a conservative one. The script renderer retains all marks even in contexts where a fictional casual writer might omit predictable ones.
+**Writing:** Delta Cursive opens return bowls into obliques and writes each clause as one unbroken ribbon, `saratinlena`. The speech is isolating; the writing is not. Newly contrastive falling tone cannot be dropped safely from ambiguous lexical forms. A quick hand is therefore capable of **more obligatory marks** than a conservative one. The script renderer retains all marks even in contexts where a fictional casual writer might omit predictable ones.
 
 ### island: Island Talar, 300–1000
 
@@ -93,6 +93,8 @@ Normalized everyday example: `sara tin lena` = Sara perceives Lena. In a contrac
 `tyni → tuni`, `lœni → loni`, `kæni → kani`, `ca → şa`, `ga → ža`, `nava → nawa`. Island `loni` looks like Proto `*loni`, but the proposed path is `*loni → lœni → loni`. It is a **reversal**, not simple uninterrupted retention. Independent convergences must not be mistaken for shared innovations.
 
 **Grammar:** evidence words become clause-final particles and then clitics. Every independent factual assertion normally states observation, inference or report. Embedded formulas retain their own optional evidence scope. Older `no …` gains a clause-final `vu` “false”; some everyday registers then use the final element alone. This is a proposed two-stage constructional change, not a sound law.
+
+In ordinary speech the process goes further: place words become argument suffixes, and one-place content roots are incorporated into the predicate word as narrowest-scope existentials. `rutunta lontuni` means “every person perceives some record”. Island becomes the family's agglutinative, incorporating branch; see [typology.md](typology.md).
 
 Normalized careful example: `pa tuni ta na sara ti na lena we` = Sara perceives Lena, with claimed direct support. Postposed `we` scopes over the completed clause. The Classical parser intentionally does not accept this daughter syntax. Evidence is socially accountable but does not make a statement true.
 
@@ -104,7 +106,7 @@ Civic descends from Delta. The current seed lexicon inherits the Delta reflexes 
 
 An audited Civic clause can use the Classical construction with modern `tin` and `len`. A school spelling may retain `tyni/lœni` in a quotation. These are different orthographic choices, not evidence that Civic has recovered the lost phonetic contrasts. Learned loans from Ridge and Island should be tagged as loans when the lexicon grows; they must not be made to obey native inheritance rules retroactively.
 
-Civic Print takes its open returns from Delta, chamfers from Ridge cutting, and explicit feet from Island manuscripts. Its graphic ancestry has contact edges. Its spoken genealogy still has one Delta parent.
+Printers also restore word spaces, partly to make quantifier scope auditable again. Civic Print takes its open returns from Delta, chamfers from Ridge cutting, and explicit feet from Island manuscripts. Its graphic ancestry has contact edges. Its spoken genealogy still has one Delta parent.
 
 ## How a philologist could get this wrong
 

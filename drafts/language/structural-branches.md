@@ -1,6 +1,6 @@
 # Later branches: phonological words become new graphic units
 
-**LOCAL LANGUAGE DRAFT. Uncommitted.** These additions extend the provisional family rather than replacing the original three branches. Market Ridge descends from Ridge; Harbor descends from Island. Neither is a hybrid genetic child of the whole family.
+**LOCAL LANGUAGE DRAFT.** These additions extend the provisional family rather than replacing the original three branches. Market Ridge descends from Ridge; Harbor descends from Island. Neither is a hybrid genetic child of the whole family.
 
 ## Market Ridge, id ridge-alpha, 750 onward
 
@@ -13,7 +13,7 @@ The urban market variety inherits Ridge's /y/ > /i/, /œ/ > /ɛ/, and alveolar a
 
 The resemblance of Market `tin` to Delta `tin` is a convergence after independent final-vowel loss. Delta and Market do not become a subgroup merely because one familiar word matches. The /ɛ/ versus /e/ correspondence in `lèn` versus `len`, and /æ/ versus /e/ in `kæn` versus `ken`, help keep their histories distinguishable.
 
-The inherited role suffixes remain productive. Their citation forms `-ta/-ti/-tu` are maintained by paradigm leveling in the explicit register; the lexical-root model does not purport to derive every inflected or cliticized phonological word. Ordinary speech can still erode them. This is not a claim that all three cases survive unchanged everywhere.
+The inherited role suffixes remain productive. Their citation forms `-ta/-ti/-tu` are maintained by paradigm leveling in the explicit register; the lexical-root model does not purport to derive every inflected or cliticized phonological word. Ordinary market speech does erode them. Everyday Market Ridge loses the suffixes, `pa` and the place labels, and fixes place by position after the predicate: `tin na sara na lena`. Every word is free and invariant, making this the family's most isolating variety. See [typology.md](typology.md).
 
 **Writing:** the already separated Ridge signs lose their remaining guide rails. The special initial-vowel forms become ordinary vowel letters; the four vowels without dedicated initial allographs are enlarged from their older marks. Each consonant and vowel now has a full letter in a linear sequence. A cluster such as `plant` occupies five letters rather than one syllable sign. The move helps mixed-name spelling and morphological analysis; it does not make the speakers inherently more analytic.
 
@@ -32,7 +32,7 @@ The latter chain is ordered: the liquid change precedes apocope. Final-vowel los
 
 The frequent clause-final observation particle `we` develops a contracted clitic `-w` after a vowel. `wa` and `wo` retain their full citation forms; collapsing all three to the same consonant would erase their contrast. This selective grammaticalization is an additional morphological proposal, not an exception smuggled into the lexical sound-law function. Formal or contrastive speech can restore `we`.
 
-A careful local clause may be written:
+Ordinary Harbor inherits Island's agglutinative clause and fuses its endings (see [typology.md](typology.md)): `nasarata nalenati tuniw`. A careful, learned clause may be written analytically:
 
 ```
 pa tun ta na sara ti na lenaw

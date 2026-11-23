@@ -78,14 +78,16 @@ mu mi ke pa tun ta mi pa tyni ta mi ti na lena
 | Variety | Example | What changed |
 | --- | --- | --- |
 | Classical, explicit | pa tyni ta na sara ti na lena | full predicate and participant marking |
-| Ridge, analytical ordinary spelling | tini na sara-ta na lena-ti | /y/ > /i/; place markers become suffixes; pa omitted |
-| Delta, ordinary | sara tin lena | unrounding and apocope; participants identified by the usual clause order |
+| Ridge, ordinary | tini nasarata nalenati | /y/ > /i/; place markers become suffixes, na a proclitic; pa omitted |
+| Delta, ordinary | sara tin lena, written saratinlena | unrounding and apocope; isolating clause order; cursive writes the clause without spaces |
 | Island, careful local | pa tuni ta na sara ti na lena we | /y/ > /u/; claimed observation becomes a final particle |
-| Market Ridge, analytical ordinary spelling | tin na sara-ta na lena-ti | apocope; independent vowel letters in the new alphabet |
+| Island, ordinary | nasarata nalenati tuniwe | agglutinative: place suffixes on arguments, evidence suffix on the verb |
+| Market Ridge, ordinary | tin na sara na lena | apocope; suffixes lost; place by position |
 | Harbor, contracted careful local | pa tun ta na sara ti na lenaw | final-i loss; observation clitic -w shares the final syllable block |
+| Harbor, ordinary | nasarata nalenati tuniw | fusional: stem tuni- before a suffix, tun alone |
 | Civic, audited | pa tin ta na sara ti na lena | Delta root with restored explicit participant marking |
 
-The comparison holds the illustrative names constant. It does not claim proper names are immune to sound change. Daughter-language sentences are design sketches; the included parser validates only Classical formal syntax. Historical script selection does not convert one row into another.
+The comparison holds the illustrative names constant. It does not claim proper names are immune to sound change. Ridge, Delta and Harbor sentences are design sketches. The parsers validate Classical, ordinary Island and ordinary Market Ridge syntax ([typology.md](typology.md)). Historical script selection does not convert one row into another.
 
 ## A dispute that belongs in a novel
 

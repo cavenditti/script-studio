@@ -79,7 +79,7 @@ test('word and line boundaries and detached mode do not create rail joins',()=>{
 test('outside upper legs branch from an existing continuous rail',()=>{
   for(const key of ['c','p','d','ş','f']) {
     const r=E.render('di'+key),before=r.placements[0],after=r.placements[1];
-    assert.match(after.paths[0],/^M0 0Q1 8 12 8/,key);
+    assert.match(after.paths[0],/^M0 -2Q1 8 12 8/,key);
     assert.ok(after.x>before.x+before.width,key+' leaves room for the outside leg');
     assert.equal(after.x-after.entryGap,before.x+before.width,key+' connects the straight lower entry');
     assert.match(after.paths[1],/^M-8 24/,key);
@@ -89,7 +89,7 @@ test('outside upper legs branch from an existing continuous rail',()=>{
 test('outside lower legs branch from an existing continuous rail',()=>{
   for(const key of ['k','b','t','ž','v']) {
     const r=E.render('di'+key),before=r.placements[0],after=r.placements[1];
-    assert.match(after.paths[1],/^M0 32Q1 24 12 24/,key);
+    assert.match(after.paths[1],/^M0 34Q1 24 12 24/,key);
     assert.ok(after.x>before.x+before.width,key+' leaves room for the outside leg');
     assert.equal(after.x-after.entryGap,before.x+before.width,key+' connects the straight upper entry');
     assert.match(after.paths[0],/^M-8 8/,key);

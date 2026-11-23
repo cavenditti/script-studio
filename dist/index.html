@@ -72,14 +72,14 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
   'use strict';
   const C = {
     j: { label: 'j', paths: ['M100 8H10C-3 8-3 24 10 24H56Q66 24 66 16'] },
-    c: { label: 'c', paths: ['M0 0Q1 8 12 8H100','M16 24H56Q66 24 66 16'] },
-    p: { label: 'p', paths: ['M0 0Q1 8 12 8H54Q64 8 64 16','M16 24H100'] },
-    d: { label: 'd', paths: ['M0 0Q1 8 12 8H100','M16 24H100'] },
-    'ş': { label: 'ş', paths: ['M0 0Q1 8 12 8H64V24H16'], aliases: ['sh','š','ʃ'] },
-    k: { label: 'k', paths: ['M16 8H100','M0 32Q1 24 12 24H56Q66 24 66 16'] },
-    b: { label: 'b', paths: ['M16 8H54Q64 8 64 16','M0 32Q1 24 12 24H100'] },
-    t: { label: 't', paths: ['M16 8H100','M0 32Q1 24 12 24H100'] },
-    'ž': { label: 'ž', paths: ['M16 8H64V24H12Q1 24 0 32'], aliases: ['zh','ʒ'] },
+    c: { label: 'c', paths: ['M0 -2Q1 8 12 8H100','M16 24H56Q66 24 66 16'] },
+    p: { label: 'p', paths: ['M0 -2Q1 8 12 8H54Q64 8 64 16','M16 24H100'] },
+    d: { label: 'd', paths: ['M0 -2Q1 8 12 8H100','M16 24H100'] },
+    'ş': { label: 'ş', paths: ['M0 -2Q1 8 12 8H64V24H16'], aliases: ['sh','š','ʃ'] },
+    k: { label: 'k', paths: ['M16 8H100','M0 34Q1 24 12 24H56Q66 24 66 16'] },
+    b: { label: 'b', paths: ['M16 8H54Q64 8 64 16','M0 34Q1 24 12 24H100'] },
+    t: { label: 't', paths: ['M16 8H100','M0 34Q1 24 12 24H100'] },
+    'ž': { label: 'ž', paths: ['M16 8H64V24H12Q1 24 0 34'], aliases: ['zh','ʒ'] },
     g: { label: 'g', paths: ['M0 0Q0 24 12 24H56Q66 24 66 16','M16 8H100'] },
     n: { label: 'n', paths: ['M0 0Q0 24 12 24H100','M16 8H54Q64 8 64 16'] },
     l: { label: 'l', paths: ['M0 0Q0 24 12 24H100','M16 8H100'] },
@@ -88,8 +88,8 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     m: { label: 'm', paths: ['M0 32Q0 8 12 8H54Q64 8 64 16','M16 24H100'] },
     r: { label: 'r', paths: ['M0 32Q0 8 12 8H100','M16 24H100'] },
     z: { label: 'z', paths: ['M0 32Q0 8 12 8H64V24H16'] },
-    f: { label: 'f', paths: ['M0 0Q1 8 12 8H100','M16 24H60V8'] },
-    v: { label: 'v', paths: ['M16 8H100','M0 32Q1 24 12 24H60V8'] },
+    f: { label: 'f', paths: ['M0 -2Q1 8 12 8H100','M16 24H60V8'] },
+    v: { label: 'v', paths: ['M16 8H100','M0 34Q1 24 12 24H60V8'] },
     w: { label: 'w', paths: ['M0 0Q0 24 12 24H100','M16 8H60V24'] }
   };
   const V = {
@@ -202,8 +202,8 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     if(left==='loop')paths=[`M${width} 8H10C-3 8-3 24 10 24${lowerTail}`];
     else if(left==='down')paths=[`${joined?(routing==='straight'?'M0 24':'M0 8C12 8 12 24 24 24'):'M0 0Q0 24 24 24'}${lowerTail}`,`M${joined&&routing==='straight'?0:24} 8${upperTail}`];
     else if(left==='up')paths=[`${joined?(routing==='straight'?'M0 8':'M0 24C12 24 12 8 24 8'):'M0 32Q0 8 24 8'}${upperTail}`,`M${joined&&routing==='straight'?0:24} 24${lowerTail}`];
-    else if(left==='top')paths=[`M0 0Q1 8 12 8${upperTail}`,`${joined?`M${-connector} 24`:'M16 24'}${lowerTail}`];
-    else paths=[`${joined?`M${-connector} 8`:'M16 8'}${upperTail}`,`M0 32Q1 24 12 24${lowerTail}`];
+    else if(left==='top')paths=[`M0 -2Q1 8 12 8${upperTail}`,`${joined?`M${-connector} 24`:'M16 24'}${lowerTail}`];
+    else paths=[`${joined?`M${-connector} 8`:'M16 8'}${upperTail}`,`M0 34Q1 24 12 24${lowerTail}`];
     // A filled cap owns the entire square, including both outside corners.
     // Its right edge is the advance edge, so the next glyph cannot overlap it.
     const closedCap=closed?{x:width-8,y:4,width:8,height:24}:null;
@@ -267,7 +267,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
             const from={x:previous.end,y:y+startY*previous.scale},to={x,y:y+startY*fit};
             joins.push({fromKey:previous.key,toKey:t.key,flow:routing==='straight'?`${track}-straight`:shape.entry==='down'?'upper-to-lower':'lower-to-upper',switched:routing!=='straight',from,to,continuous:previous.outputs[track]&&Math.abs(from.x-to.x)<.001&&Math.abs(from.y-to.y)<.001});
           }
-          paint.push(`<g transform="translate(${x} ${y}) scale(${fit})" data-letter="${xml(t.key)}">${through.svg}${shape.svg}${t.vowels.map((v,i)=>vowel(v,28+i*26,-12,o.ink)).join('')}${t.marks.map((m,i)=>mark(m,40+i*28,16,o.ink)).join('')}${t.stress?`<path d="M18-29h10" fill="none" stroke="${xml(o.ink)}" stroke-width="3"/>`:''}</g>`);
+          paint.push(`<g transform="translate(${x} ${y}) scale(${fit})" data-letter="${xml(t.key)}">${through.svg}${shape.svg}${t.vowels.map((v,i)=>vowel(v,28+i*26,-9,o.ink)).join('')}${t.marks.map((m,i)=>mark(m,40+i*28,16,o.ink)).join('')}${t.stress?`<path d="M18-26h10" fill="none" stroke="${xml(o.ink)}" stroke-width="3"/>`:''}</g>`);
           placements.push({key:t.key,x,y,width:w,scale:fit,vowels:t.vowels.length,marks:t.marks.length,paths:shape.paths,closedCap:shape.closedCap,entry:shape.entry,entryGap:leading,routing,throughPaths:through.paths});
           previous={key:t.key,end:x+w,scale:fit,outputs:shape.outputs};
         } else if(t.type==='vowel') {

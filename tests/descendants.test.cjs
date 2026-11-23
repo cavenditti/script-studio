@@ -74,10 +74,26 @@ test('Harbor fuses components by contact inside a constant body',()=>{
   for(const text of ['strlant','aei','antsrl'])assert.equal(D.block(parsed(text)[0],'#000').escape,true);
   const r=H.render('plant drènt',{hand:'harbor',width:300});assert.equal(r.lines,1);
 });
+test('Harbor softens corners and bridges near stroke ends with clear curved ligatures',()=>{
+  const m=D.blockMetrics;
+  for(const key of ['t','s','è','l','a'])assert.match(D.harbor(key).d,/Q/);
+  assert.equal(D.harbor('a').ends.length,0);assert.ok(D.harbor('p').ends.length>=2);
+  let count=0;
+  for(const text of ['pa','na','lon','dar','plant','strant','ghrai','gu','niw','zu','ke','sel']){
+    const b=D.block(parsed(text)[0],'#000');count+=b.ligatures.length;
+    assert.equal((b.body.match(/data-ligature/g)||[]).length,b.ligatures.length);
+    for(const j of b.ligatures){
+      const len=Math.hypot(j.to[0]-j.from[0],j.to[1]-j.from[1]);assert.ok(len>=m.joinMin*m.scale-.01&&len<=m.joinMax*m.scale+.01);
+      // A ligature ends on a component stroke.
+      assert.ok(b.components.some(c=>c.points.some(([x,y])=>Math.hypot(x-j.to[0],y-j.to[1])<.01)));
+    }
+  }
+  assert.ok(count>=6,'organic joins appear in ordinary syllables');
+});
 test('Harbor palette components retain full-size sound shapes with a tight optical frame',()=>{
   for(const key of Object.keys(D.alphabet)){
     const p=D.preview(key,E.vowels[key]?'vowel':'consonant','blocks');
-    assert.match(p,/viewBox="-4 -4 44 44"/);assert.ok(p.includes(D.letter(key,'currentColor')));
+    assert.match(p,/viewBox="-4 -4 44 44"/);assert.ok(p.includes(D.harborLetter(key,'currentColor')));assert.ok(D.preview(key,'consonant','alphabet').includes(D.letter(key,'currentColor')));
   }
 });
 test('prosody stays outside components and excess annotations use bounded readable tiles',()=>{

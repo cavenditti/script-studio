@@ -39,7 +39,7 @@
   // Components keep one constant scale and fuse by contact: each joins the
   // previous one in its row where their strokes first meet, and each row joins
   // the row above the same way. Shared rails become one stroke.
-  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:4,touch:3.2,shareBins:4,maxOnset:3,maxNucleus:2,maxCoda:3});
+  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:5,touch:2.5,shareBins:4,joinMin:1.5,joinMax:22,joinClear:2.2,joinAim:.05,soften:7,maxOnset:3,maxNucleus:2,maxCoda:3});
   const n=x=>String(Math.round(x*100)/100),xml=E.xml;
   const path=(d,ink,width=3.4,extra='')=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"${extra}/>`;
   function letter(key,ink){
@@ -47,36 +47,88 @@
   }
   // An empty nucleus is a small crossed square: a visible absence, never a schwa.
   const EMPTY='M12 12H24V24H12ZM12 12L24 24M24 12L12 24';
-  // Sample stroke centerlines of the (absolute-command) letter paths.
-  const inkCache=new Map();
-  function ink(key){
-    if(inkCache.has(key))return inkCache.get(key);
-    const pts=[];
-    for(const d of key==='∅'?[EMPTY]:alphabet[key]||[]){
-      const tok=d.match(/[A-Za-z]|-?\d*\.?\d+/g);let i=0,cmd='',x=0,y=0,sx=0,sy=0;const num=()=>Number(tok[i++]);
-      const line=(x1,y1)=>{const steps=Math.max(1,Math.ceil(Math.hypot(x1-x,y1-y)));for(let k=1;k<=steps;k++)pts.push([x+(x1-x)*k/steps,y+(y1-y)*k/steps]);x=x1;y=y1;};
-      const curve=(c)=>{const p0=[x,y];for(let k=1;k<=24;k++){const t=k/24,u=1-t;let q;if(c.length===2)q=[u*u*p0[0]+2*u*t*c[0][0]+t*t*c[1][0],u*u*p0[1]+2*u*t*c[0][1]+t*t*c[1][1]];else q=[u*u*u*p0[0]+3*u*u*t*c[0][0]+3*u*t*t*c[1][0]+t*t*t*c[2][0],u*u*u*p0[1]+3*u*u*t*c[0][1]+3*u*t*t*c[1][1]+t*t*t*c[2][1]];pts.push(q);}const e=c.at(-1);x=e[0];y=e[1];};
-      while(i<tok.length){
-        if(/[A-Za-z]/.test(tok[i]))cmd=tok[i++];
-        if(cmd==='M'){x=sx=num();y=sy=num();pts.push([x,y]);cmd='L';}
-        else if(cmd==='L')line(num(),num());
-        else if(cmd==='H')line(num(),y);
-        else if(cmd==='V')line(x,num());
-        else if(cmd==='Q')curve([[num(),num()],[num(),num()]]);
-        else if(cmd==='C')curve([[num(),num()],[num(),num()],[num(),num()]]);
-        else if(cmd==='Z'){line(sx,sy);}
-        else throw new Error('Unsupported path command '+cmd);
+  // Parse the alphabet's absolute-command paths into segments.
+  function segments(d){
+    const tok=d.match(/[A-Za-z]|-?\d*\.?\d+/g),subs=[];let i=0,cmd='',x=0,y=0,cur=null;const num=()=>Number(tok[i++]);
+    const add=seg=>{cur.segs.push(seg);const e=seg.pts.at(-1);x=e[0];y=e[1];};
+    while(i<tok.length){
+      if(/[A-Za-z]/.test(tok[i]))cmd=tok[i++];
+      if(cmd==='M'){x=num();y=num();cur={start:[x,y],segs:[],closed:false};subs.push(cur);cmd='L';}
+      else if(cmd==='L')add({t:'L',p0:[x,y],pts:[[num(),num()]]});
+      else if(cmd==='H')add({t:'L',p0:[x,y],pts:[[num(),y]]});
+      else if(cmd==='V')add({t:'L',p0:[x,y],pts:[[x,num()]]});
+      else if(cmd==='Q')add({t:'Q',p0:[x,y],pts:[[num(),num()],[num(),num()]]});
+      else if(cmd==='C')add({t:'C',p0:[x,y],pts:[[num(),num()],[num(),num()],[num(),num()]]});
+      else if(cmd==='Z'){if(Math.hypot(x-cur.start[0],y-cur.start[1])>.01)add({t:'L',p0:[x,y],pts:[cur.start.slice()]});cur.closed=true;}
+      else throw new Error('Unsupported path command '+cmd);
+    }
+    return subs;
+  }
+  const unit=(a,b)=>{const l=Math.hypot(b[0]-a[0],b[1]-a[1])||1;return [(b[0]-a[0])/l,(b[1]-a[1])/l];};
+  // Harbor's softened hand: every straight corner becomes a short quadratic
+  // arc, so fused components read as one organic sign rather than a diagram.
+  function soften(subs,r){
+    return subs.map(sp=>{
+      const segs=sp.segs.map(g=>({...g,p0:g.p0.slice(),pts:g.pts.map(q=>q.slice())})),out=[];
+      const n=segs.length,joins=sp.closed?n:n-1;
+      const cut=new Array(n).fill(0).map(()=>({a:0,b:0}));
+      const corner=[];
+      for(let j=0;j<joins;j++){
+        const A=segs[j],B=segs[(j+1)%n];
+        if(A.t!=='L'||B.t!=='L')continue;
+        const c=A.pts[0],ua=unit(A.p0,c),ub=unit(c,B.pts[0]);
+        if(Math.abs(ua[0]*ub[1]-ua[1]*ub[0])<.05)continue;
+        const la=Math.hypot(c[0]-A.p0[0],c[1]-A.p0[1]),lb=Math.hypot(B.pts[0][0]-c[0],B.pts[0][1]-c[1]);
+        const k=Math.min(r,la/2,lb/2);cut[j].b=k;cut[(j+1)%n].a=k;corner[j]={c,ua,ub,k};
+      }
+      const pt=(p,u,k)=>[p[0]+u[0]*k,p[1]+u[1]*k];
+      for(let j=0;j<n;j++){
+        const g=segs[j];
+        if(g.t==='L'){const u=unit(g.p0,g.pts[0]);g.p0=pt(g.p0,u,cut[j].a);g.pts[0]=pt(g.pts[0],u,-cut[j].b);}
+        out.push(g);
+        const cj=corner[j];if(cj)out.push({t:'Q',p0:g.pts[0],pts:[cj.c,pt(cj.c,cj.ub,cj.k)]});
+      }
+      // A closed outline whose first corner was rounded starts after the arc.
+      const start=out[0].p0;
+      return {start,segs:out,closed:sp.closed};
+    });
+  }
+  const serialize=subs=>subs.map(sp=>'M'+n(sp.start[0])+' '+n(sp.start[1])+sp.segs.map(g=>g.t+g.pts.map(q=>n(q[0])+' '+n(q[1])).join(' ')).join('')+(sp.closed?'Z':'')).join('');
+  // Harbor component geometry: softened paths, sampled centrelines and free
+  // stroke ends with their outward direction (for organic joins).
+  const harborCache=new Map();
+  function harbor(key){
+    if(harborCache.has(key))return harborCache.get(key);
+    const subs=key==='∅'?segments(EMPTY):soften((alphabet[key]||[]).flatMap(segments),blockMetrics.soften);
+    const pts=[],ends=[];
+    for(const sp of subs){
+      pts.push(sp.start);
+      for(const g of sp.segs){
+        const p0=g.p0,c=g.pts;
+        for(let k=1,steps=g.t==='L'?Math.max(1,Math.ceil(Math.hypot(c[0][0]-p0[0],c[0][1]-p0[1]))):16;k<=steps;k++){
+          const t=k/steps,u=1-t;
+          if(g.t==='L')pts.push([p0[0]+(c[0][0]-p0[0])*t,p0[1]+(c[0][1]-p0[1])*t]);
+          else if(g.t==='Q')pts.push([u*u*p0[0]+2*u*t*c[0][0]+t*t*c[1][0],u*u*p0[1]+2*u*t*c[0][1]+t*t*c[1][1]]);
+          else pts.push([u*u*u*p0[0]+3*u*u*t*c[0][0]+3*u*t*t*c[1][0]+t*t*t*c[2][0],u*u*u*p0[1]+3*u*u*t*c[0][1]+3*u*t*t*c[1][1]+t*t*t*c[2][1]]);
+        }
+      }
+      if(!sp.closed&&key!=='∅'&&sp.segs.length){
+        const f=sp.segs[0],l=sp.segs.at(-1);
+        ends.push({at:sp.start,dir:unit(f.pts[0],sp.start)});
+        ends.push({at:l.pts.at(-1),dir:unit(l.pts.at(-2)||l.p0,l.pts.at(-1))});
       }
     }
     if(key==='i')for(let k=0;k<12;k++)pts.push([17+2.8*Math.cos(k*Math.PI/6),15+2.8*Math.sin(k*Math.PI/6)]);
-    inkCache.set(key,pts);return pts;
+    const value={d:serialize(subs),pts,ends};harborCache.set(key,value);return value;
   }
+  const ink=key=>harbor(key).pts;
+  const harborLetter=(key,inkColor)=>path(harbor(key).d,inkColor)+(key==='i'?`<circle cx="17" cy="15" r="2.8" fill="${xml(inkColor)}"/>`:'');
   const shift=(pts,dx,dy)=>pts.map(([x,y])=>[x+dx,y+dy]);
   const extent=(pts,a)=>pts.reduce((r,p)=>[Math.min(r[0],p[a]),Math.max(r[1],p[a])],[Infinity,-Infinity]);
   // Distance to move `next` along `axis` (0 = x, 1 = y) so it fuses with
-  // `prev`. Where the facing strokes run parallel for at least eight units they
-  // become one shared stroke; otherwise the inks just touch at their closest
-  // point. Nesting is limited so a component never slides inside its neighbour.
+  // `prev`. Between rows, facing strokes that run parallel for at least eight
+  // units become one shared stroke; otherwise components stop a small gap
+  // apart, which an organic ligature can bridge. Nesting is limited so a component never slides inside its neighbour.
   function contact(prev,next,axis){
     const m=blockMetrics,other=1-axis,far=new Map(),near=new Map();
     for(const p of prev){const b=Math.round(p[other]/2);far.set(b,Math.max(far.get(b)??-Infinity,p[axis]));}
@@ -84,7 +136,7 @@
     const plain=extent(prev,axis)[1]-extent(next,axis)[0]+m.touch,gaps=[];
     for(const [b,v] of far)if(near.has(b))gaps.push(v-near.get(b));
     if(!gaps.length)return plain;
-    const share=Math.max(...gaps),shared=gaps.filter(g=>share-g<.6).length>=m.shareBins;
+    const share=Math.max(...gaps),shared=axis===1&&gaps.filter(g=>share-g<.6).length>=m.shareBins;
     if(shared)return Math.max(share,plain-m.nest);
     // Profiles are binned, so close the remaining diagonal gap exactly. Moving
     // by d changes no distance by more than d, so the inks cannot cross.
@@ -132,6 +184,34 @@
     };
     for(const t of tokens){if(t.type==='boundary')flush();else chunk.push(t);}flush();return result;
   }
+  // Organic ligatures: a free stroke end that points toward a neighbouring
+  // component and stops just short of it continues in a curve until it meets
+  // that component. At most one join per neighbouring pair, in block units.
+  function joins(components,S){
+    const m=blockMetrics,out=[];
+    const groups={onset:[],nucleus:[],coda:[]};for(const c of components)groups[c.kind].push(c);
+    const pairs=[];
+    for(const row of Object.values(groups))for(let i=1;i<row.length;i++)pairs.push([[row[i-1]],[row[i]]]);
+    if(groups.onset.length)pairs.push([groups.onset,groups.nucleus]);
+    if(groups.coda.length)pairs.push([groups.nucleus,groups.coda]);
+    const ends=c=>c.key==='∅'?[]:harbor(c.key).ends.map(e=>({at:[c.x+e.at[0]*S,c.y+e.at[1]*S],dir:e.dir}));
+    for(const [A,B] of pairs){
+      let best=null;
+      for(const [from,to] of [[A,B],[B,A]])for(const a of from)for(const e of ends(a))for(const b of to){
+        let p=null,dist=Infinity;for(const q of b.points){const d=Math.hypot(q[0]-e.at[0],q[1]-e.at[1]);if(d<dist){dist=d;p=q;}}
+        const u=[(p[0]-e.at[0])/(dist||1),(p[1]-e.at[1])/(dist||1)],aim=e.dir[0]*u[0]+e.dir[1]*u[1];
+        if(dist<m.joinMin*S||dist>m.joinMax*S||aim<m.joinAim)continue;
+        const score=dist/(.4+aim);if(best&&score>=best.score)continue;
+        // The curve must run through open space, never across another stroke.
+        const c=[e.at[0]+e.dir[0]*dist*.7,e.at[1]+e.dir[1]*dist*.7];let clear=true;
+        for(let t=.25;t<=.76&&clear;t+=.1){const u2=1-t,x=u2*u2*e.at[0]+2*u2*t*c[0]+t*t*p[0],y=u2*u2*e.at[1]+2*u2*t*c[1]+t*t*p[1];
+          for(const k of components){if((k===a||k===b)&&(t<.4||t>.6))continue;for(const q of k.points)if(Math.hypot(q[0]-x,q[1]-y)<m.joinClear*S){clear=false;break;}}}
+        if(clear)best={score,e,p,dist,c};
+      }
+      if(best){const {e,p,c}=best;out.push({d:`M${n(e.at[0])} ${n(e.at[1])}Q${n(c[0])} ${n(c[1])} ${n(p[0])} ${n(p[1])}`,from:e.at,to:p});}
+    }
+    return out;
+  }
   function block(s,inkColor){
     const m=blockMetrics,escape=s.onset.length>m.maxOnset||s.nucleus.length>m.maxNucleus||s.coda.length>m.maxCoda;
     const markTile=(marks,x0,offset=0)=>marks.map((key,i)=>`<g transform="translate(${n(x0+18*Math.floor(i/4))} ${16+18*(i%4)}) scale(.65)" data-prosody-slot="${offset+i}">${E.mark(key,0,0,inkColor)}</g>`).join('');
@@ -141,7 +221,7 @@
       const items=s.phones.map(t=>({width:34,body:`<g transform="translate(2 28) scale(.8)" data-escape-letter="${xml(t.key)}">${letter(t.key,inkColor)}</g>`}));
       for(const key of s.marks)items.push({width:28,body:`<g transform="translate(14 44) scale(.65)" data-prosody-only="true">${E.mark(key,0,0,inkColor)}</g>`});
       items.forEach((tile,i)=>{tile.body=path(`M0 ${i===0?8:0}V0H${tile.width}${i===items.length-1?'V8':''}`,inkColor,1.3)+tile.body;if(i===0&&s.stress)tile.body+=path('M12-9H22',inkColor,3);});
-      return {width:34,height:m.height,body:'',escape:true,tiles:items,components:[]};
+      return {width:34,height:m.height,body:'',escape:true,tiles:items,components:[],ligatures:[]};
     }
     const onset=fuseRow(s.onset,'onset'),nucleus=fuseRow(s.nucleus.length?s.nucleus:[{key:'∅'}],'nucleus'),coda=fuseRow(s.coda,'coda');
     const oy=onset.parts.length?-contact(onset.union,nucleus.union,1):0,cy=coda.parts.length?contact(nucleus.union,coda.union,1):0;
@@ -154,8 +234,10 @@
     let body='';
     for(const c of components){
       if(c.key==='∅')body+=`<g transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})">${path(EMPTY,inkColor,2.4,' data-empty-nucleus="true"')}</g>`;
-      else body+=`<g transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})" data-${c.kind}-part="${xml(c.key)}">${letter(c.key,inkColor)}</g>`;
+      else body+=`<g transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})" data-${c.kind}-part="${xml(c.key)}">${harborLetter(c.key,inkColor)}</g>`;
     }
+    const ligatures=joins(components,S);
+    for(const j of ligatures)body+=path(j.d,inkColor,3.4*S,' data-ligature="true"');
     const markX=glyphWidth+8;
     body+=markTile(s.marks.slice(0,8),markX);
     if(s.stress)body+=path(`M${n(glyphWidth/2-5)}-9H${n(glyphWidth/2+5)}`,inkColor,3);
@@ -163,7 +245,7 @@
     const tiles=[{width,body}];
     // Excess annotations continue in bounded tiles rather than shrinking ink.
     for(let start=8;start<s.marks.length;start+=8){const marks=s.marks.slice(start,start+8);tiles.push({width:marks.length>4?48:30,body:`<g data-prosody-only="true">${markTile(marks,0,start)}</g>`});}
-    return {width,height:m.height,body,escape:false,tiles,components,glyphWidth};
+    return {width,height:m.height,body,escape:false,tiles,components,ligatures,glyphWidth};
   }
   function render(text,options={},system='blocks'){
     const o={...E.defaults,...options},width=Math.max(300,Math.min(2400,Number(o.width)||1000)),size=Math.max(.45,Math.min(2.5,Number(o.size)||1));
@@ -215,8 +297,8 @@
   const hidden=svg=>svg.replace('role="img"','aria-hidden="true"');
   function preview(key,type,system){
     if(type==='mark')return hidden(compact(render('a{'+key+'}',{width:300,transparent:true,ink:'currentColor'},system)));
-    return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${letter(key,'currentColor')}</svg>`;
+    return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${system==='blocks'?harborLetter(key,'currentColor'):letter(key,'currentColor')}</svg>`;
   }
-  const api={alphabet,letter,ink,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={alphabet,letter,harborLetter,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

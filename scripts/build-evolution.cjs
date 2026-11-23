@@ -19,7 +19,7 @@ fs.writeFileSync(path.join(out,'family-tree.svg'),tree);
 const sample='plant drènt ghrai';
 const comparison=['classical','ridge-alpha','harbor'].map((hand,i)=>{
   const p=H.get(hand),r=H.render(sample,{hand,width:1200,transparent:true});
-  const caption=hand==='classical'?'Consonant ribbon with attached vowels':hand==='ridge-alpha'?'Every consonant and vowel is a full independent letter':'One fused syllable sign: onset / vowel / coda joined where strokes meet';
+  const caption=hand==='classical'?'Consonant ribbon with attached vowels':hand==='ridge-alpha'?'Every consonant and vowel is a full independent letter':'One fused syllable sign: softened onset / vowel / coda joined by shared rails and curved ligatures';
   return `<g transform="translate(0 ${90+i*210})"><text x="35" y="20" font-size="25">${esc(p.name)}</text><text x="35" y="47" font-family="Arial,sans-serif" font-size="16" fill="#566569">${caption}</text><g transform="translate(0 45)">${r.svg}</g></g>`;
 }).join('');
 const s=D.syllabify(D.units('plant{3}').units[0].tokens)[0],b=D.block(s,'#161c20');

@@ -375,12 +375,69 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     h:['M27 7C5-1 2 36 27 29']
   };
   // The Harbor reform borrows the alphabet's sound forms, not its linear layout.
-  // Conservative glyph bounds include stroke caps: [-2,-2]..[38,38].
-  const blockMetrics=Object.freeze({width:84,height:88,scale:.58,onsetY:1,vowelY:32,codaY:63,upperRail:27,lowerRail:58,railStroke:1.8,maxOnset:3,maxNucleus:2,maxCoda:3});
+  // Components keep one constant scale and fuse by contact: each joins the
+  // previous one in its row where their strokes first meet, and each row joins
+  // the row above the same way. Shared rails become one stroke.
+  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:4,touch:3.2,shareBins:4,maxOnset:3,maxNucleus:2,maxCoda:3});
   const n=x=>String(Math.round(x*100)/100),xml=E.xml;
   const path=(d,ink,width=3.4,extra='')=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"${extra}/>`;
   function letter(key,ink){
     return (alphabet[key]||[]).map(d=>path(d,ink)).join('')+(key==='i'?`<circle cx="17" cy="15" r="2.8" fill="${xml(ink)}"/>`:'');
+  }
+  // An empty nucleus is a small crossed square: a visible absence, never a schwa.
+  const EMPTY='M12 12H24V24H12ZM12 12L24 24M24 12L12 24';
+  // Sample stroke centerlines of the (absolute-command) letter paths.
+  const inkCache=new Map();
+  function ink(key){
+    if(inkCache.has(key))return inkCache.get(key);
+    const pts=[];
+    for(const d of key==='∅'?[EMPTY]:alphabet[key]||[]){
+      const tok=d.match(/[A-Za-z]|-?\d*\.?\d+/g);let i=0,cmd='',x=0,y=0,sx=0,sy=0;const num=()=>Number(tok[i++]);
+      const line=(x1,y1)=>{const steps=Math.max(1,Math.ceil(Math.hypot(x1-x,y1-y)));for(let k=1;k<=steps;k++)pts.push([x+(x1-x)*k/steps,y+(y1-y)*k/steps]);x=x1;y=y1;};
+      const curve=(c)=>{const p0=[x,y];for(let k=1;k<=24;k++){const t=k/24,u=1-t;let q;if(c.length===2)q=[u*u*p0[0]+2*u*t*c[0][0]+t*t*c[1][0],u*u*p0[1]+2*u*t*c[0][1]+t*t*c[1][1]];else q=[u*u*u*p0[0]+3*u*u*t*c[0][0]+3*u*t*t*c[1][0]+t*t*t*c[2][0],u*u*u*p0[1]+3*u*u*t*c[0][1]+3*u*t*t*c[1][1]+t*t*t*c[2][1]];pts.push(q);}const e=c.at(-1);x=e[0];y=e[1];};
+      while(i<tok.length){
+        if(/[A-Za-z]/.test(tok[i]))cmd=tok[i++];
+        if(cmd==='M'){x=sx=num();y=sy=num();pts.push([x,y]);cmd='L';}
+        else if(cmd==='L')line(num(),num());
+        else if(cmd==='H')line(num(),y);
+        else if(cmd==='V')line(x,num());
+        else if(cmd==='Q')curve([[num(),num()],[num(),num()]]);
+        else if(cmd==='C')curve([[num(),num()],[num(),num()],[num(),num()]]);
+        else if(cmd==='Z'){line(sx,sy);}
+        else throw new Error('Unsupported path command '+cmd);
+      }
+    }
+    if(key==='i')for(let k=0;k<12;k++)pts.push([17+2.8*Math.cos(k*Math.PI/6),15+2.8*Math.sin(k*Math.PI/6)]);
+    inkCache.set(key,pts);return pts;
+  }
+  const shift=(pts,dx,dy)=>pts.map(([x,y])=>[x+dx,y+dy]);
+  const extent=(pts,a)=>pts.reduce((r,p)=>[Math.min(r[0],p[a]),Math.max(r[1],p[a])],[Infinity,-Infinity]);
+  // Distance to move `next` along `axis` (0 = x, 1 = y) so it fuses with
+  // `prev`. Where the facing strokes run parallel for at least eight units they
+  // become one shared stroke; otherwise the inks just touch at their closest
+  // point. Nesting is limited so a component never slides inside its neighbour.
+  function contact(prev,next,axis){
+    const m=blockMetrics,other=1-axis,far=new Map(),near=new Map();
+    for(const p of prev){const b=Math.round(p[other]/2);far.set(b,Math.max(far.get(b)??-Infinity,p[axis]));}
+    for(const p of next){const b=Math.round(p[other]/2);near.set(b,Math.min(near.get(b)??Infinity,p[axis]));}
+    const plain=extent(prev,axis)[1]-extent(next,axis)[0]+m.touch,gaps=[];
+    for(const [b,v] of far)if(near.has(b))gaps.push(v-near.get(b));
+    if(!gaps.length)return plain;
+    const share=Math.max(...gaps),shared=gaps.filter(g=>share-g<.6).length>=m.shareBins;
+    if(shared)return Math.max(share,plain-m.nest);
+    // Profiles are binned, so close the remaining diagonal gap exactly. Moving
+    // by d changes no distance by more than d, so the inks cannot cross.
+    let at=share+m.touch;
+    for(let k=0;k<2;k++){const moved=next.map(p=>axis?[p[0],p[1]+at]:[p[0]+at,p[1]]);at-=Math.max(0,distance(prev,moved)-m.touch);}
+    return Math.max(at,plain-m.nest);
+  }
+  function distance(A,B){let best=Infinity;for(const [x,y] of A)for(const [u,v] of B){const d=(x-u)*(x-u)+(y-v)*(y-v);if(d<best)best=d;}return Math.sqrt(best);}
+  // Fuse one row left to right, centred on x=0 in letter units.
+  function fuseRow(tokens,kind){
+    const parts=[];let union=[];
+    for(const t of tokens){const pts=ink(t.key);const dx=parts.length?contact(union,pts,0):0;parts.push({key:t.key,kind,dx,dy:0});union=union.concat(shift(pts,dx,0));}
+    if(parts.length){const [a,b]=extent(union,0),c=(a+b)/2;parts.forEach(p=>p.dx-=c);union=shift(union,-c,0);}
+    return {parts,union};
   }
   function units(text){
     const tokens=E.tokenize(text).map(t=>t.type==='unknown'&&t.raw==='·'?{...t,type:'boundary'}:t);
@@ -414,33 +471,38 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     };
     for(const t of tokens){if(t.type==='boundary')flush();else chunk.push(t);}flush();return result;
   }
-  function block(s,ink){
+  function block(s,inkColor){
     const m=blockMetrics,escape=s.onset.length>m.maxOnset||s.nucleus.length>m.maxNucleus||s.coda.length>m.maxCoda;
-    const componentBoxes=[];
-    const row=(tokens,y,kind)=>tokens.map((t,i)=>{
-      const center=tokens.length===1?42:tokens.length===2?28+i*28:14+i*28,x=center-18*m.scale;
-      componentBoxes.push({key:t.key,kind,x:x-2*m.scale,y:y-2*m.scale,width:40*m.scale,height:40*m.scale});
-      return `<g transform="translate(${n(x)} ${y}) scale(${m.scale})" data-${kind}-part="${xml(t.key)}">${letter(t.key,ink)}</g>`;
-    }).join('');
-    const markTile=(marks,offset=0)=>marks.map((key,i)=>`<g transform="translate(${96+18*Math.floor(i/4)} ${16+18*(i%4)}) scale(.65)" data-prosody-slot="${offset+i}">${E.mark(key,0,0,ink)}</g>`).join('');
+    const markTile=(marks,x0,offset=0)=>marks.map((key,i)=>`<g transform="translate(${n(x0+18*Math.floor(i/4))} ${16+18*(i%4)}) scale(.65)" data-prosody-slot="${offset+i}">${E.mark(key,0,0,inkColor)}</g>`).join('');
     if(escape){
       // Spell out oversized groups at a constant readable size. The bracket is
       // a graphic escape, never an extra vowel or a syllable boundary.
-      const items=s.phones.map(t=>({width:34,body:`<g transform="translate(2 28) scale(.8)" data-escape-letter="${xml(t.key)}">${letter(t.key,ink)}</g>`}));
-      for(const key of s.marks)items.push({width:28,body:`<g transform="translate(14 44) scale(.65)" data-prosody-only="true">${E.mark(key,0,0,ink)}</g>`});
-      items.forEach((tile,i)=>{tile.body=path(`M0 ${i===0?8:0}V0H${tile.width}${i===items.length-1?'V8':''}`,ink,1.3)+tile.body;if(i===0&&s.stress)tile.body+=path('M12-9H22',ink,3);});
-      return {width:34,height:m.height,body:'',escape:true,tiles:items,componentBoxes};
+      const items=s.phones.map(t=>({width:34,body:`<g transform="translate(2 28) scale(.8)" data-escape-letter="${xml(t.key)}">${letter(t.key,inkColor)}</g>`}));
+      for(const key of s.marks)items.push({width:28,body:`<g transform="translate(14 44) scale(.65)" data-prosody-only="true">${E.mark(key,0,0,inkColor)}</g>`});
+      items.forEach((tile,i)=>{tile.body=path(`M0 ${i===0?8:0}V0H${tile.width}${i===items.length-1?'V8':''}`,inkColor,1.3)+tile.body;if(i===0&&s.stress)tile.body+=path('M12-9H22',inkColor,3);});
+      return {width:34,height:m.height,body:'',escape:true,tiles:items,components:[]};
     }
-    let body=path(`M82 27H2V58H82`,ink,m.railStroke,' data-vowel-chamber="true"');
-    body+=row(s.onset,m.onsetY,'onset')+row(s.nucleus,m.vowelY,'nucleus')+row(s.coda,m.codaY,'coda');
-    if(!s.nucleus.length)body+=path('M38 40H46V48H38ZM38 40L46 48M46 40L38 48',ink,1.6,' data-empty-nucleus="true"');
-    body+=markTile(s.marks.slice(0,8));
-    if(s.stress)body+=path('M37-9H47',ink,3);
-    const width=s.marks.length>4?128:s.marks.length?110:m.width;
+    const onset=fuseRow(s.onset,'onset'),nucleus=fuseRow(s.nucleus.length?s.nucleus:[{key:'∅'}],'nucleus'),coda=fuseRow(s.coda,'coda');
+    const oy=onset.parts.length?-contact(onset.union,nucleus.union,1):0,cy=coda.parts.length?contact(nucleus.union,coda.union,1):0;
+    onset.parts.forEach(p=>p.dy=oy);coda.parts.forEach(p=>p.dy=cy);
+    const parts=[...onset.parts,...nucleus.parts,...coda.parts];
+    const all=parts.flatMap(p=>shift(ink(p.key),p.dx,p.dy)),[minX,maxX]=extent(all,0);
+    const S=m.scale,left=m.pad-minX*S,glyphWidth=(maxX-minX)*S+2*m.pad;
+    const place=p=>({x:left+p.dx*S,y:m.nucleusY+p.dy*S});
+    const components=parts.map(p=>{const at=place(p);return {key:p.key,kind:p.kind,x:at.x,y:at.y,points:ink(p.key).map(([x,y])=>[at.x+x*S,at.y+y*S])};});
+    let body='';
+    for(const c of components){
+      if(c.key==='∅')body+=`<g transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})">${path(EMPTY,inkColor,2.4,' data-empty-nucleus="true"')}</g>`;
+      else body+=`<g transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})" data-${c.kind}-part="${xml(c.key)}">${letter(c.key,inkColor)}</g>`;
+    }
+    const markX=glyphWidth+8;
+    body+=markTile(s.marks.slice(0,8),markX);
+    if(s.stress)body+=path(`M${n(glyphWidth/2-5)}-9H${n(glyphWidth/2+5)}`,inkColor,3);
+    const width=s.marks.length>4?markX+40:s.marks.length?markX+22:glyphWidth;
     const tiles=[{width,body}];
     // Excess annotations continue in bounded tiles rather than shrinking ink.
-    for(let start=8;start<s.marks.length;start+=8){const marks=s.marks.slice(start,start+8);tiles.push({width:marks.length>4?48:30,body:`<g transform="translate(-82 0)" data-prosody-only="true">${markTile(marks,start)}</g>`});}
-    return {width,height:m.height,body,escape:false,tiles,componentBoxes};
+    for(let start=8;start<s.marks.length;start+=8){const marks=s.marks.slice(start,start+8);tiles.push({width:marks.length>4?48:30,body:`<g data-prosody-only="true">${markTile(marks,0,start)}</g>`});}
+    return {width,height:m.height,body,escape:false,tiles,components,glyphWidth};
   }
   function render(text,options={},system='blocks'){
     const o={...E.defaults,...options},width=Math.max(300,Math.min(2400,Number(o.width)||1000)),size=Math.max(.45,Math.min(2.5,Number(o.size)||1));
@@ -480,7 +542,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
         else put(p.body,p.width,` data-alphabet-letter="${xml(p.t.key)}" data-kind="${p.t.type}"`);
       }
     }
-    if(system==='blocks'&&vowelless)notes.push('The crossed square marks an empty nucleus; no vowel is supplied.');
+    if(system==='blocks'&&vowelless)notes.push('The small crossed square marks an empty nucleus; no vowel is supplied.');
     if(escaped)notes.push('This group exceeds 3 onset, 2 vowel or 3 coda components; a bracketed spell-out keeps every sound readable.');
     const height=Math.max(210,Math.ceil((y+(system==='blocks'?92:46))*size+2*margin));
     let guides='';if(o.guides)for(let row=0;row<lines;row++){const base=(system==='blocks'?18:36)+row*lineHeight;guides+=path(`M0 ${base+(system==='blocks'?88:36)}H${max}`,'#9eacb6',.6,' stroke-dasharray="3 7"');}
@@ -494,7 +556,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     if(type==='mark')return hidden(compact(render('a{'+key+'}',{width:300,transparent:true,ink:'currentColor'},system)));
     return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${letter(key,'currentColor')}</svg>`;
   }
-  const api={alphabet,letter,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={alphabet,letter,ink,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
 </script>
@@ -521,7 +583,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     {id:'ridge-alpha',name:'Ridge Alphabet',era:'750 onward',parent:'ridge',branch:'Northern alphabetic branch',material:'Independent letters for names, loans and public reading',mode:'alphabet',system:'alphabet',stroke:3.4,detached:true,
       change:'The long guide rails disappear. Consonants become compact free-standing letters, and every vowel gains an equally full baseline letter.',reason:'Ridge teachers promote the old initial-vowel forms to ordinary vowels and detach the diagnostic joints of consonants from their two-rail scaffolding.',retained:'One full letter records each typed consonant or vowel, including gh, c and g as single sounds; tone and stress remain explicit.'},
     {id:'harbor',name:'Harbor Blocks',era:'850 onward',parent:'island',influences:['ridge-alpha'],branch:'Maritime syllable-block branch',material:'Compact syllable seals and manuscript monograms',mode:'blocks',system:'blocks',stroke:3.4,detached:true,
-      change:'A compact three-row cell replaces the word ribbon: initial consonants above, vowels inside a short two-rail chamber, final consonants below. Every row reads left to right.',reason:'Island syllable seals are regularized by a teaching reform. It borrows recognizable sound forms from Ridge Alphabet, while keeping the syllable as the unit of writing.',retained:'Up to three initials, two vowels and three finals share one cell. Tone sits beside the cell and primary stress above it. · sets a boundary; oversized groups use a readable bracketed spell-out.'}
+      change:'A fused syllable sign replaces the word ribbon: initial consonants above, vowels in the middle, final consonants below, each joined to its neighbours where their strokes meet. Every row reads left to right.',reason:'Island syllable seals are regularized by a teaching reform. It borrows recognizable sound forms from Ridge Alphabet, while keeping the syllable as the unit of writing.',retained:'Up to three initials, two vowels and three finals fuse into one sign. Tone sits beside the sign and primary stress above it. · sets a boundary; oversized groups use a readable bracketed spell-out.'}
   ];
   const get=id=>profiles.find(p=>p.id===id)||profiles.find(p=>p.id==='classical');
   const number=n=>String(Math.round(n*100)/100);

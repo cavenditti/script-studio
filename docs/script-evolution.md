@@ -20,7 +20,7 @@ Years are relative to the classical school's foundation, year 0. Ranges describe
 | island | Island Bookhand | 300 to 1000 | Classical | Bound manuscripts: broad return bowls, inward feet, rounded closing bars |
 | civic | Civic Print | 900 onward | Delta | Reusable type: open returns with explicit feet and repeatable chamfers; graphic borrowing from Ridge and Island |
 | ridge-alpha | Ridge Alphabet | 750 onward | Ridge | Full independent consonant **and vowel letters**, with the guide rails removed |
-| harbor | Harbor Blocks | 850 onward | Island | Compact three-row syllable cells: onset, vowel chamber and coda |
+| harbor | Harbor Blocks | 850 onward | Island | Fused syllable signs: onset, vowel and coda joined where their strokes meet |
 
 Solid edges in the tree are descent. Dashed edges are graphic borrowing. Civic has one Delta parent; borrowing a letter shape does not make it the genealogical child of three spoken languages.
 
@@ -84,18 +84,18 @@ Promoting initial-vowel allographs provides a historical bridge to full vowels r
 
 ### Island → Harbor Blocks: the syllable becomes one compound sign
 
-Frequent Island ligatures initially bind a vowel and its neighboring consonants into small seals. A later teaching reform regularizes them into a **compact three-row cell**. It borrows recognizable sound forms from Ridge Alphabet without adopting alphabetic writing. This is graphic contact, not a new spoken-language parent.
+Frequent Island ligatures initially bind a vowel and its neighboring consonants into small seals. A later teaching reform regularizes them into a **fused syllable sign**. It borrows recognizable sound forms from Ridge Alphabet without adopting alphabetic writing. This is graphic contact, not a new spoken-language parent.
 
 - **Top row:** onset consonants, left to right.
-- **Middle chamber:** full vowel components, left to right, between two short inherited rails.
+- **Middle row:** full vowel components, left to right.
 - **Bottom row:** coda consonants, left to right, in the same orientation as onsets.
-- **Outside the cell:** tone and secondary-stress signs at the right; primary stress above.
+- **Outside the sign:** tone and secondary-stress signs at the right; primary stress above.
 
-The body is a fixed 84 × 88 units. Up to **three onset consonants, two vowels and three coda consonants** fit without reducing component size. `plant` contains five sounds in one cell; `strant` has three initials and two finals; `ghrai` has two initials and two vowels. Single and paired components are centered within their row. Empty onset and coda positions remain blank. Letter strokes do not intersect the chamber rails, and paired vowels have a clear gutter rather than overlapping arms.
+Nothing encloses the components. Each one joins its neighbour where their strokes first meet. A consonant's lower rail and a flat vowel top merge into one shared stroke, so `pa` reads as a single sign. A stem that meets a curve simply touches it. Rows interpenetrate by no more than a few units, so every sound shape stays whole and readable. The sign is a constant 88 units tall and as wide as its fused components. Up to **three onset consonants, two vowels and three coda consonants** fit without reducing component size. `plant` contains five sounds in one cell; `strant` has three initials and two finals; `ghrai` has two initials and two vowels. Rows are centred on a common axis. Empty onset and coda positions remain blank. Paired components touch without crossing, and strokes are shared only where they run parallel.
 
-This replaces an earlier, rejected spine-and-shoulder prototype whose small gates and mirrored roots were difficult to distinguish. The current signs keep full sound shapes and one reading order. Components in the palette show those shapes in a tight frame, not a miniature complete block surrounded by empty space.
+An earlier version enclosed the vowels in a two-rail chamber with separated components; it read as three boxed rows rather than one sign. Before that, a rejected spine-and-shoulder prototype had small gates and mirrored roots that were difficult to distinguish. The current signs keep full sound shapes and one reading order. Components in the palette show those shapes in a tight frame, not a miniature complete block surrounded by empty space.
 
-The inspiration from Korean concerns **composing consonant/vowel components into a syllable block**. Unicode describes Hangul's leading-consonant, vowel and trailing-consonant classes in its [Korean FAQ](https://www.unicode.org/faq/korean.html). Harbor uses its own letters, a two-rail vowel chamber, three fixed horizontal registers, and separate prosody. It does not use Korean jamo or Korean syllabification rules.
+The inspiration from Korean concerns **composing consonant/vowel components into a syllable block**. Unicode describes Hangul's leading-consonant, vowel and trailing-consonant classes in its [Korean FAQ](https://www.unicode.org/faq/korean.html). Harbor uses its own letters, contact fusion with shared rails, three horizontal registers, and separate prosody. It does not use Korean jamo or Korean syllabification rules.
 
 See the [complete Harbor diagnostic plate](evolution/harbor-diagnostics.svg) for all consonants in both positions, all eleven vowels, compound vowels in opposite orders, empty positions, clusters and combined tone/stress.
 
@@ -105,9 +105,9 @@ The editor uses a declared **graphic default**, not a universal pronunciation ru
 
 Use a middle dot to override it: `ka·tra` gives the second sign an initial `tr` cluster. `kai` shares one compound core, while `ka·i` creates two symbols. In the alphabet these boundaries do not alter the letter sequence. The middle dot is a structural input control for the new descendants; in older hands it remains visible as an unassigned character, so the source is never silently rewritten.
 
-A string without a written vowel has a **crossed square in the empty vowel chamber**, visibly different from schwa. It preserves the consonants as an unresolved/vowelless cluster and produces a placement note. That is not an assertion that the cluster is a spoken syllable. Graphic capacity for a cluster does not establish that a fictional language permits it.
+A string without a written vowel has a **small crossed square in the vowel row**, visibly different from schwa. It preserves the consonants as an unresolved/vowelless cluster and produces a placement note. That is not an assertion that the cluster is a spoken syllable. Graphic capacity for a cluster does not establish that a fictional language permits it.
 
-The new systems have their own glyph layout rather than transforming the old SVG. Long words wrap between letters or syllable cells. A group exceeding three onsets, two vowels or three codas uses a **bracketed alphabetic spell-out** at a constant readable size, wrapping between letters; it does not invent another syllable or shrink a huge cluster to a dot. More than eight prosodic annotations continue in separate bounded annotation tiles. The source grouping and every mark remain intact. Initial-vowel and joining controls are unavailable where the writing system determines those choices. All source sounds, unknown characters, stress and tone marks are retained.
+The new systems have their own glyph layout rather than transforming the old SVG. Long words wrap between letters or syllable signs. A group exceeding three onsets, two vowels or three codas uses a **bracketed alphabetic spell-out** at a constant readable size, wrapping between letters; it does not invent another syllable or shrink a huge cluster to a dot. More than eight prosodic annotations continue in separate bounded annotation tiles. The source grouping and every mark remain intact. Initial-vowel and joining controls are unavailable where the writing system determines those choices. All source sounds, unknown characters, stress and tone marks are retained.
 
 ## What is implemented
 
@@ -144,4 +144,4 @@ python3 build.py
 node --test tests/engine.test.cjs tests/phonetics.test.cjs tests/evolution.test.cjs tests/descendants.test.cjs
 ```
 
-`src/evolution.js` contains the public genealogy and the older drawing rules. `src/descendants.js` defines the full alphabet, shared Harbor sound components, bounded three-row cells, syllable grouping and new layouts. `scripts/build-evolution.cjs` reads only the public engine and profiles. The standalone HTML embeds them; it does not fetch external assets or read local language drafts.
+`src/evolution.js` contains the public genealogy and the older drawing rules. `src/descendants.js` defines the full alphabet, shared Harbor sound components, fused three-row syllable signs, syllable grouping and new layouts. `scripts/build-evolution.cjs` reads only the public engine and profiles. The standalone HTML embeds them; it does not fetch external assets or read local language drafts.

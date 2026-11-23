@@ -55,18 +55,22 @@ test('new systems wrap at glyph boundaries and spell out oversized Harbor groups
     }
   }
 });
-test('Harbor uses bounded rows with stroke-aware rail and component gutters',()=>{
-  const m=D.blockMetrics;
-  for(const text of ['plant','strant','ghrai','ka','a','nt','oe','eo','uy','yu','ai','aa']){
-    const b=D.block(parsed(text)[0],'#000');assert.equal(b.width,84);assert.equal(b.height,88);assert.equal(b.escape,false);
-    const rows={};for(const box of b.componentBoxes)(rows[box.kind]??=[]).push(box);
-    for(const row of Object.values(rows))for(let i=1;i<row.length;i++)assert.ok(row[i].x-(row[i-1].x+row[i-1].width)>4);
-    for(const box of b.componentBoxes){
-      if(box.kind==='onset')assert.ok(m.upperRail-m.railStroke/2-(box.y+box.height)>2.9);
-      if(box.kind==='nucleus'){assert.ok(box.y-(m.upperRail+m.railStroke/2)>2.9);assert.ok(m.lowerRail-m.railStroke/2-(box.y+box.height)>2.9);}
-      if(box.kind==='coda')assert.ok(box.y-(m.lowerRail+m.railStroke/2)>2.9);
-    }
+test('Harbor fuses components by contact inside a constant body',()=>{
+  const m=D.blockMetrics,gap=(A,B)=>Math.min(...A.points.flatMap(([x,y])=>B.points.map(([u,v])=>Math.hypot(x-u,y-v))));
+  for(const text of ['plant','strant','ghrai','ka','pa','tun','a','nt','oe','eo','uy','yu','ai','aa','lon','dar']){
+    const b=D.block(parsed(text)[0],'#000');assert.equal(b.height,m.height);assert.equal(b.escape,false);assert.ok(!b.body.includes('data-vowel-chamber'));
+    for(const c of b.components)for(const [,y] of c.points)assert.ok(y>-1&&y<m.height+1,text+' stays in body');
+    const rows={};for(const c of b.components)(rows[c.kind]??=[]).push(c);
+    // Each row reads left to right, and consecutive components touch or share a stroke.
+    for(const row of Object.values(rows))for(let i=1;i<row.length;i++){assert.ok(row[i].x>row[i-1].x);assert.ok(gap(row[i-1],row[i])<=m.touch*m.scale+1.2,text+' row fused');}
+    // Rows join: onset to nucleus, nucleus to coda. Limited nesting can leave
+    // a hairline where the closest strokes would otherwise interleave.
+    const near=(U,V)=>Math.min(...U.flatMap(a=>V.map(c=>gap(a,c))));
+    if(rows.onset)assert.ok(near(rows.onset,rows.nucleus)<=5,text+' onset fused');
+    if(rows.coda)assert.ok(near(rows.nucleus,rows.coda)<=5,text+' coda fused');
   }
+  // A consonant rail and a flat vowel top become one shared stroke.
+  const pa=D.block(parsed('pa')[0],'#000');assert.ok(Math.abs(pa.components[1].y-(pa.components[0].y+21*m.scale))<.01);
   for(const text of ['strlant','aei','antsrl'])assert.equal(D.block(parsed(text)[0],'#000').escape,true);
   const r=H.render('plant drènt',{hand:'harbor',width:300});assert.equal(r.lines,1);
 });
@@ -79,7 +83,7 @@ test('Harbor palette components retain full-size sound shapes with a tight optic
 test('prosody stays outside components and excess annotations use bounded readable tiles',()=>{
   const r=H.render("plant'"+'{3}'.repeat(25),{hand:'harbor',width:300});
   assert.equal((r.svg.match(/data-mark=/g)||[]).length,25);assert.ok(r.placements.every(p=>p.scale===1&&p.width<=128));assert.ok(r.lines>1);
-  assert.match(r.svg,/translate\(96 16\)/);assert.match(r.svg,/data-prosody-only="true"/);
+  assert.match(r.svg,/translate\([\d.]+ 16\) scale\(.65\)" data-prosody-slot="0"/);assert.match(r.svg,/data-prosody-only="true"/);
 });
 test('unknown characters stay visible and XML remains escaped',()=>{
   for(const hand of ['harbor','ridge-alpha']){

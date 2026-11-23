@@ -6,7 +6,7 @@ test('classical and legacy settings preserve the original renderer exactly',()=>
   for(const options of [{},{hand:'classical',transparent:true},{hand:'unknown',joined:false}])assert.equal(H.render(specimen,options).svg,E.render(specimen,options).svg);
 });
 test('genealogy is rooted and acyclic; borrowings are separate from descent',()=>{
-  const ids=new Set(H.profiles.map(p=>p.id));assert.equal(ids.size,7);
+  const ids=new Set(H.profiles.map(p=>p.id));assert.equal(ids.size,9);
   assert.equal(H.profiles.filter(p=>p.parent===null).length,1);
   for(const p of H.profiles){let current=p;const ancestors=new Set();while(current.parent){assert.ok(ids.has(current.parent));assert.ok(!ancestors.has(current.id));ancestors.add(current.id);current=H.get(current.parent);}for(const id of p.influences||[])assert.ok(ids.has(id));}
   assert.equal(H.get('civic').parent,'delta');assert.deepEqual(H.get('civic').influences,['ridge','island']);
@@ -14,7 +14,7 @@ test('genealogy is rooted and acyclic; borrowings are separate from descent',()=
 test('every historical hand retains letters, vowels, prosody and source text',()=>{
   const results=new Set();
   for(const p of H.profiles){const r=H.render(specimen,{hand:p.id,transparent:true});results.add(r.svg);assert.equal(r.consonants,15);assert.equal(r.vowels,8);assert.equal(r.marks,8);assert.deepEqual(r.unknown,[]);assert.ok(!/NaN|undefined/.test(r.svg));assert.ok(!r.svg.includes('<rect width="100%"'));for(let i=1;i<=8;i++)assert.match(r.svg,new RegExp(`data-mark="${i}"`));}
-  assert.equal(results.size,7);
+  assert.equal(results.size,9);
 });
 test('isolating traditions break joins; cursive descendants retain continuous rails',()=>{
   for(const hand of ['stone','reed','ridge'])assert.equal(H.render('nt',{hand}).joins.length,0);

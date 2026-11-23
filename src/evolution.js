@@ -2,6 +2,7 @@
 (function(root){
   'use strict';
   const E=typeof module==='object'&&module.exports?require('./engine.js'):root.ScriptEngine;
+  const D=typeof module==='object'&&module.exports?require('./descendants.js'):root.ScriptDescendants;
   const profiles=[
     {id:'stone',name:'Stone Register',era:'−700 to −350',parent:null,branch:'Common ancestry',material:'Incised boundary stones and counting slips',mode:'cut',stroke:5.8,detached:true,
       change:'Separate signs; bends become short angular cuts and dots become diamond punctures.',reason:'Two ruled guides begin as alignment aids. A lifted tool leaves each consonant independent.',retained:'The two levels and the direction of each returning stroke already distinguish sign families.'},
@@ -16,7 +17,11 @@
     {id:'island',name:'Island Bookhand',era:'300 to 1000',parent:'classical',branch:'Maritime branch',material:'Long-lived bound manuscripts',mode:'book',stroke:7.2,detached:false,
       change:'Return bowls broaden and end in a short inward foot; square end bars acquire rounded ends.',reason:'Book copyists exaggerate the returns that distinguish similar letter families.',retained:'The running band is retained rather than replaced by isolated letters.'},
     {id:'civic',name:'Civic Print',era:'900 onward',parent:'delta',influences:['ridge','island'],branch:'Later river standard',material:'Reusable type and public signs',mode:'civic',stroke:7.5,detached:false,
-      change:'Delta’s open returns gain a short horizontal foot; curves use repeatable chamfers and round marks return.',reason:'A river printing standard adopts cut corners from Ridge and explicit return feet from Island. Those are borrowings, not extra parents.',retained:'Rail continuity remains the organizing feature, with each vowel and tone still recoverable.'}
+      change:'Delta’s open returns gain a short horizontal foot; curves use repeatable chamfers and round marks return.',reason:'A river printing standard adopts cut corners from Ridge and explicit return feet from Island. Those are borrowings, not extra parents.',retained:'Rail continuity remains the organizing feature, with each vowel and tone still recoverable.'},
+    {id:'ridge-alpha',name:'Ridge Alphabet',era:'750 onward',parent:'ridge',branch:'Northern alphabetic branch',material:'Independent letters for names, loans and public reading',mode:'alphabet',system:'alphabet',stroke:3.4,detached:true,
+      change:'The long guide rails disappear. Consonants become compact free-standing letters, and every vowel gains an equally full baseline letter.',reason:'Ridge teachers promote the old initial-vowel forms to ordinary vowels and detach the diagnostic joints of consonants from their two-rail scaffolding.',retained:'One full letter records each typed consonant or vowel, including gh, c and g as single sounds; tone and stress remain explicit.'},
+    {id:'harbor',name:'Harbor Blocks',era:'850 onward',parent:'island',influences:['ridge-alpha'],branch:'Maritime syllable-block branch',material:'Compact syllable seals and manuscript monograms',mode:'blocks',system:'blocks',stroke:3.4,detached:true,
+      change:'A compact three-row cell replaces the word ribbon: initial consonants above, vowels inside a short two-rail chamber, final consonants below. Every row reads left to right.',reason:'Island syllable seals are regularized by a teaching reform. It borrows recognizable sound forms from Ridge Alphabet, while keeping the syllable as the unit of writing.',retained:'Up to three initials, two vowels and three finals share one cell. Tone sits beside the cell and primary stress above it. · sets a boundary; oversized groups use a readable bracketed spell-out.'}
   ];
   const get=id=>profiles.find(p=>p.id===id)||profiles.find(p=>p.id==='classical');
   const number=n=>String(Math.round(n*100)/100);
@@ -73,13 +78,16 @@
     return result;
   }
   function render(text,options={}){
-    const p=get(options.hand),base=E.render(text,{...options,joined:p.detached?false:options.joined===undefined?true:options.joined});
+    const p=get(options.hand);
+    if(p.system)return {...D.render(text,options,p.system),hand:p.id};
+    const base=E.render(text,{...options,joined:p.detached?false:options.joined===undefined?true:options.joined});
     let svg=style(base.svg,p.id);
     if(options.idPrefix){const prefix=String(options.idPrefix).replace(/[^a-zA-Z0-9_-]/g,'')||'specimen';svg=svg.replace(/id="(through-\d+)"/g,(_,id)=>`id="${prefix}-${id}"`).replace(/url\(#(through-\d+)\)/g,(_,id)=>`url(#${prefix}-${id})`);}
     return {...base,hand:p.id,svg};
   }
-  const preview=(key,type,hand)=>style(E.preview(key,type),hand);
-  const mini=hand=>render('nat',{hand,width:300,transparent:true}).svg.replace(/viewBox="[^"]*"/,'viewBox="32 35 240 76"');
-  const api={profiles,get,evolvePath,style,render,preview,mini};
+  const preview=(key,type,hand)=>get(hand).system?D.preview(key,type,get(hand).system):style(E.preview(key,type),hand);
+  const mini=hand=>get(hand).system?D.compact(render('nat',{hand,width:300,transparent:true})):render('nat',{hand,width:300,transparent:true}).svg.replace(/viewBox="[^"]*"/,'viewBox="32 35 240 76"');
+  const specimen=hand=>{const r=render('din rento',{hand,width:650,transparent:true,idPrefix:'history-detail'});return get(hand).system?D.compact(r):r.svg.replace(/width="650" height="210" viewBox="[^"]*"/,'width="620" height="105" viewBox="25 25 620 105"');};
+  const api={profiles,get,evolvePath,style,render,preview,mini,specimen};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptEvolution=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

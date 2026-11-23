@@ -11,6 +11,7 @@ for token, name in [('CHART_DATA', 'alphabet.jpg'), ('SAMPLE_DATA', 'sample.jpg'
 html = html.replace('/* STYLES */', (root / 'src/style.css').read_text())
 html = html.replace('/* ENGINE */', (root / 'src/engine.js').read_text())
 html = html.replace('/* PHONETICS */', (root / 'src/phonetics.js').read_text())
+html = html.replace('/* DESCENDANTS */', (root / 'src/descendants.js').read_text())
 html = html.replace('/* EVOLUTION */', (root / 'src/evolution.js').read_text())
 html = html.replace('/* APP */', app)
 (root / 'dist').mkdir(exist_ok=True)

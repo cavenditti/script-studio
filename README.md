@@ -29,9 +29,9 @@ The text starts with a clearly identified illustrative sample. It is not a trans
 
 ## A possible script family
 
-Seven fictional historical hands are available under **Appearance → Historical hand**. Click the current hand’s name beside Preview to explore the branching history. Classical preserves the original rendering; the other hands change joining habits, curves, return hooks, closing bars and round marks. Your text and the approved sound/mark values stay unchanged. Documents and offline copies remember the selected hand.
+Nine fictional historical stages are available under **Appearance → Historical hand**. Click the current hand’s name beside Preview to explore the branching history. Classical preserves the original rendering; the other hands change joining habits, curves, return hooks, closing bars and round marks. Ridge Alphabet gives every consonant and vowel a full letter. Harbor Blocks uses a compact three-row cell: initials above, full vowels between two short rails, finals below. Each row reads left to right; tone sits outside. Up to three initials, two vowels and three finals share a cell; larger groups use a readable bracketed spell-out. Use · to specify a Harbor boundary, as in ka·tra; adjacent vowels otherwise share the middle row. Your sound sequence and approved mark values stay unchanged. Documents and offline copies remember the selected stage.
 
-Read the [script history](docs/script-evolution.md), [family tree](docs/evolution/family-tree.svg), and [comparative atlas](docs/evolution/atlas.svg). This is a provisional fictional genealogy, not a decipherment or a translation system.
+Read the [script history](docs/script-evolution.md), [family tree](docs/evolution/family-tree.svg), [comparative atlas](docs/evolution/atlas.svg), [structural comparison/decomposition](docs/evolution/structural-branches.svg), and [complete Harbor diagnostics](docs/evolution/harbor-diagnostics.svg). This is a provisional fictional genealogy, not a decipherment or a translation system.
 
 ## Fidelity and open questions
 
@@ -47,7 +47,7 @@ The most useful next candidates are /ø/ (the close-mid rounded partner of exist
 
 ```sh
 python3 build.py
-node --test tests/engine.test.cjs tests/phonetics.test.cjs tests/evolution.test.cjs
+node --test tests/engine.test.cjs tests/phonetics.test.cjs tests/evolution.test.cjs tests/descendants.test.cjs
 node scripts/build-evolution.cjs
 python3 -m http.server 8765 --directory dist --bind 127.0.0.1
 ```
@@ -61,4 +61,4 @@ npm install --prefix /tmp/script-studio-qa linkedom
 NODE_PATH=/tmp/script-studio-qa/node_modules node tests/app.test.cjs
 ```
 
-Validation completed: 27 base-rendering tests, 2 phonetic metadata checks, and 6 evolution checks. The latter cover unchanged Classical output, an acyclic descent tree, inherited versus borrowed features, retained text/marks, historical joining rules, and carrier-dot placement. Regression checks cover continuous rails with branching outside legs, missing-rail boundaries, the single-outline Y, shared preview/export geometry, paired vowel previews, confirmed tones and stress, and the schwa alias. DOM integration checks cover tab switching, draft restoration, offline copies, blocked-storage fallback, clearing/undo, mark attachment, SVG export, and input limits. Browser checks cover desktop/mobile layouts, keyboard tab navigation, IPA-labelled insertion, marks, Appearance disclosure, and transparent PNG export. Composition wraps to the preview width so mobile lettering retains its stroke size. Creator acceptance of the reconstructed letter forms remains separate from technical checks.
+Validation completed: 27 base-rendering tests, 2 phonetic metadata checks, 6 evolution checks, and 11 structural-descendant checks. Evolution checks cover unchanged Classical output, an acyclic descent tree, retained text/marks, joining rules and carrier-dot placement. Structural checks cover a complete 31-letter alphabet, compound onsets/codas/nuclei, explicit boundaries, explicit empty nuclei, preserved prosody, stroke-aware gutters, palette framing, readable cluster overflow, wrapping, bounded annotations and escaped unsupported characters. Regression checks cover continuous rails with branching outside legs, missing-rail boundaries, the single-outline Y, shared preview/export geometry, paired vowel previews, confirmed tones and stress, and the schwa alias. DOM integration checks cover tab switching, draft restoration, offline copies, blocked-storage fallback, clearing/undo, mark attachment, SVG export, and input limits. Browser checks cover desktop/mobile layouts, keyboard tab navigation, IPA-labelled insertion, marks, Appearance disclosure, and transparent PNG export. Composition wraps to the preview width so mobile lettering retains its stroke size. Creator acceptance of the reconstructed letter forms remains separate from technical checks.

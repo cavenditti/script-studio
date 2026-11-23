@@ -13,14 +13,18 @@
     current=H.render(source.value,options());
     if(paletteHand!==current.hand){buildPalettes();paletteHand=current.hand;}
     $('open-evolution').textContent=H.get(current.hand).name;
-    $('joined').disabled=H.get(current.hand).detached;
+    const profile=H.get(current.hand);
+    $('joined').disabled=profile.detached;
+    $('initial').disabled=!!profile.system;
+    $('attachment-hint').textContent=profile.system==='alphabet'?'Each sound has a full letter.':profile.system==='blocks'?'One block per syllable. Use · to set a boundary.':'Vowels follow their consonant.';
+    $('vowel-form-legend').textContent=profile.system==='alphabet'?'Full vowel letters':profile.system==='blocks'?'Vowel components · middle row of each block':'Diacritic · word-initial form';
     $('rendered').innerHTML=current.svg;
     $('example-note').hidden=source.value!==demo;
     $('empty-preview').hidden=!!source.value.trim();
     $('paper').classList.toggle('dark-paper',$('ink').value==='#ffffff');
     $('input-count').textContent=`${Array.from(source.value).length} chars`;
     $('size-value').value=$('size').value+'%';
-    const warnings=[];
+    const warnings=[...(current.notes||[])];
     if(current.unknown.length)warnings.push(`No assigned signs for: ${current.unknown.join(', ')}. These stay visible in rust; use the chart’s labels to replace them.`);
     if(current.orphanMarks.length)warnings.push(`Place ${current.orphanMarks.join(', ')} after a consonant or initial vowel to attach the mark.`);
     $('render-warning').hidden=!warnings.length;$('render-warning').textContent=warnings.join(' ');
@@ -43,7 +47,9 @@
     const button=document.createElement('button');button.type='button';button.className='glyph-button'+(type==='vowel'?' vowel-button':'');const value=type==='mark'?`{${key}}`:key;
     const label=type==='mark'?g.name:sound?.ipa||key;
     const preview=(key,type)=>H.preview(key,type,$('hand').value);
-    const forms=type==='vowel'?`<span class="vowel-forms"><span title="Diacritic">${preview(key,'vowel')}</span><span title="Word-initial form">${preview(key,'initial')}</span></span>`:preview(key,type);
+    const independent=!!H.get($('hand').value).system;
+    if(type==='vowel'&&independent)button.classList.add('independent-vowel');
+    const forms=type==='vowel'&&independent?`<span class="vowel-forms">${preview(key,'vowel')}</span>`:type==='vowel'?`<span class="vowel-forms"><span title="Diacritic">${preview(key,'vowel')}</span><span title="Word-initial form">${preview(key,'initial')}</span></span>`:preview(key,type);
     button.innerHTML=forms+`<span class="${type==='mark'?'mark-label':'sound-label'}">${E.xml(label)}</span>`+(type==='mark'?`<span class="mark-ipa">${g.ipa}</span>`:sound?.ipa&&sound.ipa!==key?`<span class="key-hint">${E.xml(key)}</span>`:'');
     button.title=type==='mark'?`${g.name}${g.kind==='tone'?' tone':' stress'} /${g.ipa}/ · ${g.label} · ${value}`:`${key} · ${sound?.ipa?'/'+sound.ipa+'/ · ':''}${sound?.name||g.label}`;
     button.setAttribute('aria-label',`Insert ${type==='mark'?g.name:key}${type==='mark'?' /'+g.ipa+'/':sound?.ipa?' /'+sound.ipa+'/':''}`);button.addEventListener('click',()=>insert(value));return button;
@@ -94,7 +100,7 @@
   const reference=()=>$('references').showModal();$('open-reference').addEventListener('click',reference);$('close-reference').addEventListener('click',()=>$('references').close());$('references').addEventListener('click',e=>{if(e.target===$('references')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   function showStage(id){
     const p=H.get(id);$('history-stage').value=p.id;
-    const sample=H.render('din rento',{hand:p.id,width:650,transparent:true,idPrefix:'history-detail'}).svg.replace(/width="650" height="210" viewBox="[^"]*"/,'width="620" height="105" viewBox="25 25 620 105"');
+    const sample=H.specimen(p.id);
     $('history-detail').innerHTML=`<h3>${E.xml(p.name)}</h3><p class="history-branch">${E.xml(p.branch)} · ${E.xml(p.era)}</p><div class="history-specimen">${sample}</div><p class="history-material">${E.xml(p.material)}</p><button class="button primary" id="use-hand">Use this hand</button><dl><dt>What changes</dt><dd>${E.xml(p.change)}</dd><dt>Why it changes</dt><dd>${E.xml(p.reason)}</dd><dt>What survives</dt><dd>${E.xml(p.retained)}</dd></dl>`;
     for(const b of $('history-tree').querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.hand===p.id));
     $('use-hand').addEventListener('click',()=>{$('hand').value=p.id;render();$('evolution').close();});

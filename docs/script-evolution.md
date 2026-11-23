@@ -6,7 +6,7 @@ This is a **provisional fictional history** built around Carlo's original writin
 
 The setting is a connected basin with an upland watershed, a river delta and an archipelago. A shared writing school establishes a classical standard. After its network fragments, regional schools develop different habits. A later river printing standard borrows from the other two traditions. No stage is inherently better or more intelligent than another.
 
-## Seven stages, three descendant branches
+## Nine stages, different units of writing
 
 Years are relative to the classical school's foundation, year 0. Ranges describe a hand's characteristic period, not a sudden replacement of all earlier writing.
 
@@ -19,16 +19,18 @@ Years are relative to the classical school's foundation, year 0. Ranges describe
 | delta | Delta Cursive | 300 to 900 | Classical | Quick contracts: continuous rails, open oblique returns, oval pen marks |
 | island | Island Bookhand | 300 to 1000 | Classical | Bound manuscripts: broad return bowls, inward feet, rounded closing bars |
 | civic | Civic Print | 900 onward | Delta | Reusable type: open returns with explicit feet and repeatable chamfers; graphic borrowing from Ridge and Island |
+| ridge-alpha | Ridge Alphabet | 750 onward | Ridge | Full independent consonant **and vowel letters**, with the guide rails removed |
+| harbor | Harbor Blocks | 850 onward | Island | Compact three-row syllable cells: onset, vowel chamber and coda |
 
 Solid edges in the tree are descent. Dashed edges are graphic borrowing. Civic has one Delta parent; borrowing a letter shape does not make it the genealogical child of three spoken languages.
 
 ## A comparative plate
 
-![Seven hands drawn from identical modern keys](evolution/atlas.svg)
+![Nine stages drawn from identical modern keys](evolution/atlas.svg)
 
-Every row draws **the same modern keys**: `din rento ghma`, then `n p s r w`. These are neutral comparison strings, not translations or reconstructed historical words. Using a shared key set makes the shapes comparable; it does not claim that every modern sound or allograph existed at the earliest stage.
+Every row draws **the same modern keys**: `din rento ghma`, then `n p s r w`. In Harbor, the second row has explicitly marked vowelless clusters; the crossed empty-nucleus square does not supply a schwa. These are neutral comparison strings, not translations or reconstructed historical words. Using a shared key set makes the shapes comparable; it does not claim that every modern sound or allograph existed at the earliest stage.
 
-The editor's Classical rendering is unchanged. The historical profiles are drawing conventions over the current transcription system. They preserve the text, vowel attachment, initial vowels, outside legs, switch direction and the eight approved tone/stress meanings. Historical spelling and phonological conversion are separate tasks. A conservative manuscript could use an old sign after a sound merger; this feature does not merge keys or discard a user's marks.
+The editor's Classical rendering is unchanged. The first seven profiles develop its drawing conventions. The two new structural descendants instead change the unit of writing: a full phoneme letter or a compound syllable sign. All retain the input sound sequence and the eight approved tone/stress meanings. Historical spelling and phonological conversion remain separate tasks; selecting a script does not translate or merge the user's sounds.
 
 ## How the forms develop
 
@@ -68,15 +70,54 @@ Civic retains Delta's open returns. It adds short horizontal feet, inspired by I
 
 The dashed contact edges are essential. Similar shapes can be inherited, borrowed, independently reinvented, or deliberately restored. A later public standard is not necessarily an unbroken survival of the classical spoken language.
 
+## Structural divergence: alphabet and syllable seals
+
+![Same sounds in three different writing systems, with a block decomposition](evolution/structural-branches.svg)
+
+### Ridge → Ridge Alphabet: vowels become ordinary letters
+
+Ridge primers shorten each consonant to its diagnostic joint, removing the long guide rails. The seven inherited special initial-vowel forms become ordinary baseline letters; the four vowels that lacked a dedicated initial form are enlarged and stabilized from their former marks. Every written consonant and vowel now occupies an independent letter position. Vowels are never implicit or merely attached above a consonant.
+
+This is a **pure segmental alphabet** in the normalized key system. `plant` is five letters: p + l + a + n + t. `gh`, `c`, and `g` each produce a single consonant letter for /ɡ/, /tʃ/, and /dʒ/ respectively, because the input labels denote sounds rather than English spelling. Tone and stress remain prosodic marks, which does not make the vowel letters dependent on consonants. The alphabet compares all 31 current consonant/vowel values; a particular fictional spoken variety need not use all of them natively.
+
+Promoting initial-vowel allographs provides a historical bridge to full vowels rather than introducing eleven arbitrary modern letters at once. Detaching each consonant's joint accounts for recognizable family resemblances after the word ribbon disappears.
+
+### Island → Harbor Blocks: the syllable becomes one compound sign
+
+Frequent Island ligatures initially bind a vowel and its neighboring consonants into small seals. A later teaching reform regularizes them into a **compact three-row cell**. It borrows recognizable sound forms from Ridge Alphabet without adopting alphabetic writing. This is graphic contact, not a new spoken-language parent.
+
+- **Top row:** onset consonants, left to right.
+- **Middle chamber:** full vowel components, left to right, between two short inherited rails.
+- **Bottom row:** coda consonants, left to right, in the same orientation as onsets.
+- **Outside the cell:** tone and secondary-stress signs at the right; primary stress above.
+
+The body is a fixed 84 × 88 units. Up to **three onset consonants, two vowels and three coda consonants** fit without reducing component size. `plant` contains five sounds in one cell; `strant` has three initials and two finals; `ghrai` has two initials and two vowels. Single and paired components are centered within their row. Empty onset and coda positions remain blank. Letter strokes do not intersect the chamber rails, and paired vowels have a clear gutter rather than overlapping arms.
+
+This replaces an earlier, rejected spine-and-shoulder prototype whose small gates and mirrored roots were difficult to distinguish. The current signs keep full sound shapes and one reading order. Components in the palette show those shapes in a tight frame, not a miniature complete block surrounded by empty space.
+
+The inspiration from Korean concerns **composing consonant/vowel components into a syllable block**. Unicode describes Hangul's leading-consonant, vowel and trailing-consonant classes in its [Korean FAQ](https://www.unicode.org/faq/korean.html). Harbor uses its own letters, a two-rail vowel chamber, three fixed horizontal registers, and separate prosody. It does not use Korean jamo or Korean syllabification rules.
+
+See the [complete Harbor diagnostic plate](evolution/harbor-diagnostics.svg) for all consonants in both positions, all eleven vowels, compound vowels in opposite orders, empty positions, clusters and combined tone/stress.
+
+### Boundaries are explicit when needed
+
+The editor uses a declared **graphic default**, not a universal pronunciation rule: consecutive vowels share a nucleus; the last consonant between nuclei begins the next group. Thus `rento` becomes `ren·to`, and `katra` becomes `kat·ra`.
+
+Use a middle dot to override it: `ka·tra` gives the second sign an initial `tr` cluster. `kai` shares one compound core, while `ka·i` creates two symbols. In the alphabet these boundaries do not alter the letter sequence. The middle dot is a structural input control for the new descendants; in older hands it remains visible as an unassigned character, so the source is never silently rewritten.
+
+A string without a written vowel has a **crossed square in the empty vowel chamber**, visibly different from schwa. It preserves the consonants as an unresolved/vowelless cluster and produces a placement note. That is not an assertion that the cluster is a spoken syllable. Graphic capacity for a cluster does not establish that a fictional language permits it.
+
+The new systems have their own glyph layout rather than transforming the old SVG. Long words wrap between letters or syllable cells. A group exceeding three onsets, two vowels or three codas uses a **bracketed alphabetic spell-out** at a constant readable size, wrapping between letters; it does not invent another syllable or shrink a huge cluster to a dot. More than eight prosodic annotations continue in separate bounded annotation tiles. The source grouping and every mark remain intact. Initial-vowel and joining controls are unavailable where the writing system determines those choices. All source sounds, unknown characters, stress and tone marks are retained.
+
 ## What is implemented
 
-- Seven selectable historical hands in **Appearance → Historical hand**.
+- Nine selectable historical stages in **Appearance → Historical hand**.
 - A script-history explorer opened by the current hand's name next to Preview.
-- Hand-aware consonant, vowel and mark previews, SVG/PNG export, document saving and offline copies.
+- Stage-aware consonant, vowel and mark previews, SVG/PNG export, document saving and offline copies.
 - A reproducible atlas and family tree, generated from the same profile data as the editor.
 - Exact preservation of the Classical SVG when no historical profile is requested.
 
-The model changes joining practice, curve geometry, terminal-return allographs, closing bars and the shapes of round marks. It does not merely skew or color the original SVG. The core engine and original image files are unchanged. In the detached historical traditions, joining is intrinsic to the hand, so the Join letters control is unavailable.
+The older profiles change joining practice, curve geometry, terminal-return allographs, closing bars and round marks. The alphabet and syllable branch add new layouts and explicit sound-component inventories. The core Classical engine and original images remain unchanged. In traditions with intrinsic grouping, the Join letters control is unavailable; initial-vowel choices also become unavailable in the two structural descendants.
 
 The date ranges and fully normalized repertoire are useful editorial scaffolding. They are not an archaeological corpus, an argument that every change is inevitable, or a complete font with context-specific handwriting variants. In particular, material alone does not determine script shape.
 
@@ -100,7 +141,7 @@ For a compact account of comparative reconstruction, the [UCSB historical-recons
 ```sh
 node scripts/build-evolution.cjs
 python3 build.py
-node --test tests/engine.test.cjs tests/phonetics.test.cjs tests/evolution.test.cjs
+node --test tests/engine.test.cjs tests/phonetics.test.cjs tests/evolution.test.cjs tests/descendants.test.cjs
 ```
 
-`src/evolution.js` contains the public profiles and drawing rules. `scripts/build-evolution.cjs` reads only the public engine and profiles. The standalone HTML embeds them; it does not fetch external assets or read local language drafts.
+`src/evolution.js` contains the public genealogy and the older drawing rules. `src/descendants.js` defines the full alphabet, shared Harbor sound components, bounded three-row cells, syllable grouping and new layouts. `scripts/build-evolution.cjs` reads only the public engine and profiles. The standalone HTML embeds them; it does not fetch external assets or read local language drafts.

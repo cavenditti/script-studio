@@ -19,7 +19,7 @@
       <div class="composer">
         <div class="section-header"><label for="source">Write</label><span id="input-count">0 chars</span></div>
         <textarea id="source" maxlength="100000" aria-describedby="typing-hint" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Type or choose a sound…"></textarea>
-        <p class="typing-hint" id="typing-hint"><span id="example-note">Example. </span>Vowels follow their consonant.</p>
+        <p class="typing-hint" id="typing-hint"><span id="example-note">Example. </span><span id="attachment-hint">Vowels follow their consonant.</span></p>
         <div class="source-actions"><button id="save-document" class="text-button" aria-label="Save document">Save</button><button id="open-document" class="text-button" aria-label="Open document">Open</button><input type="file" id="document-file" accept=".json,application/json" hidden><button id="clear" class="text-button quiet">Clear</button></div>
         <div class="alphabet">
           <div class="palette-tabs" role="tablist" aria-label="Alphabet">
@@ -28,7 +28,7 @@
             <button role="tab" id="tab-marks" aria-controls="panel-marks" aria-selected="false" tabindex="-1">Marks</button>
           </div>
           <div role="tabpanel" id="panel-consonants" aria-labelledby="tab-consonants"><div id="consonant-palette" role="group" aria-label="Insert consonants"></div></div>
-          <div role="tabpanel" id="panel-vowels" aria-labelledby="tab-vowels" hidden><p class="form-legend">Diacritic · word-initial form</p><div id="vowel-palette" role="group" aria-label="Insert vowels"></div></div>
+          <div role="tabpanel" id="panel-vowels" aria-labelledby="tab-vowels" hidden><p class="form-legend" id="vowel-form-legend">Diacritic · word-initial form</p><div id="vowel-palette" role="group" aria-label="Insert vowels"></div></div>
           <div role="tabpanel" id="panel-marks" aria-labelledby="tab-marks" hidden><div id="mark-palette" class="palette mark-palette" role="group" aria-label="Insert accents and tones"></div></div>
           <details class="typing-details"><summary>IPA &amp; typing</summary><div id="phonetic-legend"></div><p>Smaller labels are typing keys. Use <b>sh</b> for /ʃ/, <b>zh</b> for /ʒ/, and an apostrophe for primary stress /ˈ/.</p><p>Marks <b>{1}</b>–<b>{8}</b> follow the syllable. For example, <b>ka'{3}</b> has primary stress and falling tone.</p><a href="https://www.internationalphoneticassociation.org/IPAcharts/IPA_charts_TI/IPA_charts_TI.html" target="_blank" rel="noopener noreferrer">IPA reference</a></details>
         </div>
@@ -39,7 +39,7 @@
         <div class="paper-shell"><div class="paper" id="paper"><div id="rendered" aria-live="off"></div><div class="empty-preview" id="empty-preview"><svg viewBox="-5 -5 110 46" aria-hidden="true"><path d="M0 32Q0 8 12 8H54Q64 8 64 16M16 24H100" fill="none" stroke="currentColor" stroke-width="8"/></svg><p>Start typing.</p></div></div></div>
         <p class="render-warning" id="render-warning" role="status" hidden></p>
         <details class="appearance"><summary>Appearance</summary><div class="settings" aria-label="Composition settings">
-          <div class="select-control hand-control"><label for="hand">Historical hand</label><select id="hand"><option value="classical">Classical · original</option><option value="stone">Stone Register</option><option value="reed">Early Ink</option><option value="ridge">Ridge Cut</option><option value="delta">Delta Cursive</option><option value="island">Island Bookhand</option><option value="civic">Civic Print</option></select></div>
+          <div class="select-control hand-control"><label for="hand">Historical hand</label><select id="hand"><option value="classical">Classical · original</option><option value="stone">Stone Register</option><option value="reed">Early Ink</option><option value="ridge">Ridge Cut</option><option value="delta">Delta Cursive</option><option value="island">Island Bookhand</option><option value="civic">Civic Print</option><option value="ridge-alpha">Ridge Alphabet</option><option value="harbor">Harbor Blocks</option></select></div>
           <div class="range-control"><label for="size">Letter size <output id="size-value">100%</output></label><input id="size" type="range" min="60" max="180" step="5" value="100"></div>
           <div class="select-control"><label for="initial">Initial vowels</label><select id="initial"><option value="special">Special forms</option><option value="inline">Inline signs</option></select></div>
           <div class="select-control"><label for="ink">Ink</label><select id="ink"><option value="#161c20">Charcoal</option><option value="#000000">Black</option><option value="#254f68">Deep blue</option><option value="#ffffff">White</option></select></div>
@@ -50,11 +50,12 @@
   </main>
 
   <dialog id="references" aria-labelledby="reference-title"><div class="dialog-header"><h2 id="reference-title">Original drawings</h2><button id="close-reference" class="text-button">Close</button></div><div class="reference-content"><figure><img id="reference-chart" src="../references/alphabet.jpg" alt="Original writing-system chart supplied by Carlo, showing consonants, vowel marks, initial vowel variants, and optional accent and tone forms."><figcaption>Alphabet and optional marks.</figcaption></figure><figure><img id="reference-sample" src="../references/sample.jpg" alt="Carlo’s original connected-script specimen."><figcaption>Original specimen.</figcaption></figure></div></dialog>
-  <dialog id="evolution" aria-labelledby="evolution-title"><div class="dialog-header"><h2 id="evolution-title">A possible script family</h2><button id="close-evolution" class="text-button">Close</button></div><div class="history-content"><p class="history-intro">A fictional history around your original script. Dates and branches are provisional; Classical preserves the current forms.</p><div class="select-control history-select"><label for="history-stage">Explore a stage</label><select id="history-stage"></select></div><div class="history-layout"><nav id="history-tree" aria-label="Proposed script descent"></nav><article id="history-detail" aria-live="polite"></article></div><p class="history-note">Solid descent: Stone → Early Ink → Classical → Ridge / Delta / Island; Delta → Civic. Civic also borrows features from Ridge and Island. Samples compare the same modern typing keys, without translating or changing their sounds.</p></div></dialog>
+  <dialog id="evolution" aria-labelledby="evolution-title"><div class="dialog-header"><h2 id="evolution-title">A possible script family</h2><button id="close-evolution" class="text-button">Close</button></div><div class="history-content"><p class="history-intro">A fictional history around your original script. Dates and branches are provisional; Classical preserves the current forms.</p><div class="select-control history-select"><label for="history-stage">Explore a stage</label><select id="history-stage"></select></div><div class="history-layout"><nav id="history-tree" aria-label="Proposed script descent"></nav><article id="history-detail" aria-live="polite"></article></div><p class="history-note">Solid descent: Stone → Early Ink → Classical → Ridge / Delta / Island; Delta → Civic. Civic also borrows features from Ridge and Island. Ridge → Alphabet; Island → Harbor Blocks. Samples compare the same modern typing keys, without translating or changing their sounds.</p></div></dialog>
   <div id="toast" class="toast" role="status" hidden></div>
   <script id="document-data" type="application/json">null</script>
   <script>/* ENGINE */</script>
   <script>/* PHONETICS */</script>
+  <script>/* DESCENDANTS */</script>
   <script>/* EVOLUTION */</script>
   <script>/* APP */</script>
 </body>

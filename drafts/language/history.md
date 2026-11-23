@@ -4,24 +4,23 @@
 
 ```mermaid
 flowchart TD
-  P[Proto-Talar / Stone Register<br/>−700 to −350] --> E[Early Talar / Early Ink<br/>−350 to 0]
-  P --> U[Upland Talar / Upland Capitals<br/>−350 onward]
+  P[Proto-Talar / Stone Register<br/>−700 to −550] -. same language, new script .-> RC[Ridge Cut labels<br/>−550 to −350]
+  P --> OU[Old Upland Talar / Ridge Alphabet<br/>−550 to −350]
+  OU --> U[Upland Talar / Upland Capitals<br/>−350 onward]
+  P --> E[Early Talar / Early Ink<br/>−350 to 0]
+  RC -. script inherited .-> E
   E --> C[Classical Talar / original script<br/>0 to 300]
-  C --> N[Ridge Talar / Ridge Cut<br/>300 to 900]
   C --> D[Delta Talar / Delta Cursive<br/>300 to 900]
   C --> I[Island Talar / Island Bookhand<br/>300 to 1000]
-  D --> K[Civic Talar / Civic Print<br/>900 onward]
-  N --> A[Market Ridge / Ridge Alphabet<br/>750 onward]
   I --> H[Harbor Talar / Harbor Blocks<br/>850 to 1300]
   H --> LH[Late Harbor Talar / Harbor Roundels<br/>1300 onward]
   E -. seal script .-> S[Reed Seals<br/>0 to 850]
   S -. script inherited .-> H
-  N -. learned forms and graphic influence .-> K
-  I -. manuscripts and graphic influence .-> K
-  A -. component forms only .-> H
+  OU -. component forms only .-> H
+  H -. vowel shapes .-> I
 ```
 
-Solid edges are the proposed inheritance tree. Dashed edges are contact, textual transmission or standardization. Civic is a later Delta variety; it is not the genetic child of three languages. A script can be borrowed without the borrower changing language, and the same spoken variety can use a formal hand and a quick hand. The paired labels above are historical associations, not a claim of one-to-one correspondence.
+Solid edges are the proposed inheritance tree. Dashed edges are contact, textual transmission or standardization. Ridge Cut and the Reed Seals are script stages, not languages. A script can be borrowed without the borrower changing language, and the same spoken variety can use a formal hand and a quick hand. The paired labels above are historical associations, not a claim of one-to-one correspondence.
 
 ## The provisional setting
 
@@ -59,19 +58,11 @@ The three fronted vowels are surface distinctions in this small dataset. A large
 
 The school fixes named participant places and explicit logical scopes in contracts, and introduces word spacing so that each scope word can be audited. The script's flowing rail joins become standard. The existing high/low/contour notation can encode reading pitch, contrast and reported intention, while the external bar marks stress. It does not replace the scope words in a legal formula.
 
-## The three daughter branches
+## The Classical daughters
 
-### ridge: Ridge Talar, 300–900
+### ridge: Ridge Cut, −550 to −350 (a script stage of Proto-Talar)
 
-**Shared innovations:** `/y/ → /i/`, `/œ/ → /ɛ/`, `/tʃ dʒ/ → /ts dz/`, and `/w/ → /v/`. Preserve /æ/, final vowels and final consonants in this sample model. Initial stress stabilizes; tone remains intonational or associated with quotation/ritual, rather than a general lexical contrast.
-
-`tyni → tini`, `lœni → lèni`, `ca → tsa`, `ga → dza`, `waro → varo`. The /ts dz/ forms are proposals in this private language draft. The current editor draws `t+s` or `d+z`; it has no dedicated new affricate glyph.
-
-**Grammar:** the place words move from before their argument to after it in ordinary speech, then attach as `-ta/-ti/-tu`. The fixed relation places remain recoverable. Predicate introducer `pa` becomes optional before a recognized content root. Scope operators remain separate and precede complete formulas in the careful register.
-
-Analytical example: `tini na sara-ta na lena-ti` = Sara perceives Lena. The hyphens display morphology; they are not a new script sign. In legal copying, the older `pa … ta … ti …` spelling remains available. Suffixation is a grammatical innovation, not an output of the lexical sound-law function.
-
-**Writing:** Ridge Cut resegments the inherited ribbon for cutting narrow labels. Its resemblance to Stone is a **reversal in writing practice**, not evidence that Ridge split before Classical. Its inherited front-vowel correspondences and affricate reflexes still place its language under Classical.
+Ridge Cut is not a separate language. Lowland label cutters write Proto-Talar by hanging each Stone sign on two ruled rails and reducing raised vowels to marks. Early Ink inherits this structure, so every Classical-related script descends from it. The model's `ridge` reflex is the Proto form.
 
 ### delta: Delta Talar, 300–900
 
@@ -104,32 +95,21 @@ Normalized careful example: `pa tuni ta na sara ti na lena we` = Sara perceives 
 
 **Writing:** Island Bookhand broadens return bowls and adds inward feet. Manuscript witnesses often retain conservative spellings after local sounds merge. The renderer compares graphic styles under a shared modern key system; it does not silently merge c/ş or g/ž in a user's document.
 
-## civic: Civic Talar, 900 onward
-
-Civic descends from Delta. The current seed lexicon inherits the Delta reflexes without another arbitrary blanket sound shift. Its important innovation is register and standardization: printers and schools reintroduce full scope and place markers into an audited civic variety while ordinary speech remains largely Delta-like.
-
-An audited Civic clause can use the Classical construction with modern `tin` and `len`. A school spelling may retain `tyni/lœni` in a quotation. These are different orthographic choices, not evidence that Civic has recovered the lost phonetic contrasts. Learned loans from Ridge and Island should be tagged as loans when the lexicon grows; they must not be made to obey native inheritance rules retroactively.
-
-Printers also restore word spaces, partly to make quantifier scope auditable again. Civic Print takes its open returns from Delta, chamfers from Ridge cutting, and explicit feet from Island manuscripts. Its graphic ancestry has contact edges. Its spoken genealogy still has one Delta parent.
-
 ## How a philologist could get this wrong
 
-1. Group Ridge with Stone because both are angular: that confuses writing technology with language descent.
+1. Group Ridge Cut with the Ridge Alphabet because they share a name and an angular look. Ridge Cut leads to Early Ink; the Ridge Alphabet leads to Upland Capitals.
 2. Call Island `loni` an unchanged proto form: that ignores the Classical intermediate.
-3. Group Ridge and Delta because both have /i/ for Classical /y/: the model proposes independent unrounding, so more correspondences are needed.
-4. Treat Civic archaisms as living speech: conservative spelling can mask sound change.
+3. Derive Harbor Talar from the Reed Seals. The seals give Harbor its script, not its language.
+4. Take Island Bookhand's Harbor-shaped vowels as evidence of Harbor ancestry. They are a late borrowing.
 5. Treat a formal logic register as the entire language: it suppresses the very conversational constructions that drive later change.
 
 The seeds are proposed innovations, not enough independent evidence to reconstruct a real family. The workbook follows the discipline of deriving the stated cognates from ordered rules. For real-method background see the [UCSB comparative-method worksheet](https://hlw.id.ucsb.edu/sites/default/files/2024-04/Ch12_GuideHistoricalReconstruct.pdf) and [Rankin on the comparative method](https://onlinelibrary.wiley.com/doi/10.1002/9781405166201.ch1). The fictional dates, sound laws and institutions are our design choices.
 
-## Upland Talar and the Upland Capitals, id capitals, −350 onward
+## Old Upland and Upland Talar: Ridge Alphabet and Upland Capitals
 
-Upland Talar splits from Proto-Talar before the Early stage, so it never shows the Classical fronting. Two ordered changes apply:
+Old Upland Talar (id `ridge-alpha`, −550 to −350) splits from Proto-Talar before the Early stage, so it never shows the Classical fronting. One change applies: `/w/ → /v/` everywhere (`*waro → varo`). Its grammar drops `pa` and the place words. The predicate comes first and position alone fixes each place: `tuni na sara na lena` “Sara perceives Lena”. Logical operators survive as invariant free words, and `typology.cjs` parses this register into the Classical logic.
 
-1. `/w/ → /v/` everywhere: `*waro → varo`.
-2. A final unstressed `/i u/` after a consonant reduces to schwa, written `h`: `*tuni → tunh`, `*loni → lonh`, `*zanu → zanh`.
-
-Grammar: place words follow their argument as postpositions and the predicate closes the clause: `na sara ta na lena ti tunh` “Sara perceives Lena”. The script descends directly from the Stone Register: one unbroken stroke per sound, in capital-letter proportions.
+Upland Talar (id `capitals`, −350 onward) adds a second change: a final unstressed `/i u/` after a consonant reduces to schwa, written `h` (`*tuni → tunh`, `*zanu → zanh`). It keeps the positional clause: `tunh na sara na lena`. The Ridge Alphabet gives every sound a full letter; the Upland Capitals reduce each letter to one unbroken stroke.
 
 ## The Reed Seals, id seal, 0 to 850
 
@@ -139,6 +119,6 @@ The seals are a script branch, not a language. Coastal carvers working from Earl
 
 Late Harbor applies one further change to Harbor forms: in a polysyllable, any final vowel after a single consonant is lost (`mata → mat`, `lena → len`, `walo → wal`). Most native words become one syllable. The fused Harbor endings wear away and are replaced by free particles, so the language becomes isolating again: `sara lena tun #we` “Sara perceives Lena (I saw it)”. Homophones such as tun “person” / tun “perceive” are separated in writing by ideograms. The circular script descends from Harbor Blocks.
 
-## Two later offshoots with different writing units
+## Harbor Talar
 
-The additional branches are Market Ridge under Ridge (id `ridge-alpha`) and Harbor under Island (id `harbor`). Their sound changes and writing developments are described in [structural-branches.md](structural-branches.md). A new script need not coincide with an instantaneous new language: these are proposed later varieties within the earlier branch continua.
+Harbor Talar (id `harbor`) descends from Island Talar but writes with a script inherited from the Reed Seals. Its sound changes and writing are described in [structural-branches.md](structural-branches.md).

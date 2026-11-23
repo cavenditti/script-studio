@@ -9,12 +9,12 @@
   const meanings=['person','record','perceive','stone','water','sleep'];
   const intro='Each hand belongs to a spoken variety of Talar, a provisional language invented for this script. Languages descend by regular sound change; scripts are copied, borrowed and reformed. The two histories are related but separate. Examples are written in each variety’s own spelling and word division, so the same sentence can look radically different.';
   const pitfalls=[
-    'Do not group Ridge with Stone because both are angular. That is writing technology, not descent.',
     'Harbor Talar is an Island language written in a script from the Reed Seals. Script descent and language descent part ways.',
-    'Upland Capitals look like a later alphabet but branch directly from the Stone Register. Upland Talar never had the Classical fronted vowels.',
+    'Upland Capitals look like a late alphabet, but they descend from the Ridge Alphabet and the Stone Register. Upland Talar never had the Classical fronted vowels.',
+    'Island Bookhand’s vowel shapes come from Harbor Blocks. That is late graphic borrowing; the Island ribbon still descends from Classical.',
     'Island loni “record” is not an unchanged proto form: it passed through Classical lœni and changed back.',
-    'Delta and Market Ridge both say tin “perceive” after independent vowel loss. One shared word does not make a subgroup.',
-    'Civic spelling can keep archaic forms, so conservative writing can mask sound change.',
+    'Ridge Cut looks angular like the Stone Register, but it is the ancestor of the ink tradition. The Ridge Alphabet, also from Stone, belongs to the upland line instead.',
+    'Seal and Classical spellings can keep archaic forms, so conservative writing can mask sound change.',
     'A formal logical register is not the whole language. Everyday speech drives the changes.'
   ];
   const stages={
@@ -27,14 +27,33 @@
         {text:'pa tuni ta na sara ti na lena',gloss:'Sara perceives Lena.',parts:'pa PREDICATE · tuni perceive · ta place-1 · na NAME sara · ti place-2 · na NAME lena'},
         {text:'pa zanu ta na lena',gloss:'Lena sleeps.',parts:'pa · zanu sleep · ta place-1 · na lena'}
       ]},
+    ridge:{
+      language:'Proto-Talar on ridge labels',morphology:'Isolating',division:'Spaced; vowels now marks over their consonant',
+      sound:['No sound change: this is a script stage of Proto-Talar, not a new language'],
+      grammar:'The same prefix grammar as the Stone Register. Label cutters hang each sign on two ruled rails and reduce raised vowels to marks, the structure that Early Ink and every Classical-related script inherit.',
+      cognates:['tun','loni','tuni','tas','ner','zanu'],
+      examples:[
+        {text:'pa tuni ta na sara ti na lena',gloss:'Sara perceives Lena.',parts:'pa · tuni perceive · ta place-1 · na sara · ti place-2 · na lena'},
+        {text:'pa zanu ta na lena',gloss:'Lena sleeps.',parts:'pa · zanu sleep · ta · na lena'}
+      ]},
+    'ridge-alpha':{
+      language:'Old Upland Talar',morphology:'Isolating, positional',division:'Spaced, one full letter per sound',
+      sound:['Splits from Proto-Talar before Early Talar, so it never shows the Classical vowel fronting','w → v everywhere: waro → varo “river”'],
+      grammar:'The upland variety drops pa and the place words. The predicate comes first and its arguments follow in place order, so position alone fixes the place. The logical operators survive as invariant free words.',
+      cognates:['tun','loni','tuni','tas','ner','zanu'],
+      examples:[
+        {text:'tuni na sara na lena',gloss:'Sara perceives Lena.',parts:'tuni perceive · na sara (place 1) · na lena (place 2)'},
+        {text:'zanu na lena',gloss:'Lena sleeps.',parts:'zanu sleep · na lena'},
+        {text:'ru mi ki tun mi su ni ke loni ni tuni mi ni',gloss:'Every person perceives some record.',parts:'the prefix formula with positional places'}
+      ]},
     capitals:{
-      language:'Upland Talar',morphology:'Isolating, predicate-final',division:'Spaced, one single-stroke letter per sound',
-      sound:['Splits from Proto-Talar before Early Talar, so it never shows the Classical vowel fronting','w → v everywhere: waro → varo “river”','a final unstressed i u after a consonant reduces to schwa (h): tuni → tunh, zanu → zanh'],
-      grammar:'Place words follow their argument as postpositions, and the predicate closes the clause. pa is lost.',
+      language:'Upland Talar',morphology:'Isolating, positional',division:'Spaced, one single-stroke letter per sound',
+      sound:['Inherits Old Upland w → v','a final unstressed i u after a consonant reduces to schwa (h): tuni → tunh, zanu → zanh'],
+      grammar:'Keeps the positional clause of Old Upland: predicate first, arguments in place order, operators as free words.',
       cognates:['tun','lonh','tunh','tas','ner','zanh'],
       examples:[
-        {text:'na sara ta na lena ti tunh',gloss:'Sara perceives Lena.',parts:'na sara ta Sara place-1 · na lena ti Lena place-2 · tunh perceive'},
-        {text:'na lena ta zanh',gloss:'Lena sleeps.',parts:'na lena ta · zanh sleep'}
+        {text:'tunh na sara na lena',gloss:'Sara perceives Lena.',parts:'tunh perceive · na sara · na lena'},
+        {text:'zanh na lena',gloss:'Lena sleeps.',parts:'zanh sleep · na lena'}
       ]},
     reed:{
       language:'Early Talar',morphology:'Isolating',division:'Continuous: a whole formula is one ink line',
@@ -64,19 +83,10 @@
         {text:'ru mi ki pa tun ta mi su ni ke pa lœni ta ni pa tyni ta mi ti ni',gloss:'Every person perceives some record (possibly a different one each).',parts:'∀x (person(x) → ∃y (record(y) ∧ perceive(x, y)))'},
         {text:'su ni ke pa lœni ta ni pa dar ta na sara ti na lena tu ni',gloss:'Sara gives Lena a record.',parts:'∃y (record(y) ∧ transfer(Sara, Lena, y))'}
       ]},
-    ridge:{
-      language:'Ridge Talar',morphology:'Agglutinative, dependent-marking',division:'Spaced',
-      sound:['y → i, œ → è: tyni → tini, lœni → lèni','c g → ts dz: ca → tsa “hot”','w → v: waro → varo “river”'],
-      grammar:'Place words become suffixes on each argument and na becomes a name prefix. The predicate comes first and pa is dropped.',
-      cognates:['tun','lèni','tini','tas','nèr','zanu'],
-      examples:[
-        {text:'tini nasarata nalenati',gloss:'Sara perceives Lena.',parts:'tini perceive · na-sara-ta NAME-Sara-place1 · na-lena-ti NAME-Lena-place2'},
-        {text:'zanu nalenata',gloss:'Lena sleeps.',parts:'zanu sleep · na-lena-ta'}
-      ]},
     delta:{
       language:'Delta Talar',morphology:'Isolating',division:'Continuous: each clause is one cursive ribbon',
       sound:['y œ æ → i e e','t d → r between vowels: mata → mara “parent”','final i u lost after m n l r: tini → tin, zanu → zan','final s → falling tone: tas → ta{3} “stone”'],
-      grammar:'Speech stays isolating: subject, predicate, object, with arguments omitted when context supplies them. Only the writing joins the words. Readers recover them from a small set of function words; the one clash in the seed lexicon is vuna “bind” versus vu na.',
+      grammar:'Speech stays isolating: subject, predicate, object, with arguments omitted when context supplies them. Only the writing joins the words, in a slanted cursive that never lifts the pen inside a clause. Readers recover them from a small set of function words; the one clash in the seed lexicon is vuna “bind” versus vu na.',
       cognates:['tun','len','tin','ta{3}','nèr','zan'],
       examples:[
         {text:'saratinlena',gloss:'Sara perceives Lena.',parts:'sara · tin perceive · lena, spoken as three free words'},
@@ -93,25 +103,6 @@
         {text:'rutunta lontuni',gloss:'Every person perceives some record.',parts:'ru-tun-ta every-person-place1 · lon-tuni record-perceive'},
         {text:'sulonti rutunta tuni',gloss:'There is one record that every person perceives.',parts:'su-lon-ti some-record-place2 first: wide scope'},
         {text:'nasarata nalenati londar',gloss:'Sara gives Lena a record.',parts:'lon-dar record-give: the record is incorporated'}
-      ]},
-    civic:{
-      language:'Civic Talar',morphology:'Isolating, audited register',division:'Spaced by printers',
-      sound:['Inherits Delta reflexes without a further blanket change'],
-      grammar:'Courts and printers restore the explicit Classical prefix construction, with modern roots, so that quantifier scope can be audited again. Everyday speech stays Delta-like.',
-      cognates:['tun','len','tin','ta{3}','nèr','zan'],
-      examples:[
-        {text:'pa tin ta na sara ti na lena',gloss:'Sara perceives Lena.',parts:'Classical construction with Delta tin'},
-        {text:'pa zan ta na lena',gloss:'Lena sleeps.',parts:'pa · zan · ta · na lena'}
-      ]},
-    'ridge-alpha':{
-      language:'Market Ridge',morphology:'Isolating, positional',division:'Spaced',
-      sound:['ts dz → s z: tsa → sa “hot”','final i u lost after m n l r: tini → tin, lèni → lèn','creates homophones: nèr “water” and nèr “remember”'],
-      grammar:'The trading variety drops the suffixes, pa and the place words. The predicate comes first and its arguments follow in place order, so position alone fixes the place. The logical operators survive as invariant free words. The number of arguments tells homophones apart.',
-      cognates:['tun','lèn','tin','tas','nèr','zan'],
-      examples:[
-        {text:'tin na sara na lena',gloss:'Sara perceives Lena.',parts:'tin perceive · na sara (place 1) · na lena (place 2)'},
-        {text:'zan na lena',gloss:'Lena sleeps.',parts:'zan sleep · na lena'},
-        {text:'ru mi ki tun mi su ni ke lèn ni tin mi ni',gloss:'Every person perceives some record.',parts:'the Classical formula with positional places'}
       ]},
     harbor:{
       language:'Harbor Talar',morphology:'Fusional',division:'Spaced pictograms, one per syllable',

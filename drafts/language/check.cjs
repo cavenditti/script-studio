@@ -14,7 +14,7 @@ assert.throws(()=>L.evaluate(L.parse('we pa tun ta na sara'),model),/richer mode
 assert.deepEqual([...L.stages].sort(),H.profiles.map(p=>p.id).sort());
 assert.equal(L.lexicon.length,31);assert.equal(L.roots.size,31);
 for(const entry of L.lexicon){assert.equal(entry.places.length,entry.arity);for(const stage of L.stages){const form=L.reflex(entry.proto,stage);assert.ok(form);assert.deepEqual(E.render(form).unknown,[],form);}}
-assert.equal(L.reflex('tuni','classical'),'tyni');assert.equal(L.reflex('loni','delta'),'len');assert.equal(L.reflex('kani','island'),'kani');assert.equal(L.reflex('tja','ridge'),'tsa');assert.equal(L.reflex('tas','delta'),'ta{3}');assert.equal(L.reflex('tja','ridge-alpha'),'sa');assert.equal(L.reflex('tuni','harbor'),'tun');assert.equal(L.reflex('nori','harbor'),'nol');
+assert.equal(L.reflex('tuni','classical'),'tyni');assert.equal(L.reflex('loni','delta'),'len');assert.equal(L.reflex('kani','island'),'kani');assert.equal(L.reflex('tja','ridge'),'tja');assert.equal(L.reflex('waro','ridge-alpha'),'varo');assert.equal(L.reflex('tuni','capitals'),'tunh');assert.equal(L.reflex('tas','delta'),'ta{3}');assert.equal(L.reflex('tuni','harbor'),'tun');assert.equal(L.reflex('nori','harbor'),'nol');
 for(const text of [A,B,N,Z,'fa we pa tyni ta na sara ti na lena','su ni ke pa lœni ta ni pa dar ta na sara ti na lena tu ni','ma pa tyni ta na sara ti na lena','mu mi pa tyni ta mi ti na lena']){L.parse(text);assert.deepEqual(E.render(text).unknown,[]);}
 const T=require('./typology.cjs');
 // Same truth value on many random finite models: the Island word and the Classical formula make the same promise.
@@ -29,11 +29,11 @@ assert.equal(L.logical(one('nasarata nalenati tuniwe')),L.logical(L.parse('we pa
 assert.equal(L.logical(one('ma nasarata nalenati tunitewa')),L.logical(L.parse('ma wa te pa tyni ta na sara ti na lena')));
 assert.equal(T.parseIsland('nasarata şa').length,2);
 for(const bad of ['nasarata tuni','nasarata nasarati lontuni','rutunta tuni','nasara tuni','rutuniti nalenata tuni'])assert.throws(()=>T.parseIsland(bad),bad);
-// Market Ridge: positional places, free invariant operators, homophones resolved by argument count.
-assert.equal(L.logical(T.parseMarket('ru mi ki tun mi su ni ke lèn ni tin mi ni')),L.logical(L.parse(A)));
-assert.equal(L.logical(T.parseMarket('tin na sara na lena')),L.logical(L.parse('pa tyni ta na sara ti na lena')));
-assert.equal(T.parseMarket('nèr na sara').root,'nèr');assert.equal(T.parseMarket('nèr na sara na lena').root,'nœri');
-for(const bad of ['tin na sara','tin mi na lena','ru mi ru mi tun mi'])assert.throws(()=>T.parseMarket(bad),bad);
+// Old Upland (Ridge Alphabet): positional places, free invariant operators.
+assert.equal(L.logical(T.parseMarket('ru mi ki tun mi su ni ke loni ni tuni mi ni')),L.logical(L.parse(A)));
+assert.equal(L.logical(T.parseMarket('tuni na sara na lena')),L.logical(L.parse('pa tyni ta na sara ti na lena')));
+assert.equal(T.parseMarket('ner na sara').root,'nèr');assert.equal(T.parseMarket('nori na sara na lena').root,'nœri');
+for(const bad of ['tuni na sara','tuni mi na lena','ru mi ru mi tun mi'])assert.throws(()=>T.parseMarket(bad),bad);
 // Delta ribbons: segmentation recovers words; the known clash is reported, not hidden.
 assert.deepEqual(T.segmentDelta(T.joinDelta('sara tin lena'),['sara','lena']),[['sara','tin','lena']]);
 assert.equal(T.segmentDelta('saravunalena',['sara','lena']).length,2);
@@ -41,7 +41,7 @@ assert.equal(T.segmentDelta('saravunalena',['sara','lena']).length,2);
 assert.equal(T.harborWord([{text:'tuni'}]),'tun');assert.equal(T.harborWord([{text:'tuni'},{text:'we',suffix:true}]),'tuniw');
 assert.equal(T.harborWord([{text:'tuni'},{text:'te',suffix:true},{text:'we',suffix:true}]),'tunitew');assert.equal(T.harborWord([{text:'lon'},{text:'dar'}]),'londal');
 assert.deepEqual(T.varieties.map(v=>v.id).sort(),[...L.stages].sort());
-for(const text of ['patunitanasaratinalena','tini nasarata nalenati','saratinlena','nasarata nalenati tuniwe','rutunta lontuniwe','tin na sara na lena','nasarata nalenati tuniw'])assert.deepEqual(E.render(text).unknown,[],text);
+for(const text of ['patunitanasaratinalena','saratinlena','nasarata nalenati tuniwe','rutunta lontuniwe','tuni na sara na lena','nasarata nalenati tuniw'])assert.deepEqual(E.render(text).unknown,[],text);
 // The app's philology panel must agree with the model.
 const Ph=require('../../src/philology.js'),Hv=require('../../src/evolution.js');
 assert.deepEqual(Object.keys(Ph.stages).sort(),[...L.stages].sort());
@@ -56,4 +56,4 @@ for(const stage of L.stages){
     if(stage==='delta')assert.equal(T.segmentDelta(ex.text,['sara','lena']).length,1,ex.text);
   }
 }
-console.log('PASS: 31 roots × 12 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility; Island and Market Ridge equivalence to Classical on 300 random models; Delta segmentation; Harbor fusion; app philology panel agrees with the model.');
+console.log('PASS: 31 roots × 11 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility; Island and Old Upland equivalence to Classical on 300 random models; Delta segmentation; Harbor fusion; app philology panel agrees with the model.');

@@ -3,8 +3,8 @@
 
    Island ordinary speech is parsed into the same AST as the Classical core, so
    the existing finite-model evaluator can check that an agglutinative word and
-   an explicit prefix formula make the same promise. Market Ridge (isolating,
-   positional places) is parsed the same way. Delta (isolating, written without
+   an explicit prefix formula make the same promise. Ridge Alphabet's Old Upland (isolating,
+   positional places, Old Upland) is parsed the same way. Delta (isolating, written without
    word spaces) is only segmented: its ordinary syntax is deliberately not
    given a guaranteed single parse. Harbor forms are derived from Island words. */
 const L=require('./model.cjs');
@@ -18,15 +18,14 @@ const VARS=['mi','ni','li','ri'];
    independent: Delta is isolating yet written in unbroken clause ribbons. */
 const varieties=[
   {id:'stone',morphology:'isolating',division:'spaced',note:'one invariant word per counted slot'},
-  {id:'capitals',morphology:'isolating (predicate-final)',division:'spaced',note:'Upland Talar: place words follow their argument; the predicate ends the clause'},
+  {id:'ridge',morphology:'isolating',division:'spaced',note:'the same Proto-Talar, hung on two ruled rails'},
+  {id:'ridge-alpha',morphology:'isolating (positional)',division:'spaced',note:'Old Upland: place words lost; argument position alone fixes the place'},
+  {id:'capitals',morphology:'isolating (positional)',division:'spaced',note:'Upland Talar keeps the positional clause, with reduced final vowels'},
   {id:'reed',morphology:'isolating',division:'continuous',note:'scriptio continua: a whole formula is one ink line'},
   {id:'seal',morphology:'isolating',division:'spaced',note:'seal carvers stack each syllable into one cell'},
   {id:'classical',morphology:'isolating',division:'spaced',note:'school word-spacing makes every scope word auditable'},
-  {id:'ridge',morphology:'agglutinative (dependent-marking)',division:'spaced',note:'place suffixes and name proclitic on each argument'},
   {id:'delta',morphology:'isolating',division:'continuous',note:'whole clauses written as one cursive ribbon'},
   {id:'island',morphology:'agglutinative (incorporating)',division:'spaced',note:'content roots, negation, tense and evidence built into long words'},
-  {id:'civic',morphology:'isolating',division:'spaced',note:'print restores word spaces and the audited prefix register'},
-  {id:'ridge-alpha',morphology:'isolating (positional)',division:'spaced',note:'suffixes lost; argument position alone fixes the place'},
   {id:'harbor',morphology:'fusional',division:'spaced',note:'eroded Island suffixes fuse with stems; stem alternation'},
   {id:'roundel',morphology:'isolating (monosyllabic)',division:'spaced',note:'Late Harbor words wear down to one syllable; ideograms separate homophones'},
 ];
@@ -103,10 +102,11 @@ function parseIsland(text){
   return readings;
 }
 
-/* Market Ridge everyday register: the Classical prefix operators survive as
-   free invariant words, but pa and the place words are gone. A predicate root
-   is followed by its arguments in place order. Homophones created by apocope
-   (nèr "water" / nèr "remember") are resolved by counting the following terms. */
+/* Old Upland Talar (Ridge Alphabet): the prefix operators survive as free
+   invariant words, but pa and the place words are gone. A predicate root is
+   followed by its arguments in place order. Should two roots ever share a
+   form, the number of following terms decides between them. Predicate names
+   in the result are the Classical citation forms, so the evaluator applies. */
 function parseMarket(text){
   const t=text.trim().normalize('NFC').toLowerCase().split(/\s+/);let i=0;
   const take=()=>{if(i>=t.length)throw new Error('Unexpected end of formula');return t[i++];};

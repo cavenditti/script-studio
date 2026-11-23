@@ -7,22 +7,21 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'
 const sections=[
   {title:'Sara perceives Lena (ordinary register of each variety)',rows:[
     ['stone','pa tuni ta na sara ti na lena'],
-    ['capitals','na sara ta na lena ti tunh'],
+    ['ridge-alpha','tuni na sara na lena'],
+    ['capitals','tunh na sara na lena'],
+    ['ridge','pa tuni ta na sara ti na lena'],
     ['reed','patunitanasaratinalena'],
     ['seal','pa tuni ta na sara ti na lena'],
     ['classical','pa tyni ta na sara ti na lena'],
-    ['ridge','tini nasarata nalenati'],
     ['delta','saratinlena'],
     ['island','nasarata nalenati tuniwe'],
-    ['civic','pa tin ta na sara ti na lena'],
-    ['ridge-alpha','tin na sara na lena'],
     ['harbor','nasarata nalenati tuniw'],
     ['roundel','sara lena tun #we'],
   ]},
   {title:'Every person perceives some record (narrow-scope record)',rows:[
     ['classical','ru mi ki pa tun ta mi su ni ke pa lœni ta ni pa tyni ta mi ti ni'],
     ['island','rutunta lontuniwe'],
-    ['ridge-alpha','ru mi ki tun mi su ni ke lèn ni tin mi ni'],
+    ['ridge-alpha','ru mi ki tun mi su ni ke loni ni tuni mi ni'],
     ['roundel','#ru #tun lon tun'],
   ]},
 ];

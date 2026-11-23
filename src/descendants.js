@@ -156,6 +156,9 @@
     const value={d:serialize(subs),pts,ends};harborCache.set(key,value);return value;
   }
   const ink=key=>harbor(key).pts;
+  // Round every straight corner of an absolute-command path (used by the
+  // cursive hands); unsupported commands leave the path unchanged.
+  const softenPath=(d,r)=>{try{return serialize(soften(segments(d),r));}catch(e){return d;}};
   const harborPreview=key=>{const g=`<path d="${harbor(key).d}"/>`+(key==='i'?'<circle cx="17" cy="15" r="1.2"/>':'');return pictogram(g,g,'currentColor','palette-'+key);};
   const harborLetter=(key,inkColor)=>path(harbor(key).d,inkColor)+(key==='i'?`<circle cx="17" cy="15" r="2.8" fill="${xml(inkColor)}"/>`:'');
   const shift=(pts,dx,dy)=>pts.map(([x,y])=>[x+dx,y+dy]);
@@ -368,7 +371,11 @@
     if(overCapacity(s))return spellOut(s,inkColor);
     const R=roundel,components=[];
     const shape=(form,x,y,scale,kind,key,extra='')=>{components.push({key,kind,x,y,scale});return `<g transform="translate(${n(x)} ${n(y)}) scale(${scale})"${kind?` data-${kind}-part="${xml(key)}"`:''}${extra}>${path(form,inkColor,R.weight/scale)}${key==='i'&&kind==='nucleus'?`<circle cx="17" cy="15" r="2.6" fill="${xml(inkColor)}"/>`:''}</g>`;};
-    let body=`<circle cx="${R.cx}" cy="${R.cy}" r="${R.r}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}" data-roundel="true"/>`;
+    // An open pen circle: drawn counter-clockwise from the upper right, it
+    // stops short of its start, leaving a gap where the pen enters.
+    const a0=-35*Math.PI/180,a1=a0+325*Math.PI/180,pt=a=>[R.cx+R.r*Math.cos(a),R.cy+R.r*Math.sin(a)];
+    const [sx,sy]=pt(a0),[ex,ey]=pt(a1);
+    let body=`<path d="M${n(sx)} ${n(sy)}A${R.r} ${R.r} 0 1 1 ${n(ex)} ${n(ey)}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}" stroke-linecap="round" data-roundel="true"/>`;
     const vs=s.nucleus,vScale=vs.length>1?R.pair:R.vowel;
     vs.forEach((t,i)=>{const cx=vs.length>1?R.cx-9+18*i:R.cx;body+=shape(harbor(t.key).d,cx-18*vScale,R.cy-18*vScale,vScale,'nucleus',t.key);});
     if(!vs.length)body+=path(`M${R.cx-6} ${R.cy-6}L${R.cx+6} ${R.cy+6}M${R.cx+6} ${R.cy-6}L${R.cx-6} ${R.cy+6}`,inkColor,2,' data-empty-nucleus="true"');
@@ -376,25 +383,25 @@
     rim(s.onset,'onset');rim(s.coda,'coda');
     return finishCell(s,body,84,inkColor,{components});
   }
-  // Ideograms for frequent Late Harbor words, written #word. They stand for
-  // whole words and are drawn in the same 84 × 88 cell as syllables.
+  // Ideograms for frequent Late Harbor words, written #word. Each is a closed
+  // ring (syllables use an open one) with one or two abstract strokes in the
+  // same pen, so the ideograms read as writing, not as pictures.
   const ideograms=Object.freeze({
-    tun:{meaning:'person',d:'M42 37V62M27 46H57M42 62L31 80M42 62L53 80',circle:[42,25,9]},
-    lon:{meaning:'record',d:'M25 18H59V72H25ZM32 31H52M32 44H52M32 57H45'},
-    'nèl':{meaning:'water',d:'M24 36Q33 29 42 36Q51 43 60 36M24 48Q33 41 42 48Q51 55 60 48M24 60Q33 53 42 60Q51 67 60 60'},
-    tas:{meaning:'stone',d:'M42 26L57 44L42 62L27 44Z',circle:[42,44,24]},
-    we:{meaning:'seen (direct evidence)',d:'M16 44Q42 16 68 44Q42 72 16 44Z',circle:[42,44,9],dot:[42,44]},
-    wu:{meaning:'not',d:'M26 60L58 28',circle:[42,44,22]},
-    ru:{meaning:'every',d:'M42 14V24M42 64V74M12 44H22M62 44H72M21 23L28 30M56 58L63 65M63 23L56 30M28 58L21 65',circle:[42,44,12]},
-    su:{meaning:'some',d:'M42 22V66',circle:[42,44,22],half:true},
-    na:{meaning:'name',d:'M16 26H68Q78 26 78 44Q78 62 68 62H16Q6 62 6 44Q6 26 16 26Z',dot:[42,44]}
+    tun:{meaning:'person',d:'M42 66V82'},
+    lon:{meaning:'record',d:'M31 38H53M31 50H53'},
+    'nèl':{meaning:'water',d:'M27 45Q34 37 42 45Q50 53 57 45'},
+    tas:{meaning:'stone',d:'M42 22V31M42 57V66'},
+    we:{meaning:'seen (direct evidence)',inner:8},
+    wu:{meaning:'not',d:'M27 59L57 29'},
+    ru:{meaning:'every',d:'M42 30V58M28 44H56'},
+    su:{meaning:'some',d:'M28 44H56'},
+    na:{meaning:'name',d:'M12 28V60M72 28V60'}
   });
   function ideogramCell(word,inkColor){
     const g=ideograms[word],R=roundel;
-    let body=path(g.d,inkColor,R.weight,` data-ideogram="${xml(word)}"`);
-    if(g.circle)body+=`<circle cx="${g.circle[0]}" cy="${g.circle[1]}" r="${g.circle[2]}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}"/>`;
-    if(g.half)body+=`<path d="M42 22A22 22 0 0 0 42 66Z" fill="${xml(inkColor)}"/>`;
-    if(g.dot)body+=`<circle cx="${g.dot[0]}" cy="${g.dot[1]}" r="3.4" fill="${xml(inkColor)}"/>`;
+    let body=`<circle cx="${R.cx}" cy="${R.cy}" r="${R.r}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}" data-ideogram="${xml(word)}"/>`;
+    if(g.d)body+=path(g.d,inkColor,R.weight);
+    if(g.inner)body+=`<circle cx="${R.cx}" cy="${R.cy}" r="${g.inner}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}"/>`;
     return {width:84,body};
   }
   const cellSystems={blocks:null,seal:sealCell,roundel:roundelCell};
@@ -466,6 +473,6 @@
     const ink='currentColor',body=system==='blocks'?harborPreview(key):system==='incised'?incisedLetter(key,ink):system==='capitals'?capitalLetter(key,ink):system==='roundel'?(E.consonants[key]?path(harborStrokes[key],ink,3.4):`<circle cx="18" cy="18" r="17" fill="none" stroke="${ink}" stroke-width="2.4"/><g transform="translate(9 9) scale(.5)">${path(harbor(key).d,ink,6)}${key==='i'?`<circle cx="17" cy="15" r="2.6" fill="${ink}"/>`:''}</g>`):letter(key,ink);
     return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${body}</svg>`;
   }
-  const api={alphabet,harborForms,harborStrokes,ideograms,roundel,incisedLetter,capitalLetter,sealCell,roundelCell,angular,transformPath,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={softenPath,alphabet,harborForms,harborStrokes,ideograms,roundel,incisedLetter,capitalLetter,sealCell,roundelCell,angular,transformPath,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

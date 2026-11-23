@@ -1,19 +1,18 @@
 # Words, roots and spaces: how the varieties build and write a clause
 
-**LOCAL LANGUAGE DRAFT.** This note gives each script tradition a spoken morphology and a word-division habit. The two are independent layers. A variety can glue its morphemes into long words and still space them, or keep every morpheme a free word and still write the clause as one unbroken ribbon. `typology.cjs` implements the Island and Market Ridge grammars against the Classical evaluator, segments Delta ribbons, and derives Harbor words. `specimens.cjs` regenerates the comparison sheet.
+**LOCAL LANGUAGE DRAFT.** This note gives each script tradition a spoken morphology and a word-division habit. The two are independent layers. A variety can glue its morphemes into long words and still space them, or keep every morpheme a free word and still write the clause as one unbroken ribbon. `typology.cjs` implements the Island and Old Upland grammars against the Classical evaluator, segments Delta ribbons, and derives Harbor words. `specimens.cjs` regenerates the comparison sheet.
 
 | Script | Variety | Ordinary morphology | Written word division | Sara perceives Lena |
 | --- | --- | --- | --- | --- |
 | Stone Register | Proto | isolating | spaced, one word per counted slot | pa tuni ta na sara ti na lena |
-| Upland Capitals | Upland | isolating, predicate-final | spaced | na sara ta na lena ti tunh |
+| Ridge Cut | Proto (labels) | isolating | spaced | pa tuni ta na sara ti na lena |
+| Ridge Alphabet | Old Upland | isolating, positional | spaced | tuni na sara na lena |
+| Upland Capitals | Upland | isolating, positional | spaced | tunh na sara na lena |
 | Early Ink | Early | isolating | **continuous**, one ink line per formula | patunitanasaratinalena |
 | Reed Seals | Early | isolating | spaced, one cell per syllable | pa tuni ta na sara ti na lena |
 | Classical | Classical | isolating | spaced by school rule | pa tyni ta na sara ti na lena |
-| Ridge Cut | Ridge | agglutinative, dependent-marking | spaced | tini nasarata nalenati |
 | Delta Cursive | Delta | isolating | **continuous**, one ribbon per clause | saratinlena |
 | Island Bookhand | Island | agglutinative, incorporating | spaced, long words | nasarata nalenati tuniwe |
-| Civic Print | Civic | isolating | spaced by printers | pa tin ta na sara ti na lena |
-| Ridge Alphabet | Market Ridge | isolating, positional | spaced | tin na sara na lena |
 | Harbor Blocks | Harbor | fusional | spaced blocks | nasarata nalenati tuniw |
 | Harbor Roundels | Late Harbor | isolating, monosyllabic | circles plus `#word` ideograms | sara lena tun #we |
 
@@ -23,16 +22,15 @@ The sheet shows the same contrast in each hand: `node drafts/language/specimens.
 
 ```mermaid
 flowchart LR
-  C[Classical<br/>isolating, spaced] --> R[Ridge<br/>suffixing]
-  R --> M[Market Ridge<br/>isolating again]
+  P[Proto<br/>isolating] --> OU[Old Upland<br/>positional]
+  P --> C[Classical<br/>isolating, spaced]
   C --> I[Island<br/>incorporating]
   I --> H[Harbor<br/>fusional]
   H --> LH[Late Harbor<br/>isolating again, ideograms]
   C --> D[Delta<br/>isolating, unspaced]
-  D --> K[Civic<br/>isolating, spaced]
 ```
 
-This follows the familiar cycle in which free words become affixes, affixes erode and fuse, and the losses are repaired with new free words. Ridge and Island take the first step in different directions. Harbor and Market Ridge each show a later stage. Delta never leaves the isolating stage. It shows that spacing is a scribal decision, not a direct consequence of grammar.
+This follows the familiar cycle in which free words become affixes, affixes erode and fuse, and the losses are repaired with new free words. Island takes the first step, Harbor the second, and Late Harbor completes the cycle by becoming isolating again. Old Upland loses its place words early and stays isolating, while Delta never leaves the isolating stage. It shows that spacing is a scribal decision, not a direct consequence of grammar.
 
 ## Island: content roots inside words
 
@@ -91,18 +89,16 @@ Harbor applies its lexical rules (/r/ → /l/ after a vowel, then final /i u/ ap
 
 The resulting `tun ~ tuni-` alternation is the first fusional pattern. The stem no longer has a single invariant shape, and one syllable such as `tew` now carries tense and evidence together. A Harbor Block can therefore show a portmanteau inflection as one compact sign. The glyph still spells sounds, not grammar. Careful Harbor speech keeps the learned analytic sentence from [the branches note](structural-branches.md): `pa tun ta na sara ti na lenaw`.
 
-## Ridge and Market Ridge: suffixes come and go
+## Old Upland: place by position
 
-Ridge makes the place words into suffixes on the argument and `na` into a name proclitic: `tini nasarata nalenati`. The predicate remains a free word, and scope operators remain free prefixes. Ridge is agglutinative on the dependents but not incorporating, so it marks places on the arguments where Island builds them into the predicate.
-
-Market Ridge, a trading lingua franca, loses the suffixes in ordinary speech. Classical prefix operators survive as invariant free words, while `pa` and the place labels disappear. Place is fixed by position: the predicate root comes first, then its arguments in place order.
+Old Upland Talar (written in the Ridge Alphabet) drops `pa` and the place words early. The predicate comes first and its arguments follow in place order. The prefix operators survive as invariant free words.
 
 ```
-tin na sara na lena                              Sara perceives Lena
-ru mi ki tun mi su ni ke lèn ni tin mi ni        = Classical sentence A
+tuni na sara na lena                             Sara perceives Lena
+ru mi ki tun mi su ni ke loni ni tuni mi ni      = Classical sentence A
 ```
 
-Every grammatical word is free and invariant, making this the most isolating variety in the family. It is still fully parseable. Market apocope makes `nèr` "water" and `nèr` "remember" homophones, and the number of following arguments decides between them. Ridge Alphabet spacing makes each of these free words visible to learners and traders.
+Every grammatical word is free and invariant, and the register is still fully parseable. Upland Talar (Upland Capitals) keeps the same clause with its reduced final vowels: `tunh na sara na lena`.
 
 ## Delta: isolating speech in joined writing
 
@@ -110,7 +106,7 @@ Delta speech stays isolating: `sara tin lena`, with omitted arguments recoverabl
 
 Readers can separate the words because Delta function words form a small closed set of CV syllables and the content roots are short. `typology.cjs` segments a ribbon against the lexicon and the names the reader knows. In the seed lexicon, almost every ribbon has exactly one segmentation. One known clash is `saravunalena`, which can split as `sara vuna lena` "Sara binds Lena" or as `sara vu na lena`. The second split is lexically possible and grammatically empty. Lexical segmentation is not parsing, so the reader still needs grammar to choose.
 
-Delta's real reading problem is scope, not word boundaries. A ribbon such as `rutunsulentin` cannot show which quantifier is meant to be wide. Civic Print restores spaces together with the audited prefix register. The printers' reform is about auditability, not about recovering lost words.
+Delta's real reading problem is scope, not word boundaries. A ribbon such as `rutunsulentin` cannot show which quantifier is meant to be wide. Only the formal prefix register, kept by schools, can make scope explicit again.
 
 The falling tone mark becomes a segmentation cue as well: `ta{3}` "stone" vs the place word `ta`. Writing ribbons makes the mark even less optional.
 
@@ -123,5 +119,5 @@ Early scribes write a whole formula as one ink line: `patunitanasaratinalena`. T
 - Island co-reference across predicates, and incorporation of two-place roots with a fixed second argument
 - Harbor's full paradigm of fused endings, beyond the `-w` and `-tew` examples
 - Ridge place-suffix allomorphy under later apocope
-- Whether Market Ridge develops new prepositions from motion verbs such as `pada`, which would be the next turn of the cycle
+- Whether Upland Talar develops new prepositions from motion verbs such as `pada`, which would be the next turn of the cycle
 - A Delta grammar that formally states its ordinary scope preferences

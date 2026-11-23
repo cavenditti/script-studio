@@ -1,23 +1,6 @@
 # Later branches: phonological words become new graphic units
 
-**LOCAL LANGUAGE DRAFT.** These additions extend the provisional family rather than replacing the original three branches. Market Ridge descends from Ridge; Harbor descends from Island. Neither is a hybrid genetic child of the whole family.
-
-## Market Ridge, id ridge-alpha, 750 onward
-
-The urban market variety inherits Ridge's /y/ > /i/, /œ/ > /ɛ/, and alveolar affricates. It then applies two lexical changes:
-
-1. `/ts dz/ → /s z/`. The script-key sequences `ts/dz` used in the earlier draft therefore become ordinary `s/z` in these native roots.
-2. Delete final unstressed `/i u/` after `/m n l r/` in polysyllabic lexical citation forms.
-
-`*tja → Classical ca → Ridge tsa → Market sa`; `*tuni → tyni → tini → tin`; `*loni → lœni → lèni → lèn`; `*kani → kæni → kæni → kæn`.
-
-The resemblance of Market `tin` to Delta `tin` is a convergence after independent final-vowel loss. Delta and Market do not become a subgroup merely because one familiar word matches. The /ɛ/ versus /e/ correspondence in `lèn` versus `len`, and /æ/ versus /e/ in `kæn` versus `ken`, help keep their histories distinguishable.
-
-The inherited role suffixes remain productive. Their citation forms `-ta/-ti/-tu` are maintained by paradigm leveling in the explicit register; the lexical-root model does not purport to derive every inflected or cliticized phonological word. Ordinary market speech does erode them. Everyday Market Ridge loses the suffixes, `pa` and the place labels, and fixes place by position after the predicate: `tin na sara na lena`. Every word is free and invariant, making this the family's most isolating variety. See [typology.md](typology.md).
-
-**Writing:** the already separated Ridge signs lose their remaining guide rails. The special initial-vowel forms become ordinary vowel letters; the four vowels without dedicated initial allographs are enlarged from their older marks. Each consonant and vowel now has a full letter in a linear sequence. A cluster such as `plant` occupies five letters rather than one syllable sign. The move helps mixed-name spelling and morphological analysis; it does not make the speakers inherently more analytic.
-
-The alphabet's full comparative inventory retains signs available for other dialects and loans. It must not be confused with a claim that every one of those sounds remains contrastive in native Market Ridge.
+**LOCAL LANGUAGE DRAFT.** This note covers Harbor Talar, which descends from Island, and its writing, which descends from the Reed Seals. The upland varieties are in [history.md](history.md).
 
 ## Harbor Talar, id harbor, 850 to 1300
 
@@ -40,7 +23,7 @@ pa tun ta na sara ti na lenaw
 
 Sara perceives Lena, with claimed direct support. The final name plus observation clitic syllabifies `le·naw`; the `n + a + w` syllable fits one compound block. The particle still scopes over the completed clause, not just Lena, even though it shares the final phonological word. The Classical parser deliberately does not implement this daughter construction.
 
-**Writing:** the Harbor script does not descend from Island Bookhand. It continues the Reed Seals, a syllable-cell tradition carved since the Early period. Harbor schools take those seal cells into ordinary writing. The teaching reform replaces the ambiguous spine prototype with a fused syllable sign built from simplified components, in which each borrowed consonant keeps only its stem stroke or joins its second stroke to it: onsets above, vowels in the middle, codas below, each component joined to its neighbours where their strokes meet. A consonant rail resting on a flat vowel top becomes one shared stroke; corners are rounded, free stroke ends flow into neighbours in short curved ligatures, and the whole syllable is drawn as one outlined pictogram. Every row reads left to right. Full sound components are borrowed from Market Ridge writing; this is a graphic borrowing, not a change to Harbor’s Island ancestry or a merger of languages.
+**Writing:** the Harbor script does not descend from Island Bookhand. It continues the Reed Seals, a syllable-cell tradition carved since the Early period. Harbor schools take those seal cells into ordinary writing. The teaching reform replaces the ambiguous spine prototype with a fused syllable sign built from simplified components, in which each borrowed consonant keeps only its stem stroke or joins its second stroke to it: onsets above, vowels in the middle, codas below, each component joined to its neighbours where their strokes meet. A consonant rail resting on a flat vowel top becomes one shared stroke; corners are rounded, free stroke ends flow into neighbours in short curved ligatures, and the whole syllable is drawn as one outlined pictogram. Every row reads left to right. Simplified sound components are borrowed from the Ridge Alphabet; this is a graphic borrowing, not a change to Harbor’s Island ancestry or a merger of languages.
 
 The sign holds up to three onsets, two vowels and three codas at a constant component size. Larger groups use bracketed alphabetic spell-out rather than inventing vowels or erasing consonants. Empty onsets and codas remain blank; a crossed square indicates an empty nucleus. Tone flags sit outside the right edge, while primary stress sits above. They encode pitch and stress, not hidden grammatical operators. A syllable may include a bound morpheme, but the glyph components still spell sounds.
 

@@ -363,48 +363,67 @@
     if(!s.nucleus.length)body+=path('M38 40H46V48H38ZM38 40L46 48M46 40L38 48',inkColor,1.6,' data-empty-nucleus="true"');
     return finishCell(s,body,84,inkColor,{components});
   }
-  // Harbor Roundels: every syllable is a circle. The vowel sits inside; its
-  // consonants are single strokes resting on the rim (onset) or hanging from
-  // it (coda). Frequent words can be written with ideograms: #word.
-  const roundel=Object.freeze({cx:42,cy:44,r:22,consonant:.48,vowel:.5,pair:.36,weight:3,spread:20});
-  function roundelCell(s,inkColor){
-    if(overCapacity(s))return spellOut(s,inkColor);
-    const R=roundel,components=[];
-    const shape=(form,x,y,scale,kind,key,extra='')=>{components.push({key,kind,x,y,scale});return `<g transform="translate(${n(x)} ${n(y)}) scale(${scale})"${kind?` data-${kind}-part="${xml(key)}"`:''}${extra}>${path(form,inkColor,R.weight/scale)}${key==='i'&&kind==='nucleus'?`<circle cx="17" cy="15" r="2.6" fill="${xml(inkColor)}"/>`:''}</g>`;};
-    // An open pen circle: drawn counter-clockwise from the upper right, it
-    // stops short of its start, leaving a gap where the pen enters.
-    const a0=-35*Math.PI/180,a1=a0+325*Math.PI/180,pt=a=>[R.cx+R.r*Math.cos(a),R.cy+R.r*Math.sin(a)];
-    const [sx,sy]=pt(a0),[ex,ey]=pt(a1);
-    let body=`<path d="M${n(sx)} ${n(sy)}A${R.r} ${R.r} 0 1 1 ${n(ex)} ${n(ey)}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}" stroke-linecap="round" data-roundel="true"/>`;
-    const vs=s.nucleus,vScale=vs.length>1?R.pair:R.vowel;
-    vs.forEach((t,i)=>{const cx=vs.length>1?R.cx-9+18*i:R.cx;body+=shape(harbor(t.key).d,cx-18*vScale,R.cy-18*vScale,vScale,'nucleus',t.key);});
-    if(!vs.length)body+=path(`M${R.cx-6} ${R.cy-6}L${R.cx+6} ${R.cy+6}M${R.cx+6} ${R.cy-6}L${R.cx-6} ${R.cy+6}`,inkColor,2,' data-empty-nucleus="true"');
-    const rim=(tokens,kind)=>tokens.forEach((t,i)=>{const k=R.consonant,cx=R.cx+(i-(tokens.length-1)/2)*R.spread,box=36*k;body+=shape(harborStrokes[t.key],cx-18*k,kind==='onset'?R.cy-R.r-box+1:R.cy+R.r-1,k,kind,t.key,' data-rim-stroke="true"');});
-    rim(s.onset,'onset');rim(s.coda,'coda');
-    return finishCell(s,body,84,inkColor,{components});
+  // Tidecord: harbour clerks once kept cargo tallies as knots on a cord. When
+  // ink returned, the shared rail of the Harbor Blocks became that cord, one
+  // ruled line per word. Initial consonants hang just below it, each vowel is a
+  // bead threaded on it with its reduced Harbor form hanging below, and final
+  // consonants stand just above it after the bead. The small gap keeps a
+  // stroke's own horizontal from merging into the cord. Frequent words are tally knots
+  // (#word): a solid bead with one or two strokes.
+  const cord=Object.freeze({y:30,weight:2.8,consonant:.66,vowel:.56,bead:5,knot:5.6,stem:5,gap:4,overhang:6,pad:6,step:5,beadStep:26});
+  function box(d){
+    const pts=segments(d).flatMap(sp=>[sp.start,...sp.segs.flatMap(g=>g.pts)]),xs=pts.map(q=>q[0]),ys=pts.map(q=>q[1]);
+    return {x0:Math.min(...xs),x1:Math.max(...xs),y0:Math.min(...ys),y1:Math.max(...ys)};
   }
-  // Ideograms for frequent Late Harbor words, written #word. Each is a closed
-  // ring (syllables use an open one) with one or two abstract strokes in the
-  // same pen, so the ideograms read as writing, not as pictures.
+  const cordLine=(w,inkColor)=>path(`M${-cord.overhang} ${cord.y}H${n(w+cord.overhang)}`,inkColor,cord.weight,' data-cord="true"');
+  function cordCell(s,inkColor){
+    if(overCapacity(s))return spellOut(s,inkColor);
+    const C=cord,components=[];let x=C.pad,body='';
+    const hang=(t,kind)=>{
+      const d=harborStrokes[t.key],b=box(d),k=C.consonant,px=x-b.x0*k,py=kind==='onset'?C.y+C.gap-b.y0*k:C.y-C.gap-b.y1*k;
+      components.push({key:t.key,kind,x:px,y:py,scale:k});
+      body+=`<g transform="translate(${n(px)} ${n(py)}) scale(${k})" data-${kind}-part="${xml(t.key)}" data-cord-stroke="${kind==='onset'?'hanging':'standing'}">${path(d,inkColor,C.weight/k)}</g>`;
+      x+=(b.x1-b.x0)*k+C.step;
+    };
+    s.onset.forEach(t=>hang(t,'onset'));
+    const beads=s.nucleus.length?s.nucleus:[null];
+    beads.forEach(t=>{
+      const cx=x+C.beadStep/2-2;
+      body+=`<circle cx="${n(cx)}" cy="${C.y}" r="${C.bead}" fill="none" stroke="${xml(inkColor)}" stroke-width="${C.weight}" data-bead="true"/>`;
+      if(!t){body+=path(`M${n(cx-4)} ${C.y+10}L${n(cx+4)} ${C.y+18}M${n(cx+4)} ${C.y+10}L${n(cx-4)} ${C.y+18}`,inkColor,2,' data-empty-nucleus="true"');}
+      else {
+        const h=harbor(t.key),b=box(h.d),k=C.vowel,px=cx-(b.x0+b.x1)/2*k,py=C.y+C.bead+C.stem-b.y0*k;
+        components.push({key:t.key,kind:'nucleus',x:px,y:py,scale:k});
+        body+=path(`M${n(cx)} ${n(C.y+C.bead)}V${n(C.y+C.bead+C.stem+1)}`,inkColor,C.weight,' data-bead-stem="true"');
+        body+=`<g transform="translate(${n(px)} ${n(py)}) scale(${k})" data-nucleus-part="${xml(t.key)}">${path(h.d,inkColor,C.weight/k)}${t.key==='i'?`<circle cx="17" cy="15" r="2.6" fill="${xml(inkColor)}"/>`:''}</g>`;
+      }
+      x+=C.beadStep;
+    });
+    s.coda.forEach(t=>hang(t,'coda'));
+    const w=Math.max(x-C.step+C.pad,30);
+    return finishCell(s,cordLine(w,inkColor)+body,w,inkColor,{components});
+  }
+  // Tally knots for frequent Late Harbor words, written #word. Each is a solid
+  // bead on the cord with one or two abstract strokes: writing, not pictures.
   const ideograms=Object.freeze({
-    tun:{meaning:'person',d:'M42 66V82'},
-    lon:{meaning:'record',d:'M31 38H53M31 50H53'},
-    'nèl':{meaning:'water',d:'M27 45Q34 37 42 45Q50 53 57 45'},
-    tas:{meaning:'stone',d:'M42 22V31M42 57V66'},
-    we:{meaning:'seen (direct evidence)',inner:8},
-    wu:{meaning:'not',d:'M27 59L57 29'},
-    ru:{meaning:'every',d:'M42 30V58M28 44H56'},
-    su:{meaning:'some',d:'M28 44H56'},
-    na:{meaning:'name',d:'M12 28V60M72 28V60'}
+    tun:{meaning:'person',d:'M22 35V66M13 53H31'},
+    lon:{meaning:'record',d:'M15 35V62M29 35V62'},
+    'nèl':{meaning:'water',d:'M22 35V42M8 50Q15 42 22 50Q29 58 36 50'},
+    tas:{meaning:'stone',d:'M22 35V40M14 40H30V55H14Z'},
+    we:{meaning:'seen (direct evidence)',ring:11},
+    wu:{meaning:'not',d:'M9 56L35 4'},
+    ru:{meaning:'every',d:'M22 6V56'},
+    su:{meaning:'some',d:'M22 8V24'},
+    na:{meaning:'name',d:'M8 12V48M36 12V48'}
   });
   function ideogramCell(word,inkColor){
-    const g=ideograms[word],R=roundel;
-    let body=`<circle cx="${R.cx}" cy="${R.cy}" r="${R.r}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}" data-ideogram="${xml(word)}"/>`;
-    if(g.d)body+=path(g.d,inkColor,R.weight);
-    if(g.inner)body+=`<circle cx="${R.cx}" cy="${R.cy}" r="${g.inner}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}"/>`;
-    return {width:84,body};
+    const g=ideograms[word],C=cord,w=44;
+    let body=cordLine(w,inkColor)+(g.d?path(g.d,inkColor,C.weight):'');
+    if(g.ring)body+=`<circle cx="22" cy="${C.y}" r="${g.ring}" fill="none" stroke="${xml(inkColor)}" stroke-width="${C.weight}"/>`;
+    body+=`<circle cx="22" cy="${C.y}" r="${C.knot}" fill="${xml(inkColor)}" data-ideogram="${xml(word)}" data-knot="true"/>`;
+    return {width:w,body};
   }
-  const cellSystems={blocks:null,seal:sealCell,roundel:roundelCell};
+  const cellSystems={blocks:null,seal:sealCell,cord:cordCell};
   const isCell=system=>system in cellSystems;
   function render(text,options={},system='blocks'){
     const o={...E.defaults,...options},width=Math.max(300,Math.min(2400,Number(o.width)||1000)),size=Math.max(.45,Math.min(2.5,Number(o.size)||1));
@@ -418,7 +437,7 @@
       const unit=data.units[ui];
       if(unit.type==='newline'){nextLine();continue;}
       if(unit.type==='space'){if(x)x+=22;continue;}
-      if(system==='roundel'&&unit.raw==='#'){
+      if(system==='cord'&&unit.raw==='#'){
         const next=data.units[ui+1],word=next&&next.type==='word'?next.tokens.filter(t=>t.type==='consonant'||t.type==='vowel').map(t=>t.key).join(''):'';
         if(ideograms[word]&&next.tokens.every(t=>t.type==='consonant'||t.type==='vowel')){const g=ideogramCell(word,o.ink);put(g.body,g.width,` data-ideogram-word="${xml(word)}"`,12);consumedHash++;ui++;continue;}
       }
@@ -458,7 +477,7 @@
     }
     // A # that introduced an ideogram is a writing convention, not an unknown sign.
     const hashes=data.tokens.filter(t=>t.type==='unknown'&&t.raw==='#').length,unknown=consumedHash&&consumedHash===hashes?unknownAll.filter(r=>r!=='#'):unknownAll;
-    if(cell&&vowelless)notes.push(system==='roundel'?'An empty circle with a cross marks an empty nucleus; no vowel is supplied.':'The small crossed square marks an empty nucleus; no vowel is supplied.');
+    if(cell&&vowelless)notes.push(system==='cord'?'A bead with a small cross beneath it marks an empty nucleus; no vowel is supplied.':'The small crossed square marks an empty nucleus; no vowel is supplied.');
     if(escaped)notes.push('This group exceeds 3 onset, 2 vowel or 3 coda components; a bracketed spell-out keeps every sound readable.');
     const height=Math.max(210,Math.ceil((y+(cell?92:46))*size+2*margin));
     let guides='';if(o.guides)for(let row=0;row<lines;row++){const base=(cell?18:36)+row*lineHeight;guides+=path(`M0 ${base+(cell?88:36)}H${max}`,'#9eacb6',.6,' stroke-dasharray="3 7"');}
@@ -470,9 +489,9 @@
   const hidden=svg=>svg.replace('role="img"','aria-hidden="true"');
   function preview(key,type,system){
     if(type==='mark')return hidden(compact(render('a{'+key+'}',{width:300,transparent:true,ink:'currentColor'},system)));
-    const ink='currentColor',body=system==='blocks'?harborPreview(key):system==='incised'?incisedLetter(key,ink):system==='capitals'?capitalLetter(key,ink):system==='roundel'?(E.consonants[key]?path(harborStrokes[key],ink,3.4):`<circle cx="18" cy="18" r="17" fill="none" stroke="${ink}" stroke-width="2.4"/><g transform="translate(9 9) scale(.5)">${path(harbor(key).d,ink,6)}${key==='i'?`<circle cx="17" cy="15" r="2.6" fill="${ink}"/>`:''}</g>`):letter(key,ink);
+    const ink='currentColor',body=system==='blocks'?harborPreview(key):system==='incised'?incisedLetter(key,ink):system==='capitals'?capitalLetter(key,ink):system==='cord'?(E.consonants[key]?path(harborStrokes[key],ink,3.4):`<path d="M0 5H36" fill="none" stroke="${ink}" stroke-width="2.4"/><circle cx="18" cy="5" r="3.6" fill="none" stroke="${ink}" stroke-width="2.4"/><g transform="translate(9.5 10) scale(.48)">${path(harbor(key).d,ink,5)}${key==='i'?`<circle cx="17" cy="15" r="2.6" fill="${ink}"/>`:''}</g>`):letter(key,ink);
     return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${body}</svg>`;
   }
-  const api={softenPath,alphabet,harborForms,harborStrokes,ideograms,roundel,incisedLetter,capitalLetter,sealCell,roundelCell,angular,transformPath,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={softenPath,alphabet,harborForms,harborStrokes,ideograms,cord,incisedLetter,capitalLetter,sealCell,cordCell,angular,transformPath,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

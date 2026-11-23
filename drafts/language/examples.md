@@ -85,7 +85,7 @@ mu mi ke pa tun ta mi pa tyni ta mi ti na lena
 | Upland (Capitals) | tunh na sara na lena | final i/u reduced to schwa |
 | Harbor, contracted careful local | pa tun ta na sara ti na lenaw | final-i loss; observation clitic -w shares the final syllable block |
 | Harbor, ordinary | nasarata nalenati tuniw | fusional: stem tuni- before a suffix, tun alone |
-| Late Harbor (Roundels) | sara lena tun #we | monosyllabic, isolating again; #we is the ideogram for “seen” |
+| Late Harbor (Tidecord) | sara lena tun #we | monosyllabic, isolating again; #we is the tally knot for “seen” |
 
 The comparison holds the illustrative names constant. It does not claim proper names are immune to sound change. Delta, Harbor and Late Harbor sentences are design sketches. The parsers validate Classical, ordinary Island and Old Upland syntax ([typology.md](typology.md)). Historical script selection does not convert one row into another.
 

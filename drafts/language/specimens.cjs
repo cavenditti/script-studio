@@ -16,13 +16,13 @@ const sections=[
     ['delta','saratinlena'],
     ['island','nasarata nalenati tuniwe'],
     ['harbor','nasarata nalenati tuniw'],
-    ['roundel','sara lena tun #we'],
+    ['cord','sara lena tun #we'],
   ]},
   {title:'Every person perceives some record (narrow-scope record)',rows:[
     ['classical','ru mi ki pa tun ta mi su ni ke pa lœni ta ni pa tyni ta mi ti ni'],
     ['island','rutunta lontuniwe'],
     ['ridge-alpha','ru mi ki tun mi su ni ke loni ni tuni mi ni'],
-    ['roundel','#ru #tun lon tun'],
+    ['cord','#ru #tun lon tun'],
   ]},
 ];
 const meta=Object.fromEntries(T.varieties.map(v=>[v.id,v]));

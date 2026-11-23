@@ -10,7 +10,7 @@ node drafts/language/check.cjs       # validate the draft
 node drafts/language/specimens.cjs   # regenerate specimens.svg (then rsvg-convert to PNG)
 ```
 
-The language now appears in the app’s **Scripts and languages** dialog through `src/philology.js`. That file holds each variety’s sound changes, grammar type, word division, cognates and example sentences. `check.cjs` verifies those cognates and examples against this model. The workbook itself stays out of the build and the public atlas. Its branch IDs deliberately match the public script profiles: stone, ridge, ridge-alpha, capitals, reed, seal, classical, delta, island, harbor, roundel. Script style selection never applies these sound laws or translates a text.
+The language now appears in the app’s **Scripts and languages** dialog through `src/philology.js`. That file holds each variety’s sound changes, grammar type, word division, cognates and example sentences. `check.cjs` verifies those cognates and examples against this model. The workbook itself stays out of the build and the public atlas. Its branch IDs deliberately match the public script profiles: stone, ridge, ridge-alpha, capitals, reed, seal, classical, delta, island, harbor, cord. Script style selection never applies these sound laws or translates a text.
 
 The design has two simultaneous histories: a spoken family that changes by inheritance, and a learned logical register that communities repeatedly maintain, shorten, or revive. A logical notation is not a claim that its speakers think more rationally. Precise expression is an acquired register, with ordinary ambiguity, metaphor, disagreement, humour, and incomplete utterances around it.
 
@@ -18,7 +18,7 @@ The design has two simultaneous histories: a spoken family that changes by inher
 
 - A restricted, parseable predicate grammar with named places, explicit scope, reference, quantification, questions, evidence and time operators.
 - A comparative lexicon with regular changes through eleven stages, including Old Upland and Upland Talar (an early Proto offshoot), the Early Talar of the Reed Seals, and Late Harbor Talar.
-- Classical daughters (Delta, Island), the upland branch with two alphabets, and the Harbor line with syllable cells, pictograms and circles.
+- Classical daughters (Delta, Island), the upland branch with two alphabets, and the Harbor line with syllable cells, pictograms and the Tidecord.
 - A typological spread: isolating Classical, Delta and Old Upland; incorporating Island; fusional Harbor; isolating again in Late Harbor. Early Ink and Delta Cursive write isolating speech without word spaces. `typology.cjs` parses Island and Market Ridge into the Classical logic and tests them against it.
 - Examples that distinguish shared ancestry, independent convergence, learned restoration and borrowing.
 

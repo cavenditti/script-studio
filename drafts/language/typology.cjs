@@ -27,7 +27,7 @@ const varieties=[
   {id:'delta',morphology:'isolating',division:'continuous',note:'whole clauses written as one cursive ribbon'},
   {id:'island',morphology:'agglutinative (incorporating)',division:'spaced',note:'content roots, negation, tense and evidence built into long words'},
   {id:'harbor',morphology:'fusional',division:'spaced',note:'eroded Island suffixes fuse with stems; stem alternation'},
-  {id:'roundel',morphology:'isolating (monosyllabic)',division:'spaced',note:'Late Harbor words wear down to one syllable; ideograms separate homophones'},
+  {id:'cord',morphology:'isolating (monosyllabic)',division:'spaced',note:'Late Harbor words wear down to one syllable; ideograms separate homophones'},
 ];
 
 /* Island combining stem: compounding truncates a final unstressed /i u/ after

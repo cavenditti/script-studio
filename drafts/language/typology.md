@@ -14,7 +14,7 @@
 | Delta Cursive | Delta | isolating | **continuous**, one ribbon per clause | saratinlena |
 | Island Bookhand | Island | agglutinative, incorporating | spaced, long words | nasarata nalenati tuniwe |
 | Harbor Blocks | Harbor | fusional | spaced blocks | nasarata nalenati tuniw |
-| Harbor Roundels | Late Harbor | isolating, monosyllabic | circles plus `#word` ideograms | sara lena tun #we |
+| Tidecord | Late Harbor | isolating, monosyllabic | one cord per word, plus `#word` tally knots | sara lena tun #we |
 
 The sheet shows the same contrast in each hand: `node drafts/language/specimens.cjs`, then `rsvg-convert drafts/language/specimens.svg -o drafts/language/specimens.png`.
 

@@ -13,7 +13,7 @@ flowchart TD
   C --> D[Delta Talar / Delta Cursive<br/>300 to 900]
   C --> I[Island Talar / Island Bookhand<br/>300 to 1000]
   I --> H[Harbor Talar / Harbor Blocks<br/>850 to 1300]
-  H --> LH[Late Harbor Talar / Harbor Roundels<br/>1300 onward]
+  H --> LH[Late Harbor Talar / Tidecord<br/>1300 onward]
   E -. seal script .-> S[Reed Seals<br/>0 to 850]
   S -. script inherited .-> H
   OU -. component forms only .-> H
@@ -115,9 +115,9 @@ Upland Talar (id `capitals`, −350 onward) adds a second change: a final unstre
 
 The seals are a script branch, not a language. Coastal carvers working from Early Ink models stack each syllable into one cell. They record Early Talar formulas and keep those spellings long after the coast speaks Island and then Harbor Talar. The model's `seal` reflex is therefore the Early form.
 
-## Late Harbor Talar and the Harbor Roundels, id roundel, 1300 onward
+## Late Harbor Talar and the Tidecord, id cord, 1300 onward
 
-Late Harbor applies one further change to Harbor forms: in a polysyllable, any final vowel after a single consonant is lost (`mata → mat`, `lena → len`, `walo → wal`). Most native words become one syllable. The fused Harbor endings wear away and are replaced by free particles, so the language becomes isolating again: `sara lena tun #we` “Sara perceives Lena (I saw it)”. Homophones such as tun “person” / tun “perceive” are separated in writing by ideograms. The circular script descends from Harbor Blocks.
+Late Harbor applies one further change to Harbor forms: in a polysyllable, any final vowel after a single consonant is lost (`mata → mat`, `lena → len`, `walo → wal`). Most native words become one syllable. The fused Harbor endings wear away and are replaced by free particles, so the language becomes isolating again: `sara lena tun #we` “Sara perceives Lena (I saw it)”. Homophones such as tun “person” / tun “perceive” are separated in writing by tally knots. The Tidecord descends from Harbor Blocks. Harbor clerks had long kept cargo tallies as knots on cords; ledger writers turn the shared Harbor rail into such a cord, hang each word's syllables from it, and bring the old tally knots back as ideograms. The cords themselves never wrote language, so they are an influence on the script's look, not an ancestor.
 
 ## Harbor Talar
 

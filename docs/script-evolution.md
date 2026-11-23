@@ -22,7 +22,7 @@ Years are relative to the classical school's foundation, year 0. Ranges describe
 | delta | Delta Cursive | 300 to 900 | Classical | Quick contracts: a forward-slanting cursive with rounded turns, open returns and word-final exit strokes |
 | island | Island Bookhand | 300 to 1000 | Classical | Bound manuscripts: broad return bowls and inward feet; vowels drawn with Harbor Blocks shapes over the Classical ribbon |
 | harbor | Harbor Blocks | 850 to 1300 | Reed Seals | Fused syllable pictograms: onset, vowel and coda merged into one outline; borrows from Ridge Alphabet |
-| roundel | Harbor Roundels | 1300 onward | Harbor Blocks | One open pen circle per syllable, vowel inside, single-stroke consonants on the rim; ring-and-stroke ideograms for frequent words |
+| cord | Tidecord | 1300 onward | Harbor Blocks | One ruled cord per word; onsets hang below it, vowels are beads threaded on it, codas stand above it; solid tally knots for frequent words |
 
 Solid edges in the tree are descent. Dashed edges are graphic borrowing: Island Bookhand takes vowel shapes from Harbor Blocks, and Harbor takes simplified sound forms from the Ridge Alphabet. Borrowing a shape does not change a script's parent.
 
@@ -32,7 +32,7 @@ Solid edges in the tree are descent. Dashed edges are graphic borrowing: Island 
 
 Every row draws **the same modern keys**: `din rento ghma`, then `n p s r w`. In Harbor, the second row has explicitly marked vowelless clusters; the crossed empty-nucleus square does not supply a schwa. These are neutral comparison strings, not translations or reconstructed historical words. Using a shared key set makes the shapes comparable; it does not claim that every modern sound or allograph existed at the earliest stage.
 
-The editor's Classical rendering is unchanged. Ridge Cut, Early Ink, Delta and Island develop its drawing conventions. The structural hands change the unit of writing instead: an incised proto-alphabet, two full alphabets, syllable cells, fused syllable pictograms, and circles with ideograms. All retain the input sound sequence and the eight approved tone/stress meanings. Historical spelling and phonological conversion remain separate tasks; selecting a script does not translate or merge the user's sounds.
+The editor's Classical rendering is unchanged. Ridge Cut, Early Ink, Delta and Island develop its drawing conventions. The structural hands change the unit of writing instead: an incised proto-alphabet, two full alphabets, syllable cells, fused syllable pictograms, and a corded hand with tally-knot ideograms. All retain the input sound sequence and the eight approved tone/stress meanings. Historical spelling and phonological conversion remain separate tasks; selecting a script does not translate or merge the user's sounds.
 
 ## How the forms develop
 
@@ -72,7 +72,7 @@ Island copyists broaden the return bowls and add a short inward foot. Closing ba
 
 
 
-## Structural divergence: alphabets, syllable cells and circles
+## Structural divergence: alphabets, syllable cells and cords
 
 ![Same sounds in three different writing systems, with a block decomposition](evolution/structural-branches.svg)
 
@@ -99,23 +99,31 @@ The inspiration from Korean concerns **composing consonant/vowel components into
 
 See the [complete Harbor diagnostic plate](evolution/harbor-diagnostics.svg) for all consonants in both positions, all eleven vowels, compound vowels in opposite orders, empty positions, clusters and combined tone/stress.
 
-### Harbor Blocks → Harbor Roundels: circles and ideograms
+### Harbor Blocks → Tidecord: cords, beads and tally knots
 
-Late Harbor Talar wears most words down to a single syllable, and homophones multiply: tun means both “person” and “perceive”. Ledger writers answer with a quicker, rounder hand. Every syllable becomes an **open pen circle**, started at the upper right and stopped just short of its start. The vowel sits inside it, and single-stroke consonants rest on the rim above (onset) or hang from it below (coda). Frequent words get **ideograms**, written in the editor as `#word`. These are not pictures: each is a closed ring plus one or two abstract strokes in the same pen, so they read as part of the writing.
+Late Harbor Talar wears most words down to a single syllable, and homophones multiply: tun means both “person” and “perceive”. Harbor clerks had long recorded cargo as knots on cords, a tally practice that never wrote language. Ledger writers now fold that habit into the script. The shared rail of the Harbor Blocks becomes a ruled **cord**, one per word, broken only at word spaces.
 
-| Typed | Ideogram | Meaning |
+- **Initial consonants** hang just below the cord as single strokes.
+- **Each vowel** is an open **bead** threaded on the cord, with its reduced Harbor form hanging from a short stem beneath. A diphthong has two beads.
+- **Final consonants** stand just above the cord after the bead.
+
+A syllable reads like a knot on a line: strokes hang before it and stand after it. The circle survives only as the small bead, so the hand reads as running writing, not a row of medallions.
+
+Frequent words are written with **tally knots**, typed in the editor as `#word`. Each is a solid bead on the cord plus one or two abstract strokes:
+
+| Typed | Tally knot | Meaning |
 | --- | --- | --- |
-| `#tun` | ring with a descending stroke | person |
-| `#lon` | ring with two bars | record |
-| `#nèl` | ring with a wave | water |
-| `#tas` | ring with ticks above and below | stone |
-| `#we` | double ring | seen (direct evidence) |
-| `#wu` | slashed ring | not |
-| `#ru` | ring with a cross | every |
-| `#su` | ring with one bar | some |
-| `#na` | ring between two uprights | name |
+| `#tun` | knot with a hanging cross | person |
+| `#lon` | knot with two hanging strokes | record |
+| `#nèl` | knot with a hanging wave | water |
+| `#tas` | knot with a hanging square | stone |
+| `#we` | ringed knot | seen (direct evidence) |
+| `#wu` | knot slashed through the cord | not |
+| `#ru` | knot with a stroke through the cord | every |
+| `#su` | knot with a short upright | some |
+| `#na` | knot between two uprights | name |
 
-So `#ru #tun lon tun` writes “every person perceives some record”: the ideogram distinguishes person from the spelled-out tun, perceive. An unrecognized `#` stays visible as an unknown sign. Ideograms are a writing convention keyed to the typed word. The renderer still never translates text or applies sound laws.
+So `#ru #tun lon tun` writes “every person perceives some record”: the knot distinguishes person from the spelled-out tun, perceive. An unrecognized `#` stays visible as an unknown sign. Tally knots are a writing convention keyed to the typed word. The renderer still never translates text or applies sound laws.
 
 ### Boundaries are explicit when needed
 

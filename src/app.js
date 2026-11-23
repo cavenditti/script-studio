@@ -16,7 +16,7 @@
     const profile=H.get(current.hand);
     $('joined').disabled=profile.detached;
     $('initial').disabled=!!profile.system;
-    const hints={alphabet:['Each sound has a full letter.','Full vowel letters'],capitals:['Each sound is one unbroken stroke.','Single-stroke vowel letters'],incised:['A vowel after a consonant is a small raised letter.','Vowel letters · raised after a consonant'],blocks:['One block per syllable. Use · to set a boundary.','Vowel components · middle row of each block'],seal:['One seal cell per syllable. Use · to set a boundary.','Vowel components · inside the rail chamber'],roundel:['One circle per syllable. Write #tun, #lon, #nèl, #tas, #we, #wu, #ru, #su or #na for an ideogram.','Vowel components · inside each circle']};
+    const hints={alphabet:['Each sound has a full letter.','Full vowel letters'],capitals:['Each sound is one unbroken stroke.','Single-stroke vowel letters'],incised:['A vowel after a consonant is a small raised letter.','Vowel letters · raised after a consonant'],blocks:['One block per syllable. Use · to set a boundary.','Vowel components · middle row of each block'],seal:['One seal cell per syllable. Use · to set a boundary.','Vowel components · inside the rail chamber'],cord:['One cord per word, one bead per vowel. Write #tun, #lon, #nèl, #tas, #we, #wu, #ru, #su or #na for a tally knot.','Vowel components · hanging from each bead']};
     const hint=hints[profile.system]||['Vowels follow their consonant.','Diacritic · word-initial form'];
     $('attachment-hint').textContent=hint[0];
     $('vowel-form-legend').textContent=hint[1];

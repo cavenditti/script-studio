@@ -15,6 +15,7 @@
     'Island loni “record” is not an unchanged proto form: it passed through Classical lœni and changed back.',
     'Ridge Cut looks angular like the Stone Register, but it is the ancestor of the ink tradition. The Ridge Alphabet, also from Stone, belongs to the upland line instead.',
     'Seal and Classical spellings can keep archaic forms, so conservative writing can mask sound change.',
+    'Tidecord’s knots do not continue a lost knot writing. The harbour cargo cords were tallies, not language; only the idea of knots on a line passed into the script, and every sound sign still comes from Harbor Blocks.',
     'A formal logical register is not the whole language. Everyday speech drives the changes.'
   ];
   const stages={
@@ -114,15 +115,15 @@
         {text:'nalenata zanuw',gloss:'Lena sleeps (I saw it).',parts:'zanu-w, but bare zan'},
         {text:'rutunta lontuniwutew',gloss:'(I saw that) no person perceived any record.',parts:'lon-tuni-wu-tew record-perceive-NOT-PAST.OBSERVED'}
       ]},
-    roundel:{
-      language:'Late Harbor Talar',morphology:'Isolating, monosyllabic',division:'Spaced circles, one per syllable, plus ideograms',
+    cord:{
+      language:'Late Harbor Talar',morphology:'Isolating, monosyllabic',division:'One cord per word, one bead per vowel, plus tally-knot ideograms',
       sound:['any final vowel after a single consonant is lost: mata → mat “parent”, lena → len “rest”','most native words are now one syllable','tun “person” and tun “perceive” fall together, as do şa “hot” and şa “shine”'],
-      grammar:'The fused Harbor endings wear away and are replaced by free particles, so the language becomes isolating again: subject, object, predicate, then a final evidence word. Ideograms (written #word) separate homophones and mark the commonest words.',
+      grammar:'The fused Harbor endings wear away and are replaced by free particles, so the language becomes isolating again: subject, object, predicate, then a final evidence word. Tally knots (written #word), inherited from the cargo cords, separate homophones and mark the commonest words.',
       cognates:['tun','lon','tun','tas','nèl','zan'],
       examples:[
-        {text:'sara lena tun #we',gloss:'Sara perceives Lena (I saw it).',parts:'sara · lena · tun perceive · #we ideogram SEEN (an eye)'},
-        {text:'#ru #tun lon tun',gloss:'Every person perceives some record.',parts:'#ru EVERY · #tun PERSON ideogram, unlike the spelled tun “perceive” · lon record · tun perceive'},
-        {text:'#na lena zan #we',gloss:'Lena sleeps (I saw it).',parts:'#na NAME cartouche · lena · zan sleep · #we SEEN'}
+        {text:'sara lena tun #we',gloss:'Sara perceives Lena (I saw it).',parts:'sara · lena · tun perceive · #we SEEN, a ringed knot'},
+        {text:'#ru #tun lon tun',gloss:'Every person perceives some record.',parts:'#ru EVERY, a knot through the cord · #tun PERSON knot, unlike the spelled tun “perceive” · lon record · tun perceive'},
+        {text:'#na lena zan #we',gloss:'Lena sleeps (I saw it).',parts:'#na NAME, a knot between two uprights · lena · zan sleep · #we SEEN'}
       ]}
   };
   const get=id=>stages[id]||stages.classical;

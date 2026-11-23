@@ -9,7 +9,7 @@ test('genealogy is rooted and acyclic; borrowings are separate from descent',()=
   const ids=new Set(H.profiles.map(p=>p.id));assert.equal(ids.size,11);
   assert.equal(H.profiles.filter(p=>p.parent===null).length,1);
   for(const p of H.profiles){let current=p;const ancestors=new Set();while(current.parent){assert.ok(ids.has(current.parent));assert.ok(!ancestors.has(current.id));ancestors.add(current.id);current=H.get(current.parent);}for(const id of p.influences||[])assert.ok(ids.has(id));}
-  assert.ok(!H.profiles.some(p=>p.id==='civic'));assert.equal(H.get('ridge').parent,'stone');assert.equal(H.get('ridge-alpha').parent,'stone');assert.equal(H.get('capitals').parent,'ridge-alpha');assert.equal(H.get('reed').parent,'ridge');assert.equal(H.get('classical').parent,'reed');assert.deepEqual(H.get('island').influences,['harbor']);assert.equal(H.get('seal').parent,'reed');assert.equal(H.get('harbor').parent,'seal');assert.deepEqual(H.get('harbor').influences,['ridge-alpha']);assert.equal(H.get('roundel').parent,'harbor');
+  assert.ok(!H.profiles.some(p=>p.id==='civic'));assert.equal(H.get('ridge').parent,'stone');assert.equal(H.get('ridge-alpha').parent,'stone');assert.equal(H.get('capitals').parent,'ridge-alpha');assert.equal(H.get('reed').parent,'ridge');assert.equal(H.get('classical').parent,'reed');assert.deepEqual(H.get('island').influences,['harbor']);assert.equal(H.get('seal').parent,'reed');assert.equal(H.get('harbor').parent,'seal');assert.deepEqual(H.get('harbor').influences,['ridge-alpha']);assert.equal(H.get('cord').parent,'harbor');assert.equal(H.get('cord').name,'Tidecord');
 });
 test('every historical hand retains letters, vowels, prosody and source text',()=>{
   const results=new Set();
@@ -31,10 +31,15 @@ test('historical allographs change returns and marks, preserving carrier dot pos
   assert.match(H.render('pa',{hand:'stone'}).svg,/data-raised-vowel="a"/);assert.ok(!H.render('a',{hand:'stone'}).svg.includes('data-raised-vowel'));
   // Upland Capitals: every sound is a single unbranched stroke.
   for(const key of [...Object.keys(E.consonants),...Object.keys(E.vowels)]){const d=[...H.preview(key,E.vowels[key]?'vowel':'consonant','capitals').matchAll(/ d="([^"]*)"/g)].map(m=>m[1]);assert.equal(d.length,1,key);assert.equal((d[0].match(/M/g)||[]).length,1,key);}
-  // Reed Seals keep the two-rail chamber; Roundels draw circles and ideograms.
+  // Reed Seals keep the two-rail chamber; Tidecord hangs syllables from a word cord.
   assert.match(H.render('plant',{hand:'seal'}).svg,/data-seal-chamber="true"/);
-  const ro=H.render('pa #tun #we #zan',{hand:'roundel'});assert.match(ro.svg,/data-roundel="true"/);assert.equal((ro.svg.match(/data-ideogram-word=/g)||[]).length,2);assert.match(ro.svg,/data-roundel="true"[^>]*/);assert.match(ro.svg,/A22 22 0 1 1/);for(const g of Object.values(require('../src/descendants.js').ideograms))assert.ok(!/Q42 16|L31 80/.test(g.d||''),'ideograms are abstract strokes');assert.deepEqual(ro.unknown,['#']);
-  assert.deepEqual(H.render('#tun lon',{hand:'roundel'}).unknown,[]);
+  const ro=H.render('pa #tun #we #zan',{hand:'cord'});assert.match(ro.svg,/data-cord="true"/);assert.equal((ro.svg.match(/data-ideogram-word=/g)||[]).length,2);assert.equal((ro.svg.match(/data-knot="true"/g)||[]).length,2);assert.ok(!/A22 22/.test(ro.svg),'no roundel circles');assert.deepEqual(ro.unknown,['#']);
+  // One bead per vowel; onsets hang below the cord, codas stand above it.
+  const tn=H.render('tun',{hand:'cord'});assert.equal((tn.svg.match(/data-bead="true"/g)||[]).length,1);assert.match(tn.svg,/data-onset-part="t" data-cord-stroke="hanging"/);assert.match(tn.svg,/data-coda-part="n" data-cord-stroke="standing"/);
+  assert.equal((H.render('kai',{hand:'cord'}).svg.match(/data-bead="true"/g)||[]).length,2);assert.match(H.render('st',{hand:'cord'}).svg,/data-empty-nucleus="true"/);
+  // Cells of one word touch, so the cord runs unbroken through the word.
+  const sa=H.render('sara',{hand:'cord'}),cx=[...sa.svg.matchAll(/<path d="M(-?[\d.]+) 30H([\d.]+)"[^>]*data-cord="true"/g)].map(m=>[Number(m[1]),Number(m[2])]);assert.equal(cx.length,2);assert.ok(Math.abs(sa.placements[0].x+cx[0][1]-(sa.placements[1].x+cx[1][0]))<.01);
+  assert.deepEqual(H.render('#tun lon',{hand:'cord'}).unknown,[]);
   assert.match(H.preview('u','vowel','delta'),/<ellipse/);
   assert.match(H.render('s',{hand:'island'}).svg,/data-historical-cap="rounded"/);
   assert.notEqual(H.preview('p','consonant','delta'),H.preview('p','consonant','classical'));

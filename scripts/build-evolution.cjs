@@ -19,7 +19,7 @@ fs.writeFileSync(path.join(out,'family-tree.svg'),tree);
 const sample='plant drènt ghrai';
 const comparison=['classical','ridge-alpha','harbor'].map((hand,i)=>{
   const p=H.get(hand),r=H.render(sample,{hand,width:1200,transparent:true});
-  const caption=hand==='classical'?'Consonant ribbon with attached vowels':hand==='ridge-alpha'?'Every consonant and vowel is a full independent letter':'One fused syllable sign: softened onset / vowel / coda joined by shared rails and curved ligatures';
+  const caption=hand==='classical'?'Consonant ribbon with attached vowels':hand==='ridge-alpha'?'Every consonant and vowel is a full independent letter':'One outlined pictogram per syllable: onset / vowel / coda merged into a single contour';
   return `<g transform="translate(0 ${90+i*210})"><text x="35" y="20" font-size="25">${esc(p.name)}</text><text x="35" y="47" font-family="Arial,sans-serif" font-size="16" fill="#566569">${caption}</text><g transform="translate(0 45)">${r.svg}</g></g>`;
 }).join('');
 const s=D.syllabify(D.units('plant{3}').units[0].tokens)[0],b=D.block(s,'#161c20');
@@ -47,6 +47,6 @@ for(const text of ["plant'{1}{2}{3}{4}{5}{6}{7}{8}",'strlant aei antsrl','katra 
   diagnostics.push(`<text x="35" y="${dy}" font-family="Arial,sans-serif" font-size="16" fill="#566569">${esc(text)}</text>`);
   diagnostics.push(`<g transform="translate(5 ${dy+7})">${H.render(text,{hand:'harbor',width:1160,transparent:true}).svg}</g>`);dy+=180;
 }
-const sheet=`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="${dy+30}" viewBox="0 0 1200 ${dy+30}" role="img" aria-labelledby="title desc"><title id="title">Harbor component and rendering diagnostics</title><desc id="desc">All consonants in both positions, all vowels, ordered compound nuclei, empty nucleus, clusters, tone and stress, bounded spell-out, and explicit boundaries. Cells are drawn at the editor's default size.</desc><rect width="1200" height="${dy+30}" fill="white"/><g font-family="Georgia,serif" fill="#1b292c"><text x="35" y="39" font-size="30">Harbor: every component at reading size</text><text x="35" y="65" font-family="Arial,sans-serif" font-size="16" fill="#566569">Fused rows · unchanged component orientation · strokes shared only where parallel</text>${diagnostics.join('')}</g></svg>`;
+const sheet=`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="${dy+30}" viewBox="0 0 1200 ${dy+30}" role="img" aria-labelledby="title desc"><title id="title">Harbor component and rendering diagnostics</title><desc id="desc">All consonants in both positions, all vowels, ordered compound nuclei, empty nucleus, clusters, tone and stress, bounded spell-out, and explicit boundaries. Cells are drawn at the editor's default size.</desc><rect width="1200" height="${dy+30}" fill="white"/><g font-family="Georgia,serif" fill="#1b292c"><text x="35" y="39" font-size="30">Harbor: every component at reading size</text><text x="35" y="65" font-family="Arial,sans-serif" font-size="16" fill="#566569">One outlined pictogram per syllable · unchanged component orientation · overlaps merge into one contour</text>${diagnostics.join('')}</g></svg>`;
 fs.writeFileSync(path.join(out,'harbor-diagnostics.svg'),sheet);
 console.log('Wrote nine-hand atlas, branching tree, structural decomposition and Harbor diagnostic plate.');

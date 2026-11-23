@@ -378,7 +378,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
   // Components keep one constant scale and fuse by contact: each joins the
   // previous one in its row where their strokes first meet, and each row joins
   // the row above the same way. Shared rails become one stroke.
-  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:5,touch:2.5,shareBins:4,joinMin:1.5,joinMax:22,joinClear:2.2,joinAim:.05,soften:7,maxOnset:3,maxNucleus:2,maxCoda:3});
+  const blockMetrics=Object.freeze({height:88,scale:.78,nucleusY:28,pad:4,nest:12,touch:-2,outer:8.4,inner:3.6,shareBins:4,joinMin:1.5,joinMax:22,joinClear:2.2,joinAim:.05,soften:7,maxOnset:3,maxNucleus:2,maxCoda:3});
   const n=x=>String(Math.round(x*100)/100),xml=E.xml;
   const path=(d,ink,width=3.4,extra='')=>`<path d="${d}" fill="none" stroke="${xml(ink)}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"${extra}/>`;
   function letter(key,ink){
@@ -461,6 +461,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     const value={d:serialize(subs),pts,ends};harborCache.set(key,value);return value;
   }
   const ink=key=>harbor(key).pts;
+  const harborPreview=key=>{const g=`<path d="${harbor(key).d}"/>`+(key==='i'?'<circle cx="17" cy="15" r="1.2"/>':'');return pictogram(g,g,'currentColor','palette-'+key);};
   const harborLetter=(key,inkColor)=>path(harbor(key).d,inkColor)+(key==='i'?`<circle cx="17" cy="15" r="2.8" fill="${xml(inkColor)}"/>`:'');
   const shift=(pts,dx,dy)=>pts.map(([x,y])=>[x+dx,y+dy]);
   const extent=(pts,a)=>pts.reduce((r,p)=>[Math.min(r[0],p[a]),Math.max(r[1],p[a])],[Infinity,-Infinity]);
@@ -547,11 +548,18 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
           for(const k of components){if((k===a||k===b)&&(t<.4||t>.6))continue;for(const q of k.points)if(Math.hypot(q[0]-x,q[1]-y)<m.joinClear*S){clear=false;break;}}}
         if(clear)best={score,e,p,dist,c};
       }
-      if(best){const {e,p,c}=best;out.push({d:`M${n(e.at[0])} ${n(e.at[1])}Q${n(c[0])} ${n(c[1])} ${n(p[0])} ${n(p[1])}`,from:e.at,to:p});}
+      if(best){const {e,p,c}=best;out.push({d:`M${n(e.at[0])} ${n(e.at[1])}Q${n(c[0])} ${n(c[1])} ${n(p[0])} ${n(p[1])}`,from:e.at,control:c,to:p});}
     }
     return out;
   }
-  function block(s,inkColor){
+  // Outline union: ink strokes of width `outer` minus a mask of width `inner`.
+  let pictograms=0;
+  function pictogram(inkGeometry,maskGeometry,inkColor,idBase){
+    const m=blockMetrics,id=`${String(idBase||'harbor').replace(/[^a-zA-Z0-9_-]/g,'')||'harbor'}-pictogram-${++pictograms}`;
+    const box='x="-40" y="-40" width="400" height="180"';
+    return `<mask id="${id}" maskUnits="userSpaceOnUse" ${box}><rect ${box} fill="white"/><g fill="none" stroke="black" stroke-width="${m.inner}" stroke-linecap="round" stroke-linejoin="round">${maskGeometry}</g></mask><g mask="url(#${id})" data-pictogram="true"><g fill="none" stroke="${xml(inkColor)}" stroke-width="${m.outer}" stroke-linecap="round" stroke-linejoin="round">${inkGeometry}</g></g>`;
+  }
+  function block(s,inkColor,idBase){
     const m=blockMetrics,escape=s.onset.length>m.maxOnset||s.nucleus.length>m.maxNucleus||s.coda.length>m.maxCoda;
     const markTile=(marks,x0,offset=0)=>marks.map((key,i)=>`<g transform="translate(${n(x0+18*Math.floor(i/4))} ${16+18*(i%4)}) scale(.65)" data-prosody-slot="${offset+i}">${E.mark(key,0,0,inkColor)}</g>`).join('');
     if(escape){
@@ -570,13 +578,17 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     const S=m.scale,left=m.pad-minX*S,glyphWidth=(maxX-minX)*S+2*m.pad;
     const place=p=>({x:left+p.dx*S,y:m.nucleusY+p.dy*S});
     const components=parts.map(p=>{const at=place(p);return {key:p.key,kind:p.kind,x:at.x,y:at.y,points:ink(p.key).map(([x,y])=>[at.x+x*S,at.y+y*S])};});
-    let body='';
-    for(const c of components){
-      if(c.key==='∅')body+=`<g transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})">${path(EMPTY,inkColor,2.4,' data-empty-nucleus="true"')}</g>`;
-      else body+=`<g transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})" data-${c.kind}-part="${xml(c.key)}">${harborLetter(c.key,inkColor)}</g>`;
-    }
+    // The syllable becomes one pictogram: every component and ligature is
+    // stroked together at the outline width, then the inner stroke width is
+    // masked out. Overlapping strokes therefore merge into a single contour
+    // instead of crossing.
     const ligatures=joins(components,S);
-    for(const j of ligatures)body+=path(j.d,inkColor,3.4*S,' data-ligature="true"');
+    const geometry=tagged=>components.map(c=>{
+      const at=`transform="translate(${n(c.x)} ${n(c.y)}) scale(${S})"`;
+      if(c.key==='∅')return `<path ${at} d="${EMPTY}"${tagged?' data-empty-nucleus="true"':''}/>`;
+      return `<path ${at} d="${harbor(c.key).d}"${tagged?` data-${c.kind}-part="${xml(c.key)}"`:''}/>`+(c.key==='i'?`<circle ${at} cx="17" cy="15" r="1.2"/>`:'');
+    }).join('')+`<g transform="scale(${S})">`+ligatures.map(j=>`<path d="M${n(j.from[0]/S)} ${n(j.from[1]/S)}Q${n(j.control[0]/S)} ${n(j.control[1]/S)} ${n(j.to[0]/S)} ${n(j.to[1]/S)}"${tagged?' data-ligature="true"':''}/>`).join('')+'</g>';
+    let body=pictogram(geometry(true),geometry(false),inkColor,idBase);
     const markX=glyphWidth+8;
     body+=markTile(s.marks.slice(0,8),markX);
     if(s.stress)body+=path(`M${n(glyphWidth/2-5)}-9H${n(glyphWidth/2+5)}`,inkColor,3);
@@ -603,7 +615,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
       for(const s of syllableList){
         if(s.type==='orphan'){prepared.push({orphan:s});continue;}
         syllables.push(s);if(!s.nucleus.length)vowelless=true;
-        if(system==='blocks'){const b=block(s,o.ink);if(b.escape)escaped=true;b.tiles.forEach((tile,i)=>prepared.push({s,b:tile,width:tile.width+(b.escape?0:12),escape:b.escape,part:i,group:syllables.length-1}));}
+        if(system==='blocks'){const b=block(s,o.ink,o.idPrefix);if(b.escape)escaped=true;b.tiles.forEach((tile,i)=>prepared.push({s,b:tile,width:tile.width+(b.escape?0:12),escape:b.escape,part:i,group:syllables.length-1}));}
         else {
           const nucleusIndex=s.onset.length,target=s.nucleus.length?nucleusIndex:Math.max(0,s.phones.length-1);
           s.phones.forEach((t,i)=>{
@@ -636,9 +648,9 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
   const hidden=svg=>svg.replace('role="img"','aria-hidden="true"');
   function preview(key,type,system){
     if(type==='mark')return hidden(compact(render('a{'+key+'}',{width:300,transparent:true,ink:'currentColor'},system)));
-    return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${system==='blocks'?harborLetter(key,'currentColor'):letter(key,'currentColor')}</svg>`;
+    return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${system==='blocks'?harborPreview(key):letter(key,'currentColor')}</svg>`;
   }
-  const api={alphabet,letter,harborLetter,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={alphabet,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
 </script>
@@ -665,7 +677,7 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
     {id:'ridge-alpha',name:'Ridge Alphabet',era:'750 onward',parent:'ridge',branch:'Northern alphabetic branch',material:'Independent letters for names, loans and public reading',mode:'alphabet',system:'alphabet',stroke:3.4,detached:true,
       change:'The long guide rails disappear. Consonants become compact free-standing letters, and every vowel gains an equally full baseline letter.',reason:'Ridge teachers promote the old initial-vowel forms to ordinary vowels and detach the diagnostic joints of consonants from their two-rail scaffolding.',retained:'One full letter records each typed consonant or vowel, including gh, c and g as single sounds; tone and stress remain explicit.'},
     {id:'harbor',name:'Harbor Blocks',era:'850 onward',parent:'island',influences:['ridge-alpha'],branch:'Maritime syllable-block branch',material:'Compact syllable seals and manuscript monograms',mode:'blocks',system:'blocks',stroke:3.4,detached:true,
-      change:'A fused syllable sign replaces the word ribbon: initial consonants above, vowels in the middle, final consonants below, each joined to its neighbours by shared rails and short curved ligatures, with corners softened. Every row reads left to right.',reason:'Island syllable seals are regularized by a teaching reform. It borrows recognizable sound forms from Ridge Alphabet, while keeping the syllable as the unit of writing.',retained:'Up to three initials, two vowels and three finals fuse into one sign. Tone sits beside the sign and primary stress above it. · sets a boundary; oversized groups use a readable bracketed spell-out.'}
+      change:'A fused syllable sign replaces the word ribbon: initial consonants above, vowels in the middle, final consonants below, overlapping and joined by shared rails and short curved ligatures, then drawn as one outlined pictogram. Every row reads left to right.',reason:'Island syllable seals are regularized by a teaching reform. It borrows recognizable sound forms from Ridge Alphabet, while keeping the syllable as the unit of writing.',retained:'Up to three initials, two vowels and three finals fuse into one sign. Tone sits beside the sign and primary stress above it. · sets a boundary; oversized groups use a readable bracketed spell-out.'}
   ];
   const get=id=>profiles.find(p=>p.id===id)||profiles.find(p=>p.id==='classical');
   const number=n=>String(Math.round(n*100)/100);

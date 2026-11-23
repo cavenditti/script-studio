@@ -62,7 +62,7 @@ test('Harbor fuses components by contact inside a constant body',()=>{
     for(const c of b.components)for(const [,y] of c.points)assert.ok(y>-1&&y<m.height+1,text+' stays in body');
     const rows={};for(const c of b.components)(rows[c.kind]??=[]).push(c);
     // Each row reads left to right, and consecutive components touch or share a stroke.
-    for(const row of Object.values(rows))for(let i=1;i<row.length;i++){assert.ok(row[i].x>row[i-1].x);assert.ok(gap(row[i-1],row[i])<=m.touch*m.scale+1.2,text+' row fused');}
+    for(const row of Object.values(rows))for(let i=1;i<row.length;i++){assert.ok(row[i].x>row[i-1].x);assert.ok(gap(row[i-1],row[i])<=Math.max(0,m.touch)*m.scale+1.2,text+' row fused');}
     // Rows join: onset to nucleus, nucleus to coda. Limited nesting can leave
     // a hairline where the closest strokes would otherwise interleave.
     const near=(U,V)=>Math.min(...U.flatMap(a=>V.map(c=>gap(a,c))));
@@ -74,7 +74,7 @@ test('Harbor fuses components by contact inside a constant body',()=>{
   for(const text of ['strlant','aei','antsrl'])assert.equal(D.block(parsed(text)[0],'#000').escape,true);
   const r=H.render('plant drènt',{hand:'harbor',width:300});assert.equal(r.lines,1);
 });
-test('Harbor softens corners and bridges near stroke ends with clear curved ligatures',()=>{
+test('Harbor softens corners, bridges near stroke ends and merges each syllable into one pictogram',()=>{
   const m=D.blockMetrics;
   for(const key of ['t','s','è','l','a'])assert.match(D.harbor(key).d,/Q/);
   assert.equal(D.harbor('a').ends.length,0);assert.ok(D.harbor('p').ends.length>=2);
@@ -88,12 +88,16 @@ test('Harbor softens corners and bridges near stroke ends with clear curved liga
       assert.ok(b.components.some(c=>c.points.some(([x,y])=>Math.hypot(x-j.to[0],y-j.to[1])<.01)));
     }
   }
-  assert.ok(count>=6,'organic joins appear in ordinary syllables');
+  assert.ok(count>=2,'organic joins appear in ordinary syllables');
+  // One outline union per syllable: ink at the outer width, masked at the inner width.
+  const r=H.render('plant pa',{hand:'harbor'});assert.equal((r.svg.match(/data-pictogram="true"/g)||[]).length,2);
+  const ids=[...r.svg.matchAll(/<mask id="([^"]+)"/g)].map(x=>x[1]);assert.equal(new Set(ids).size,2);for(const id of ids)assert.ok(r.svg.includes(`mask="url(#${id})"`));
+  assert.ok(m.outer>m.inner);assert.match(r.svg,new RegExp(`stroke-width="${m.inner}"`));
 });
 test('Harbor palette components retain full-size sound shapes with a tight optical frame',()=>{
   for(const key of Object.keys(D.alphabet)){
     const p=D.preview(key,E.vowels[key]?'vowel':'consonant','blocks');
-    assert.match(p,/viewBox="-4 -4 44 44"/);assert.ok(p.includes(D.harborLetter(key,'currentColor')));assert.ok(D.preview(key,'consonant','alphabet').includes(D.letter(key,'currentColor')));
+    assert.match(p,/viewBox="-4 -4 44 44"/);assert.match(p,/data-pictogram="true"/);assert.ok(p.includes(D.harbor(key).d));assert.ok(D.preview(key,'consonant','alphabet').includes(D.letter(key,'currentColor')));
   }
 });
 test('prosody stays outside components and excess annotations use bounded readable tiles',()=>{

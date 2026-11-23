@@ -112,7 +112,7 @@ The new systems have their own glyph layout rather than transforming the old SVG
 ## What is implemented
 
 - Nine selectable historical stages in **Appearance → Historical hand**.
-- A script-history explorer opened by the current hand's name next to Preview.
+- A **Scripts and languages** explorer opened by the current hand's name next to Preview. Each stage shows its script history and the philology of its spoken variety: sound changes, grammar type, word division, cognates and example sentences drawn in that hand. Ordinary Delta, for example, appears as unspaced cursive and Island as long agglutinated words.
 - Stage-aware consonant, vowel and mark previews, SVG/PNG export, document saving and offline copies.
 - A reproducible atlas and family tree, generated from the same profile data as the editor.
 - Exact preservation of the Classical SVG when no historical profile is requested.

@@ -42,4 +42,18 @@ assert.equal(T.harborWord([{text:'tuni'}]),'tun');assert.equal(T.harborWord([{te
 assert.equal(T.harborWord([{text:'tuni'},{text:'te',suffix:true},{text:'we',suffix:true}]),'tunitew');assert.equal(T.harborWord([{text:'lon'},{text:'dar'}]),'londal');
 assert.deepEqual(T.varieties.map(v=>v.id).sort(),[...L.stages].sort());
 for(const text of ['patunitanasaratinalena','tini nasarata nalenati','saratinlena','nasarata nalenati tuniwe','rutunta lontuniwe','tin na sara na lena','nasarata nalenati tuniw'])assert.deepEqual(E.render(text).unknown,[],text);
-console.log('PASS: 31 roots × 9 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility; Island and Market Ridge equivalence to Classical on 300 random models; Delta segmentation; Harbor fusion.');
+// The app's philology panel must agree with the model.
+const Ph=require('../../src/philology.js'),Hv=require('../../src/evolution.js');
+assert.deepEqual(Object.keys(Ph.stages).sort(),[...L.stages].sort());
+for(const stage of L.stages){
+  const st=Ph.stages[stage];
+  Ph.meanings.forEach((meaning,i)=>assert.equal(st.cognates[i],L.reflex(L.lexicon.find(e=>e.gloss===meaning).proto,stage),stage+' '+meaning));
+  for(const ex of st.examples){
+    assert.deepEqual(Hv.render(ex.text,{hand:stage}).unknown,[],stage+': '+ex.text);
+    if(stage==='classical')L.parse(ex.text);
+    if(stage==='island')assert.equal(T.parseIsland(ex.text).length,1,ex.text);
+    if(stage==='ridge-alpha')T.parseMarket(ex.text);
+    if(stage==='delta')assert.equal(T.segmentDelta(ex.text,['sara','lena']).length,1,ex.text);
+  }
+}
+console.log('PASS: 31 roots × 9 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility; Island and Market Ridge equivalence to Classical on 300 random models; Delta segmentation; Harbor fusion; app philology panel agrees with the model.');

@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const E=ScriptEngine,P=ScriptPhonetics,H=ScriptEvolution,$=id=>document.getElementById(id);let storageKey='carlo-script-studio-v1';
+  const E=ScriptEngine,P=ScriptPhonetics,H=ScriptEvolution,L=typeof ScriptPhilology==='object'?ScriptPhilology:null,$=id=>document.getElementById(id);let storageKey='carlo-script-studio-v1';
   const source=$('source');let current,saveTimer,toastTimer,canStore=true,clearedDraft=null;
   // Illustrative phonetic labels, not a claimed transcription of the original.
   const demo='ghera shoma\nkaru vèna';
@@ -98,15 +98,36 @@
   });
   $('clear').addEventListener('click',()=>{if(clearedDraft!==null&&!source.value){source.value=clearedDraft;clearedDraft=null;$('clear').textContent='Clear';render();source.focus();return;}if(!source.value)return;clearedDraft=source.value;source.value='';$('clear').textContent='Undo clear';render();toast('Cleared. Choose Undo clear to restore the text.');});
   const reference=()=>$('references').showModal();$('open-reference').addEventListener('click',reference);$('close-reference').addEventListener('click',()=>$('references').close());$('references').addEventListener('click',e=>{if(e.target===$('references')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
+  // Language behind the hand: variety, sound changes, grammar, cognates and
+  // example sentences drawn in this hand's own spelling and word division.
+  function exampleArt(text,hand,i){
+    return H.render(text,{hand,width:1600,transparent:true,idPrefix:`philology-${hand}-${i}`}).svg;
+  }
+  // Crop each drawing to its ink once it is in the document.
+  function cropArt(){
+    for(const svg of $('history-detail').querySelectorAll('.philology-art svg')){
+      if(typeof svg.getBBox!=='function')continue;
+      try{const b=svg.getBBox(),pad=8;if(!b.width)continue;svg.setAttribute('viewBox',`${b.x-pad} ${b.y-pad} ${b.width+2*pad} ${b.height+2*pad}`);svg.setAttribute('width',String(Math.round(b.width+2*pad)));svg.setAttribute('height',String(Math.round(b.height+2*pad)));}catch{}
+    }
+  }
+  function philology(hand){
+    if(!L)return '';
+    const s=L.get(hand),x=E.xml;
+    const cognates=L.meanings.map((m,i)=>`<tr><th scope="row">${x(m)}</th><td lang="x-talar">${x(s.cognates[i])}</td></tr>`).join('');
+    const examples=s.examples.map((e,i)=>`<figure class="philology-example"><div class="philology-art">${exampleArt(e.text,hand,i)}</div><figcaption><span class="philology-text" lang="x-talar">${x(e.text)}</span><span class="philology-gloss">${x(e.gloss)}</span><span class="philology-parts">${x(e.parts)}</span></figcaption></figure>`).join('');
+    return `<section class="philology" aria-label="Language"><h4>${x(s.language)}</h4><p class="philology-type">${x(s.morphology)} · ${x(s.division)}</p><dl><dt>Sound changes</dt><dd><ul>${s.sound.map(t=>`<li>${x(t)}</li>`).join('')}</ul></dd><dt>Grammar</dt><dd>${x(s.grammar)}</dd></dl><table class="philology-cognates"><caption>Cognates</caption><tbody>${cognates}</tbody></table><h4 class="philology-examples-title">In this hand</h4>${examples}</section>`;
+  }
   function showStage(id){
     const p=H.get(id);$('history-stage').value=p.id;
     const sample=H.specimen(p.id);
-    $('history-detail').innerHTML=`<h3>${E.xml(p.name)}</h3><p class="history-branch">${E.xml(p.branch)} · ${E.xml(p.era)}</p><div class="history-specimen">${sample}</div><p class="history-material">${E.xml(p.material)}</p><button class="button primary" id="use-hand">Use this hand</button><dl><dt>What changes</dt><dd>${E.xml(p.change)}</dd><dt>Why it changes</dt><dd>${E.xml(p.reason)}</dd><dt>What survives</dt><dd>${E.xml(p.retained)}</dd></dl>`;
+    $('history-detail').innerHTML=`<h3>${E.xml(p.name)}</h3><p class="history-branch">${E.xml(p.branch)} · ${E.xml(p.era)}</p><div class="history-specimen">${sample}</div><p class="history-material">${E.xml(p.material)}</p><button class="button primary" id="use-hand">Use this hand</button><dl><dt>What changes</dt><dd>${E.xml(p.change)}</dd><dt>Why it changes</dt><dd>${E.xml(p.reason)}</dd><dt>What survives</dt><dd>${E.xml(p.retained)}</dd></dl>${philology(p.id)}`;
+    cropArt();
     for(const b of $('history-tree').querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.hand===p.id));
     $('use-hand').addEventListener('click',()=>{$('hand').value=p.id;render();$('evolution').close();});
   }
   function historyBranch(parent){return '<ul>'+H.profiles.filter(p=>p.parent===parent).map(p=>`<li><button class="history-node" data-hand="${p.id}" aria-pressed="false"><b>${E.xml(p.name)}</b><span>${E.xml(p.era)}</span><span class="history-mini" aria-hidden="true">${H.mini(p.id)}</span></button>${historyBranch(p.id)}</li>`).join('')+'</ul>';}
   $('history-tree').innerHTML=historyBranch(null);
+  if(L){$('history-intro').textContent=L.intro;$('history-pitfalls').innerHTML=L.pitfalls.map(t=>`<li>${E.xml(t)}</li>`).join('');}
   $('history-stage').replaceChildren();
   for(const p of H.profiles){const o=document.createElement('option');o.value=p.id;o.textContent=p.name;$('history-stage').append(o);}
   for(const b of $('history-tree').querySelectorAll('button'))b.addEventListener('click',()=>showStage(b.dataset.hand));

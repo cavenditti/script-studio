@@ -1,4 +1,4 @@
-/* Structural descendants of the Two-Rail tradition. No language draft is read. */
+/* Structural descendants of the Two-Rail tradition. Script geometry only; the language lives in philology.js. */
 (function(root){
   'use strict';
   const E=typeof module==='object'&&module.exports?require('./engine.js'):root.ScriptEngine;

@@ -10,7 +10,7 @@ node drafts/language/check.cjs       # validate the draft
 node drafts/language/specimens.cjs   # regenerate specimens.svg (then rsvg-convert to PNG)
 ```
 
-The language is not part of the app, build, public atlas, or committed documentation. Its branch IDs deliberately match the public script profiles: stone, reed, classical, ridge, delta, island, civic, ridge-alpha, harbor. Script style selection never applies these sound laws or translates a text.
+The language now appears in the app’s **Scripts and languages** dialog through `src/philology.js`. That file holds each variety’s sound changes, grammar type, word division, cognates and example sentences. `check.cjs` verifies those cognates and examples against this model. The workbook itself stays out of the build and the public atlas. Its branch IDs deliberately match the public script profiles: stone, reed, classical, ridge, delta, island, civic, ridge-alpha, harbor. Script style selection never applies these sound laws or translates a text.
 
 The design has two simultaneous histories: a spoken family that changes by inheritance, and a learned logical register that communities repeatedly maintain, shorten, or revive. A logical notation is not a claim that its speakers think more rationally. Precise expression is an acquired register, with ordinary ambiguity, metaphor, disagreement, humour, and incomplete utterances around it.
 

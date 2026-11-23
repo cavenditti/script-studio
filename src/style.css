@@ -19,3 +19,24 @@ dialog{border:0;border-radius:14px;padding:0;width:min(1050px,calc(100% - 32px))
 @media(max-width:480px){.preview-title{gap:3px}.history-layout nav ul{display:block}.history-layout nav ul ul{border-top:0;border-left:1px solid var(--line);padding:0 0 0 14px;margin:10px 0 0 7px}.history-layout nav li{text-align:left;margin-top:10px}.history-node{max-width:none;min-height:84px;align-items:flex-start;position:relative;padding-right:90px}.history-mini{position:absolute;right:8px;top:22px;width:75px}.history-layout article h3{font-size:1.75rem}}
 
 .independent-vowel .vowel-forms{grid-template-columns:1fr}.history-specimen svg{max-height:160px}
+
+.philology{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.philology h4{font-family:Georgia,serif;font-size:1.375rem;font-weight:400;margin:0 0 4px}
+.philology-type{font-size:.8125rem;color:var(--accent);margin-bottom:14px}
+.philology dl{margin-top:0}
+.philology dd ul{margin:0;padding-left:18px}
+.philology-cognates{border-collapse:collapse;font-size:.875rem;margin:4px 0 22px}
+.philology-cognates caption{text-align:left;font-weight:650;margin-bottom:6px}
+.philology-cognates th{text-align:left;font-weight:400;color:var(--muted);padding:3px 18px 3px 0}
+.philology-cognates td{font-family:Georgia,serif;padding:3px 0}
+.philology-examples-title{margin-top:6px!important}
+.philology-example{margin:0 0 20px}
+.philology-art{background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px;overflow:hidden}
+.philology-art svg{display:block;max-width:100%;height:auto;max-height:150px}
+.philology-example figcaption{display:flex;flex-direction:column;gap:3px;margin-top:8px;font-size:.875rem;line-height:1.5}
+.philology-text{font-family:Georgia,serif;font-size:1rem;overflow-wrap:anywhere}
+.philology-gloss{color:var(--ink)}
+.philology-parts{color:var(--muted);font-size:.8125rem;overflow-wrap:anywhere}
+.history-pitfalls{margin-top:14px;font-size:.8125rem;line-height:1.6;color:var(--muted)}
+.history-pitfalls summary{cursor:pointer;color:var(--ink)}
+.history-pitfalls ul{margin:8px 0 0;padding-left:18px}

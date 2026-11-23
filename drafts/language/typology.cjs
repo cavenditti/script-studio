@@ -18,7 +18,9 @@ const VARS=['mi','ni','li','ri'];
    independent: Delta is isolating yet written in unbroken clause ribbons. */
 const varieties=[
   {id:'stone',morphology:'isolating',division:'spaced',note:'one invariant word per counted slot'},
+  {id:'capitals',morphology:'isolating (predicate-final)',division:'spaced',note:'Upland Talar: place words follow their argument; the predicate ends the clause'},
   {id:'reed',morphology:'isolating',division:'continuous',note:'scriptio continua: a whole formula is one ink line'},
+  {id:'seal',morphology:'isolating',division:'spaced',note:'seal carvers stack each syllable into one cell'},
   {id:'classical',morphology:'isolating',division:'spaced',note:'school word-spacing makes every scope word auditable'},
   {id:'ridge',morphology:'agglutinative (dependent-marking)',division:'spaced',note:'place suffixes and name proclitic on each argument'},
   {id:'delta',morphology:'isolating',division:'continuous',note:'whole clauses written as one cursive ribbon'},
@@ -26,6 +28,7 @@ const varieties=[
   {id:'civic',morphology:'isolating',division:'spaced',note:'print restores word spaces and the audited prefix register'},
   {id:'ridge-alpha',morphology:'isolating (positional)',division:'spaced',note:'suffixes lost; argument position alone fixes the place'},
   {id:'harbor',morphology:'fusional',division:'spaced',note:'eroded Island suffixes fuse with stems; stem alternation'},
+  {id:'roundel',morphology:'isolating (monosyllabic)',division:'spaced',note:'Late Harbor words wear down to one syllable; ideograms separate homophones'},
 ];
 
 /* Island combining stem: compounding truncates a final unstressed /i u/ after

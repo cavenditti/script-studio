@@ -16,8 +16,10 @@
     const profile=H.get(current.hand);
     $('joined').disabled=profile.detached;
     $('initial').disabled=!!profile.system;
-    $('attachment-hint').textContent=profile.system==='alphabet'?'Each sound has a full letter.':profile.system==='blocks'?'One block per syllable. Use · to set a boundary.':'Vowels follow their consonant.';
-    $('vowel-form-legend').textContent=profile.system==='alphabet'?'Full vowel letters':profile.system==='blocks'?'Vowel components · middle row of each block':'Diacritic · word-initial form';
+    const hints={alphabet:['Each sound has a full letter.','Full vowel letters'],capitals:['Each sound is one unbroken stroke.','Single-stroke vowel letters'],incised:['A vowel after a consonant is a small raised letter.','Vowel letters · raised after a consonant'],blocks:['One block per syllable. Use · to set a boundary.','Vowel components · middle row of each block'],seal:['One seal cell per syllable. Use · to set a boundary.','Vowel components · inside the rail chamber'],roundel:['One circle per syllable. Write #tun, #lon, #nèl, #tas, #we, #wu, #ru, #su or #na for an ideogram.','Vowel components · inside each circle']};
+    const hint=hints[profile.system]||['Vowels follow their consonant.','Diacritic · word-initial form'];
+    $('attachment-hint').textContent=hint[0];
+    $('vowel-form-legend').textContent=hint[1];
     $('rendered').innerHTML=current.svg;
     $('example-note').hidden=source.value!==demo;
     $('empty-preview').hidden=!!source.value.trim();
@@ -125,7 +127,9 @@
     for(const b of $('history-tree').querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.hand===p.id));
     $('use-hand').addEventListener('click',()=>{$('hand').value=p.id;render();$('evolution').close();});
   }
-  function historyBranch(parent){return '<ul>'+H.profiles.filter(p=>p.parent===parent).map(p=>`<li><button class="history-node" data-hand="${p.id}" aria-pressed="false"><b>${E.xml(p.name)}</b><span>${E.xml(p.era)}</span><span class="history-mini" aria-hidden="true">${H.mini(p.id)}</span></button>${historyBranch(p.id)}</li>`).join('')+'</ul>';}
+  // Each branch gets width in proportion to the stages it ends in.
+  const leaves=id=>{const kids=H.profiles.filter(p=>p.parent===id);return kids.length?kids.reduce((sum,p)=>sum+leaves(p.id),0):1;};
+  function historyBranch(parent){return '<ul>'+H.profiles.filter(p=>p.parent===parent).map(p=>`<li style="flex-grow:${leaves(p.id)}"><button class="history-node" data-hand="${p.id}" aria-pressed="false"><b>${E.xml(p.name)}</b><span>${E.xml(p.era)}</span><span class="history-mini" aria-hidden="true">${H.mini(p.id)}</span></button>${historyBranch(p.id)}</li>`).join('')+'</ul>';}
   $('history-tree').innerHTML=historyBranch(null);
   if(L){$('history-intro').textContent=L.intro;$('history-pitfalls').innerHTML=L.pitfalls.map(t=>`<li>${E.xml(t)}</li>`).join('');}
   $('history-stage').replaceChildren();

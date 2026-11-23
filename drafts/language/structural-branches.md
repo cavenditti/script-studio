@@ -19,7 +19,7 @@ The inherited role suffixes remain productive. Their citation forms `-ta/-ti/-tu
 
 The alphabet's full comparative inventory retains signs available for other dialects and loans. It must not be confused with a claim that every one of those sounds remains contrastive in native Market Ridge.
 
-## Harbor Talar, id harbor, 850 onward
+## Harbor Talar, id harbor, 850 to 1300
 
 Harbor inherits Island's vowel and affricate mergers. Two further lexical rules follow:
 
@@ -40,7 +40,7 @@ pa tun ta na sara ti na lenaw
 
 Sara perceives Lena, with claimed direct support. The final name plus observation clitic syllabifies `le·naw`; the `n + a + w` syllable fits one compound block. The particle still scopes over the completed clause, not just Lena, even though it shares the final phonological word. The Classical parser deliberately does not implement this daughter construction.
 
-**Writing:** scribes initially tie vowels and adjacent consonants into recurring syllable seals. The teaching reform replaces the ambiguous spine prototype with a fused syllable sign built from simplified components, in which each borrowed consonant keeps only its stem stroke or joins its second stroke to it: onsets above, vowels in the middle, codas below, each component joined to its neighbours where their strokes meet. A consonant rail resting on a flat vowel top becomes one shared stroke; corners are rounded, free stroke ends flow into neighbours in short curved ligatures, and the whole syllable is drawn as one outlined pictogram. Every row reads left to right. Full sound components are borrowed from Market Ridge writing; this is a graphic borrowing, not a change to Harbor’s Island ancestry or a merger of languages.
+**Writing:** the Harbor script does not descend from Island Bookhand. It continues the Reed Seals, a syllable-cell tradition carved since the Early period. Harbor schools take those seal cells into ordinary writing. The teaching reform replaces the ambiguous spine prototype with a fused syllable sign built from simplified components, in which each borrowed consonant keeps only its stem stroke or joins its second stroke to it: onsets above, vowels in the middle, codas below, each component joined to its neighbours where their strokes meet. A consonant rail resting on a flat vowel top becomes one shared stroke; corners are rounded, free stroke ends flow into neighbours in short curved ligatures, and the whole syllable is drawn as one outlined pictogram. Every row reads left to right. Full sound components are borrowed from Market Ridge writing; this is a graphic borrowing, not a change to Harbor’s Island ancestry or a merger of languages.
 
 The sign holds up to three onsets, two vowels and three codas at a constant component size. Larger groups use bracketed alphabetic spell-out rather than inventing vowels or erasing consonants. Empty onsets and codas remain blank; a crossed square indicates an empty nucleus. Tone flags sit outside the right edge, while primary stress sits above. They encode pitch and stress, not hidden grammatical operators. A syllable may include a bound morpheme, but the glyph components still spell sounds.
 

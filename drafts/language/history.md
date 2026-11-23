@@ -5,13 +5,17 @@
 ```mermaid
 flowchart TD
   P[Proto-Talar / Stone Register<br/>−700 to −350] --> E[Early Talar / Early Ink<br/>−350 to 0]
+  P --> U[Upland Talar / Upland Capitals<br/>−350 onward]
   E --> C[Classical Talar / original script<br/>0 to 300]
   C --> N[Ridge Talar / Ridge Cut<br/>300 to 900]
   C --> D[Delta Talar / Delta Cursive<br/>300 to 900]
   C --> I[Island Talar / Island Bookhand<br/>300 to 1000]
   D --> K[Civic Talar / Civic Print<br/>900 onward]
   N --> A[Market Ridge / Ridge Alphabet<br/>750 onward]
-  I --> H[Harbor Talar / Harbor Blocks<br/>850 onward]
+  I --> H[Harbor Talar / Harbor Blocks<br/>850 to 1300]
+  H --> LH[Late Harbor Talar / Harbor Roundels<br/>1300 onward]
+  E -. seal script .-> S[Reed Seals<br/>0 to 850]
+  S -. script inherited .-> H
   N -. learned forms and graphic influence .-> K
   I -. manuscripts and graphic influence .-> K
   A -. component forms only .-> H
@@ -117,6 +121,23 @@ Printers also restore word spaces, partly to make quantifier scope auditable aga
 5. Treat a formal logic register as the entire language: it suppresses the very conversational constructions that drive later change.
 
 The seeds are proposed innovations, not enough independent evidence to reconstruct a real family. The workbook follows the discipline of deriving the stated cognates from ordered rules. For real-method background see the [UCSB comparative-method worksheet](https://hlw.id.ucsb.edu/sites/default/files/2024-04/Ch12_GuideHistoricalReconstruct.pdf) and [Rankin on the comparative method](https://onlinelibrary.wiley.com/doi/10.1002/9781405166201.ch1). The fictional dates, sound laws and institutions are our design choices.
+
+## Upland Talar and the Upland Capitals, id capitals, −350 onward
+
+Upland Talar splits from Proto-Talar before the Early stage, so it never shows the Classical fronting. Two ordered changes apply:
+
+1. `/w/ → /v/` everywhere: `*waro → varo`.
+2. A final unstressed `/i u/` after a consonant reduces to schwa, written `h`: `*tuni → tunh`, `*loni → lonh`, `*zanu → zanh`.
+
+Grammar: place words follow their argument as postpositions and the predicate closes the clause: `na sara ta na lena ti tunh` “Sara perceives Lena”. The script descends directly from the Stone Register: one unbroken stroke per sound, in capital-letter proportions.
+
+## The Reed Seals, id seal, 0 to 850
+
+The seals are a script branch, not a language. Coastal carvers working from Early Ink models stack each syllable into one cell. They record Early Talar formulas and keep those spellings long after the coast speaks Island and then Harbor Talar. The model's `seal` reflex is therefore the Early form.
+
+## Late Harbor Talar and the Harbor Roundels, id roundel, 1300 onward
+
+Late Harbor applies one further change to Harbor forms: in a polysyllable, any final vowel after a single consonant is lost (`mata → mat`, `lena → len`, `walo → wal`). Most native words become one syllable. The fused Harbor endings wear away and are replaced by free particles, so the language becomes isolating again: `sara lena tun #we` “Sara perceives Lena (I saw it)”. Homophones such as tun “person” / tun “perceive” are separated in writing by ideograms. The circular script descends from Harbor Blocks.
 
 ## Two later offshoots with different writing units
 

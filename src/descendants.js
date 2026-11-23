@@ -260,9 +260,28 @@
     const box='x="-40" y="-40" width="400" height="180"';
     return `<mask id="${id}" maskUnits="userSpaceOnUse" ${box}><rect ${box} fill="white"/><g fill="none" stroke="black" stroke-width="${m.inner}" stroke-linecap="round" stroke-linejoin="round">${maskGeometry}</g></mask><g mask="url(#${id})" data-pictogram="true"><g fill="none" stroke="${xml(inkColor)}" stroke-width="${m.outer}" stroke-linecap="round" stroke-linejoin="round">${inkGeometry}</g></g>`;
   }
+  // Shared by every syllable-cell system: capacity, prosody tiles and the
+  // bracketed alphabetic spell-out for oversized groups.
+  const overCapacity=s=>s.onset.length>blockMetrics.maxOnset||s.nucleus.length>blockMetrics.maxNucleus||s.coda.length>blockMetrics.maxCoda;
+  const markTiles=(marks,x0,inkColor,offset=0)=>marks.map((key,i)=>`<g transform="translate(${n(x0+18*Math.floor(i/4))} ${16+18*(i%4)}) scale(.65)" data-prosody-slot="${offset+i}">${E.mark(key,0,0,inkColor)}</g>`).join('');
+  function spellOut(s,inkColor){
+    const items=s.phones.map(t=>({width:34,body:`<g transform="translate(2 28) scale(.8)" data-escape-letter="${xml(t.key)}">${letter(t.key,inkColor)}</g>`}));
+    for(const key of s.marks)items.push({width:28,body:`<g transform="translate(14 44) scale(.65)" data-prosody-only="true">${E.mark(key,0,0,inkColor)}</g>`});
+    items.forEach((tile,i)=>{tile.body=path(`M0 ${i===0?8:0}V0H${tile.width}${i===items.length-1?'V8':''}`,inkColor,1.3)+tile.body;if(i===0&&s.stress)tile.body+=path('M12-9H22',inkColor,3);});
+    return {width:34,height:blockMetrics.height,body:'',escape:true,tiles:items,components:[],ligatures:[]};
+  }
+  // Close a cell: prosody to the right, stress above, overflow in extra tiles.
+  function finishCell(s,body,glyphWidth,inkColor,extra={}){
+    const markX=glyphWidth+8;
+    body+=markTiles(s.marks.slice(0,8),markX,inkColor);
+    if(s.stress)body+=path(`M${n(glyphWidth/2-5)}-9H${n(glyphWidth/2+5)}`,inkColor,3);
+    const width=s.marks.length>4?markX+40:s.marks.length?markX+22:glyphWidth,tiles=[{width,body}];
+    for(let start=8;start<s.marks.length;start+=8){const marks=s.marks.slice(start,start+8);tiles.push({width:marks.length>4?48:30,body:`<g data-prosody-only="true">${markTiles(marks,0,inkColor,start)}</g>`});}
+    return {width,height:blockMetrics.height,body,escape:false,tiles,glyphWidth,...extra};
+  }
   function block(s,inkColor,idBase){
-    const m=blockMetrics,escape=s.onset.length>m.maxOnset||s.nucleus.length>m.maxNucleus||s.coda.length>m.maxCoda;
-    const markTile=(marks,x0,offset=0)=>marks.map((key,i)=>`<g transform="translate(${n(x0+18*Math.floor(i/4))} ${16+18*(i%4)}) scale(.65)" data-prosody-slot="${offset+i}">${E.mark(key,0,0,inkColor)}</g>`).join('');
+    const m=blockMetrics,escape=overCapacity(s);
+    const markTile=(marks,x0,offset=0)=>markTiles(marks,x0,inkColor,offset);
     if(escape){
       // Spell out oversized groups at a constant readable size. The bracket is
       // a graphic escape, never an extra vowel or a syllable boundary.
@@ -300,29 +319,121 @@
     for(let start=8;start<s.marks.length;start+=8){const marks=s.marks.slice(start,start+8);tiles.push({width:marks.length>4?48:30,body:`<g data-prosody-only="true">${markTile(marks,0,start)}</g>`});}
     return {width,height:m.height,body,escape:false,tiles,components,ligatures,glyphWidth};
   }
+  // ---- Path utilities for the newer hands ----
+  function transformPath(d,fx,fy,dx=0,dy=0){
+    const map=q=>[q[0]*fx+dx,q[1]*fy+dy];
+    return serialize(segments(d).map(sp=>({start:map(sp.start),closed:sp.closed,segs:sp.segs.map(g=>({...g,pts:g.pts.map(map)}))})));
+  }
+  // Incised hand: each curve becomes two straight cuts through its midpoint.
+  function angular(d){
+    return serialize(segments(d).map(sp=>({start:sp.start,closed:sp.closed,segs:sp.segs.flatMap(g=>{
+      if(g.t==='L')return [g];
+      const p0=g.p0,c=g.pts,mid=g.t==='Q'?[.25*p0[0]+.5*c[0][0]+.25*c[1][0],.25*p0[1]+.5*c[0][1]+.25*c[1][1]]:[.125*p0[0]+.375*c[0][0]+.375*c[1][0]+.125*c[2][0],.125*p0[1]+.375*c[0][1]+.375*c[1][1]+.125*c[2][1]];
+      return [{t:'L',p0,pts:[mid]},{t:'L',p0:mid,pts:[c.at(-1)]}];
+    })})));
+  }
+  const stroked=(d,inkColor,width,cap='round',join='round',extra='')=>`<path d="${d}" fill="none" stroke="${xml(inkColor)}" stroke-width="${n(width)}" stroke-linecap="${cap}" stroke-linejoin="${join}"${extra}/>`;
+  // Stone Register: the alphabet's sound forms, cut straight with a square tool.
+  function incisedLetter(key,inkColor){
+    return (alphabet[key]||[]).map(d=>stroked(angular(d),inkColor,5,'square','miter')).join('')+(key==='i'?`<path d="M17 11L21 15L17 19L13 15Z" fill="${xml(inkColor)}"/>`:'');
+  }
+  // Upland Capitals: one unbroken stroke per sound, narrowed and lengthened
+  // toward capital-letter proportions. Consonants share the single-stroke
+  // skeletons; every vowel form is already one stroke.
+  const capitalSource=key=>E.consonants[key]?harborStrokes[key]:(alphabet[key]||[])[0];
+  function capitalLetter(key,inkColor){
+    const d=capitalSource(key);if(!d)return '';
+    return stroked(transformPath(d,.72,1.15,4,-2),inkColor,4,'butt','miter')+(key==='i'?`<rect x="${n(17*.72+4-2.2)}" y="${n(15*1.15-2-2.2)}" width="4.4" height="4.4" fill="${xml(inkColor)}"/>`:'');
+  }
+  // Reed Seals: the first syllable cells. Full sound forms sit in three rows
+  // around a short two-rail vowel chamber inherited from Early Ink.
+  function sealCell(s,inkColor){
+    if(overCapacity(s))return spellOut(s,inkColor);
+    const scale=.58,components=[];
+    const row=(tokens,y,kind)=>tokens.map((t,i)=>{
+      const center=tokens.length===1?42:tokens.length===2?28+i*28:14+i*28,x=center-18*scale;
+      components.push({key:t.key,kind,x,y});
+      return `<g transform="translate(${n(x)} ${y}) scale(${scale})" data-${kind}-part="${xml(t.key)}">${letter(t.key,inkColor)}</g>`;
+    }).join('');
+    let body=path('M82 27H2V58H82',inkColor,2.6,' data-seal-chamber="true"');
+    body+=row(s.onset,1,'onset')+row(s.nucleus,32,'nucleus')+row(s.coda,63,'coda');
+    if(!s.nucleus.length)body+=path('M38 40H46V48H38ZM38 40L46 48M46 40L38 48',inkColor,1.6,' data-empty-nucleus="true"');
+    return finishCell(s,body,84,inkColor,{components});
+  }
+  // Harbor Roundels: every syllable is a circle. The vowel sits inside; its
+  // consonants are single strokes resting on the rim (onset) or hanging from
+  // it (coda). Frequent words can be written with ideograms: #word.
+  const roundel=Object.freeze({cx:42,cy:44,r:22,consonant:.48,vowel:.5,pair:.36,weight:3,spread:20});
+  function roundelCell(s,inkColor){
+    if(overCapacity(s))return spellOut(s,inkColor);
+    const R=roundel,components=[];
+    const shape=(form,x,y,scale,kind,key,extra='')=>{components.push({key,kind,x,y,scale});return `<g transform="translate(${n(x)} ${n(y)}) scale(${scale})"${kind?` data-${kind}-part="${xml(key)}"`:''}${extra}>${path(form,inkColor,R.weight/scale)}${key==='i'&&kind==='nucleus'?`<circle cx="17" cy="15" r="2.6" fill="${xml(inkColor)}"/>`:''}</g>`;};
+    let body=`<circle cx="${R.cx}" cy="${R.cy}" r="${R.r}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}" data-roundel="true"/>`;
+    const vs=s.nucleus,vScale=vs.length>1?R.pair:R.vowel;
+    vs.forEach((t,i)=>{const cx=vs.length>1?R.cx-9+18*i:R.cx;body+=shape(harbor(t.key).d,cx-18*vScale,R.cy-18*vScale,vScale,'nucleus',t.key);});
+    if(!vs.length)body+=path(`M${R.cx-6} ${R.cy-6}L${R.cx+6} ${R.cy+6}M${R.cx+6} ${R.cy-6}L${R.cx-6} ${R.cy+6}`,inkColor,2,' data-empty-nucleus="true"');
+    const rim=(tokens,kind)=>tokens.forEach((t,i)=>{const k=R.consonant,cx=R.cx+(i-(tokens.length-1)/2)*R.spread,box=36*k;body+=shape(harborStrokes[t.key],cx-18*k,kind==='onset'?R.cy-R.r-box+1:R.cy+R.r-1,k,kind,t.key,' data-rim-stroke="true"');});
+    rim(s.onset,'onset');rim(s.coda,'coda');
+    return finishCell(s,body,84,inkColor,{components});
+  }
+  // Ideograms for frequent Late Harbor words, written #word. They stand for
+  // whole words and are drawn in the same 84 × 88 cell as syllables.
+  const ideograms=Object.freeze({
+    tun:{meaning:'person',d:'M42 37V62M27 46H57M42 62L31 80M42 62L53 80',circle:[42,25,9]},
+    lon:{meaning:'record',d:'M25 18H59V72H25ZM32 31H52M32 44H52M32 57H45'},
+    'nèl':{meaning:'water',d:'M24 36Q33 29 42 36Q51 43 60 36M24 48Q33 41 42 48Q51 55 60 48M24 60Q33 53 42 60Q51 67 60 60'},
+    tas:{meaning:'stone',d:'M42 26L57 44L42 62L27 44Z',circle:[42,44,24]},
+    we:{meaning:'seen (direct evidence)',d:'M16 44Q42 16 68 44Q42 72 16 44Z',circle:[42,44,9],dot:[42,44]},
+    wu:{meaning:'not',d:'M26 60L58 28',circle:[42,44,22]},
+    ru:{meaning:'every',d:'M42 14V24M42 64V74M12 44H22M62 44H72M21 23L28 30M56 58L63 65M63 23L56 30M28 58L21 65',circle:[42,44,12]},
+    su:{meaning:'some',d:'M42 22V66',circle:[42,44,22],half:true},
+    na:{meaning:'name',d:'M16 26H68Q78 26 78 44Q78 62 68 62H16Q6 62 6 44Q6 26 16 26Z',dot:[42,44]}
+  });
+  function ideogramCell(word,inkColor){
+    const g=ideograms[word],R=roundel;
+    let body=path(g.d,inkColor,R.weight,` data-ideogram="${xml(word)}"`);
+    if(g.circle)body+=`<circle cx="${g.circle[0]}" cy="${g.circle[1]}" r="${g.circle[2]}" fill="none" stroke="${xml(inkColor)}" stroke-width="${R.weight}"/>`;
+    if(g.half)body+=`<path d="M42 22A22 22 0 0 0 42 66Z" fill="${xml(inkColor)}"/>`;
+    if(g.dot)body+=`<circle cx="${g.dot[0]}" cy="${g.dot[1]}" r="3.4" fill="${xml(inkColor)}"/>`;
+    return {width:84,body};
+  }
+  const cellSystems={blocks:null,seal:sealCell,roundel:roundelCell};
+  const isCell=system=>system in cellSystems;
   function render(text,options={},system='blocks'){
     const o={...E.defaults,...options},width=Math.max(300,Math.min(2400,Number(o.width)||1000)),size=Math.max(.45,Math.min(2.5,Number(o.size)||1));
-    const margin=32,max=(width-2*margin)/size,lineHeight=system==='blocks'?108:88;
-    const data=units(text),paint=[],placements=[],syllables=[],unknown=[...new Set(data.tokens.filter(t=>t.type==='unknown').map(t=>t.raw))],orphanMarks=[],notes=[];
-    let x=0,y=system==='blocks'?18:36,lines=1,maxX=0,vowelless=false,escaped=false;
+    const margin=32,max=(width-2*margin)/size,cell=isCell(system),lineHeight=cell?108:88;
+    const data=units(text),paint=[],placements=[],syllables=[],unknownAll=[...new Set(data.tokens.filter(t=>t.type==='unknown').map(t=>t.raw))],orphanMarks=[],notes=[];
+    let x=0,y=cell?18:36,consumedHash=0,lines=1,maxX=0,vowelless=false,escaped=false;
     const nextLine=()=>{maxX=Math.max(maxX,x);x=0;y+=lineHeight;lines++;};
     const put=(body,w,attrs='',gap=0)=>{const fit=Math.min(1,max/w),advance=w*fit;if(x>0&&x+advance>max)nextLine();paint.push(`<g transform="translate(${n(x)} ${n(y)}) scale(${fit})"${attrs}>${body}</g>`);placements.push({x,y,width:advance,scale:fit});x+=advance+gap;maxX=Math.max(maxX,x);};
-    const literal=(raw,rust=false)=>put(`<text x="0" y="${system==='blocks'?58:28}" fill="${rust?'#a53e29':xml(o.ink)}" font-family="Georgia,serif" font-size="23">${xml(raw)}</text>`,Math.max(18,Array.from(raw).length*14));
-    for(const unit of data.units){
+    const literal=(raw,rust=false)=>put(`<text x="0" y="${cell?58:28}" fill="${rust?'#a53e29':xml(o.ink)}" font-family="Georgia,serif" font-size="23">${xml(raw)}</text>`,Math.max(18,Array.from(raw).length*14));
+    for(let ui=0;ui<data.units.length;ui++){
+      const unit=data.units[ui];
       if(unit.type==='newline'){nextLine();continue;}
       if(unit.type==='space'){if(x)x+=22;continue;}
+      if(system==='roundel'&&unit.raw==='#'){
+        const next=data.units[ui+1],word=next&&next.type==='word'?next.tokens.filter(t=>t.type==='consonant'||t.type==='vowel').map(t=>t.key).join(''):'';
+        if(ideograms[word]&&next.tokens.every(t=>t.type==='consonant'||t.type==='vowel')){const g=ideogramCell(word,o.ink);put(g.body,g.width,` data-ideogram-word="${xml(word)}"`,12);consumedHash++;ui++;continue;}
+      }
       if(unit.type!=='word'){literal(unit.raw,unit.type==='unknown');continue;}
       const syllableList=syllabify(unit.tokens);
       const prepared=[];
       for(const s of syllableList){
         if(s.type==='orphan'){prepared.push({orphan:s});continue;}
         syllables.push(s);if(!s.nucleus.length)vowelless=true;
-        if(system==='blocks'){const b=block(s,o.ink,o.idPrefix);if(b.escape)escaped=true;b.tiles.forEach((tile,i)=>prepared.push({s,b:tile,width:tile.width+(b.escape?0:12),escape:b.escape,part:i,group:syllables.length-1}));}
+        if(cell){const b=system==='blocks'?block(s,o.ink,o.idPrefix):cellSystems[system](s,o.ink);if(b.escape)escaped=true;b.tiles.forEach((tile,i)=>prepared.push({s,b:tile,width:tile.width+(b.escape?0:12),escape:b.escape,part:i,group:syllables.length-1}));}
         else {
           const nucleusIndex=s.onset.length,target=s.nucleus.length?nucleusIndex:Math.max(0,s.phones.length-1);
+          const draw=system==='incised'?incisedLetter:system==='capitals'?capitalLetter:letter,advance=system==='capitals'?34:44;
+          // Stone Register keeps vowels with their consonant: a vowel after an
+          // initial consonant is a small raised letter, not a full one.
+          const carrier=system==='incised'&&s.onset.length&&s.nucleus.length?s.onset.length-1:-1;
           s.phones.forEach((t,i)=>{
-            let body=letter(t.key,o.ink),w=44;
-            if(i===target){s.marks.forEach((m,j)=>{body+=`<g transform="translate(${17+j*18}-8) scale(.65)">${E.mark(m,0,0,o.ink)}</g>`;});w=Math.max(w,34+18*Math.max(0,s.marks.length-1));if(s.stress)body+=path('M12-24H22',o.ink,2.6);}
+            if(carrier>=0&&t.type==='vowel'&&i>carrier&&i<=carrier+s.nucleus.length)return;
+            let body=draw(t.key,o.ink),w=advance;
+            if(i===carrier){s.nucleus.forEach((v,j)=>{body+=`<g transform="translate(${30+j*17} -14) scale(.45)" data-raised-vowel="${xml(v.key)}">${incisedLetter(v.key,o.ink)}</g>`;});w=Math.max(w,34+17*s.nucleus.length);}
+            const markAt=carrier>=0?carrier:target,markY=carrier>=0?-30:-8;
+            if(i===markAt){s.marks.forEach((m,j)=>{body+=`<g transform="translate(${17+j*18} ${markY}) scale(.65)">${E.mark(m,0,0,o.ink)}</g>`;});w=Math.max(w,34+18*Math.max(0,s.marks.length-1));if(s.stress)body+=path(`M12 ${markY-16}H22`,o.ink,2.6);}
             prepared.push({t,body,width:w});
           });
         }
@@ -331,17 +442,19 @@
       if(x>0&&wordWidth<=max&&x+wordWidth>max)nextLine();
       for(const p of prepared){
         if(p.orphan){for(const t of p.orphan.tokens){literal(t.raw,true);if(t.type==='mark')orphanMarks.push(t.raw);}continue;}
-        if(system==='blocks'){
+        if(cell){
           const info=p.part===0?` data-syllable="${xml(p.s.phones.map(t=>t.key).join(' '))}" data-onset="${xml(p.s.onset.map(t=>t.key).join(' '))}" data-nucleus="${xml(p.s.nucleus.map(t=>t.key).join(' '))}" data-coda="${xml(p.s.coda.map(t=>t.key).join(' '))}"`:'';
           put(p.b.body,p.b.width,`${info} data-syllable-group="${p.group}" data-block-part="${p.part}"${p.escape?' data-block-escape="true"':''}`,p.escape?0:12);
         }
         else put(p.body,p.width,` data-alphabet-letter="${xml(p.t.key)}" data-kind="${p.t.type}"`);
       }
     }
-    if(system==='blocks'&&vowelless)notes.push('The small crossed square marks an empty nucleus; no vowel is supplied.');
+    // A # that introduced an ideogram is a writing convention, not an unknown sign.
+    const hashes=data.tokens.filter(t=>t.type==='unknown'&&t.raw==='#').length,unknown=consumedHash&&consumedHash===hashes?unknownAll.filter(r=>r!=='#'):unknownAll;
+    if(cell&&vowelless)notes.push(system==='roundel'?'An empty circle with a cross marks an empty nucleus; no vowel is supplied.':'The small crossed square marks an empty nucleus; no vowel is supplied.');
     if(escaped)notes.push('This group exceeds 3 onset, 2 vowel or 3 coda components; a bracketed spell-out keeps every sound readable.');
-    const height=Math.max(210,Math.ceil((y+(system==='blocks'?92:46))*size+2*margin));
-    let guides='';if(o.guides)for(let row=0;row<lines;row++){const base=(system==='blocks'?18:36)+row*lineHeight;guides+=path(`M0 ${base+(system==='blocks'?88:36)}H${max}`,'#9eacb6',.6,' stroke-dasharray="3 7"');}
+    const height=Math.max(210,Math.ceil((y+(cell?92:46))*size+2*margin));
+    let guides='';if(o.guides)for(let row=0;row<lines;row++){const base=(cell?18:36)+row*lineHeight;guides+=path(`M0 ${base+(cell?88:36)}H${max}`,'#9eacb6',.6,' stroke-dasharray="3 7"');}
     const bg=o.transparent?'':`<rect width="100%" height="100%" fill="${xml(o.background)}"/>`;
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${xml(text||'Empty script composition')}"><title>${xml(text||'Script composition')}</title>${bg}<g transform="translate(${margin} ${margin}) scale(${size})">${guides}${paint.join('')}</g></svg>`;
     return {svg,width,height,lines,unknown,placements,joins:[],orphanMarks,notes,syllables,marks:data.tokens.filter(t=>t.type==='mark').length,consonants:data.tokens.filter(t=>t.type==='consonant').length,vowels:data.tokens.filter(t=>t.type==='vowel').length,contentBounds:{x:margin-5*size,y:margin+(system==='blocks'?6:6)*size,width:Math.min(width-margin,maxX*size+10*size),height:(y+(system==='blocks'?92:46)-6)*size}};
@@ -350,8 +463,9 @@
   const hidden=svg=>svg.replace('role="img"','aria-hidden="true"');
   function preview(key,type,system){
     if(type==='mark')return hidden(compact(render('a{'+key+'}',{width:300,transparent:true,ink:'currentColor'},system)));
-    return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${system==='blocks'?harborPreview(key):letter(key,'currentColor')}</svg>`;
+    const ink='currentColor',body=system==='blocks'?harborPreview(key):system==='incised'?incisedLetter(key,ink):system==='capitals'?capitalLetter(key,ink):system==='roundel'?(E.consonants[key]?path(harborStrokes[key],ink,3.4):`<circle cx="18" cy="18" r="17" fill="none" stroke="${ink}" stroke-width="2.4"/><g transform="translate(9 9) scale(.5)">${path(harbor(key).d,ink,6)}${key==='i'?`<circle cx="17" cy="15" r="2.6" fill="${ink}"/>`:''}</g>`):letter(key,ink);
+    return `<svg viewBox="-4 -4 44 44" aria-hidden="true">${body}</svg>`;
   }
-  const api={alphabet,harborForms,harborStrokes,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
+  const api={alphabet,harborForms,harborStrokes,ideograms,roundel,incisedLetter,capitalLetter,sealCell,roundelCell,angular,transformPath,letter,harborLetter,harborPreview,ink,harbor,blockMetrics,units,syllabify,block,render,compact,preview};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.ScriptDescendants=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

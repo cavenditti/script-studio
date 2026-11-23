@@ -6,27 +6,30 @@ This is a **provisional fictional history** built around Carlo's original writin
 
 The setting is a connected basin with an upland watershed, a river delta and an archipelago. A shared writing school establishes a classical standard. After its network fragments, regional schools develop different habits. A later river printing standard borrows from the other two traditions. No stage is inherently better or more intelligent than another.
 
-## Nine stages, different units of writing
+## Twelve stages, different units of writing
 
 Years are relative to the classical school's foundation, year 0. Ranges describe a hand's characteristic period, not a sudden replacement of all earlier writing.
 
 | ID | Hand | Period | Parent | Medium and principal innovation |
 | --- | --- | --- | --- | --- |
-| stone | Stone Register | −700 to −350 | — | Incised surfaces: independent signs, angular bends, diamond punctures |
-| reed | Early Ink | −350 to 0 | Stone | Prepared sheets: rounded returns and pen stops; signs remain independent |
+| stone | Stone Register | −700 to −350 | — | Incised surfaces: free-standing consonant letters cut straight; a vowel after a consonant is a small raised letter |
+| capitals | Upland Capitals | −350 onward | Stone | Monuments and painted signs: one unbroken stroke per sound, in capital-letter proportions |
+| reed | Early Ink | −350 to 0 | Stone | Prepared sheets: rounded returns and pen stops; raised vowels shrink to marks; signs remain independent |
+| seal | Reed Seals | 0 to 850 | Early Ink | Carved seals: one cell per syllable, with sounds stacked around a two-rail vowel chamber |
 | classical | Classical | 0 to 300 | Early Ink | The original hand: continuous rails, genuine S-switches, visible branching legs |
 | ridge | Ridge Cut | 300 to 900 | Classical | Cut labels: resegmented signs, chamfers, beaked returns, diamond marks |
 | delta | Delta Cursive | 300 to 900 | Classical | Quick contracts: continuous rails, open oblique returns, oval pen marks |
 | island | Island Bookhand | 300 to 1000 | Classical | Bound manuscripts: broad return bowls, inward feet, rounded closing bars |
 | civic | Civic Print | 900 onward | Delta | Reusable type: open returns with explicit feet and repeatable chamfers; graphic borrowing from Ridge and Island |
 | ridge-alpha | Ridge Alphabet | 750 onward | Ridge | Full independent consonant **and vowel letters**, with the guide rails removed |
-| harbor | Harbor Blocks | 850 onward | Island | Fused syllable signs: onset, vowel and coda joined where their strokes meet |
+| harbor | Harbor Blocks | 850 to 1300 | Reed Seals | Fused syllable pictograms: onset, vowel and coda merged into one outline; borrows from Island and Ridge Alphabet |
+| roundel | Harbor Roundels | 1300 onward | Harbor Blocks | One circle per syllable, with the vowel inside and single-stroke consonants on the rim; ideograms for frequent words |
 
 Solid edges in the tree are descent. Dashed edges are graphic borrowing. Civic has one Delta parent; borrowing a letter shape does not make it the genealogical child of three spoken languages.
 
 ## A comparative plate
 
-![Nine stages drawn from identical modern keys](evolution/atlas.svg)
+![Twelve stages drawn from identical modern keys](evolution/atlas.svg)
 
 Every row draws **the same modern keys**: `din rento ghma`, then `n p s r w`. In Harbor, the second row has explicitly marked vowelless clusters; the crossed empty-nucleus square does not supply a schwa. These are neutral comparison strings, not translations or reconstructed historical words. Using a shared key set makes the shapes comparable; it does not claim that every modern sound or allograph existed at the earliest stage.
 
@@ -34,11 +37,17 @@ The editor's Classical rendering is unchanged. The first seven profiles develop 
 
 ## How the forms develop
 
+### The Stone Register: halfway to an alphabet
+
+The earliest hand is a set of free-standing consonant letters cut with a square tool. The cutter approximates every curve with two straight cuts and punches dots as diamonds. Vowels are already written, but a vowel that follows a consonant is a small letter raised over that consonant's shoulder. Only a vowel that begins a syllable is cut at full size. The register therefore sits between two later systems. One is the Ridge Alphabet, where every sound has a full letter. The other is the Classical ribbon, where vowels are marks on their consonant.
+
+### Stone → Upland Capitals: one stroke per sound
+
+The upland communities keep the stone habit of independent letters but make them for a chisel run or a single brush pull. Every consonant reduces to one unbroken stroke that keeps its stem direction. Every vowel, already a single stroke, grows from a raised mark into a full letter on the line. The letters narrow and lengthen into capital proportions, with square ends and a dotted i that is distinct from j. The result resembles a Latin alphabet more than its ancestor does. It is a separate branch that never passes through the ink school. Its language, Upland Talar, splits from Proto-Talar before the Early stage and never acquires the Classical fronted vowels.
+
 ### Stone → Early Ink: a change in ductus
 
-“Ductus” means the habitual way a sign is executed. In the proposed Stone hand, the writer lifts a cutting tool between signs and approximates bends with short straight cuts. Dots become diamond punctures. The two levels begin as ruled guides, with the direction of a returning stroke carrying a stable distinction.
-
-Early Ink keeps the separate signs but rounds the returns and pen stops. This is more than thinning the current font: letters are detached, cuts become curves, and marks recover round forms. A tool change motivates a possibility; it does not mechanically determine what every writer must do.
+“Ductus” means the habitual way a sign is executed. Early Ink scribes write with a reed. They keep the separate signs but round the returns and pen stops. The raised vowel letters shrink into marks over their consonant, the first step toward the Classical diacritics. This is more than thinning the current font: letters are detached, cuts become curves, and marks recover round forms. A tool change motivates a possibility; it does not mechanically determine what every writer must do.
 
 ### Early Ink → Classical: a school standard
 
@@ -70,7 +79,7 @@ Civic retains Delta's open returns. It adds short horizontal feet, inspired by I
 
 The dashed contact edges are essential. Similar shapes can be inherited, borrowed, independently reinvented, or deliberately restored. A later public standard is not necessarily an unbroken survival of the classical spoken language.
 
-## Structural divergence: alphabet and syllable seals
+## Structural divergence: alphabets, syllable cells and circles
 
 ![Same sounds in three different writing systems, with a block decomposition](evolution/structural-branches.svg)
 
@@ -82,9 +91,13 @@ This is a **pure segmental alphabet** in the normalized key system. `plant` is f
 
 Promoting initial-vowel allographs provides a historical bridge to full vowels rather than introducing eleven arbitrary modern letters at once. Detaching each consonant's joint accounts for recognizable family resemblances after the word ribbon disappears.
 
-### Island → Harbor Blocks: the syllable becomes one compound sign
+### Early Ink → Reed Seals: the first syllable cells
 
-Frequent Island ligatures initially bind a vowel and its neighboring consonants into small seals. A later teaching reform regularizes them into a **fused syllable sign**. It borrows recognizable sound forms from Ridge Alphabet without adopting alphabetic writing. This is graphic contact, not a new spoken-language parent.
+A seal must hold a whole name in a small square. Coastal carvers working from Early Ink models therefore stack each syllable into one cell instead of running sounds along a line. Initial consonants go above, final consonants below, and the vowels sit between two short rails, the last trace of Early Ink's guide lines. Every component keeps its full sound shape at a constant size. This is the old boxed three-row cell, and it sits halfway between the ink line and the later Harbor pictograms. The seals record Early Talar formulas and keep those spellings for centuries.
+
+### Reed Seals → Harbor Blocks: the syllable becomes one compound sign
+
+Harbor schools take the seal cell into everyday writing. They drop the rail chamber and regularize each syllable into a **fused syllable sign**. Their speakers' language descends from Island Talar, so the script and the language have different parents. This is a clear case of writing transmitted by an institution rather than by a speech community. It borrows recognizable sound forms from Ridge Alphabet without adopting alphabetic writing. This is graphic contact, not a new spoken-language parent.
 
 - **Top row:** onset consonants, left to right.
 - **Middle row:** full vowel components, left to right.
@@ -99,6 +112,24 @@ The inspiration from Korean concerns **composing consonant/vowel components into
 
 See the [complete Harbor diagnostic plate](evolution/harbor-diagnostics.svg) for all consonants in both positions, all eleven vowels, compound vowels in opposite orders, empty positions, clusters and combined tone/stress.
 
+### Harbor Blocks → Harbor Roundels: circles and ideograms
+
+Late Harbor Talar wears most words down to a single syllable, and homophones multiply: tun means both “person” and “perceive”. Ledger writers answer with a different system. Every syllable becomes a **circle**: the vowel sits inside it, single-stroke consonants rest on the rim above (onset) or hang from it below (coda). Frequent words get **ideograms**, written in the editor as `#word`:
+
+| Typed | Ideogram | Meaning |
+| --- | --- | --- |
+| `#tun` | standing figure | person |
+| `#lon` | ruled tablet | record |
+| `#nèl` | three waves | water |
+| `#tas` | diamond in a circle | stone |
+| `#we` | eye | seen (direct evidence) |
+| `#wu` | slashed circle | not |
+| `#ru` | radiating circle | every |
+| `#su` | half-filled circle | some |
+| `#na` | cartouche | name |
+
+So `#ru #tun lon tun` writes “every person perceives some record”: the ideogram distinguishes person from the spelled-out tun, perceive. An unrecognized `#` stays visible as an unknown sign. Ideograms are a writing convention keyed to the typed word. The renderer still never translates text or applies sound laws.
+
 ### Boundaries are explicit when needed
 
 The editor uses a declared **graphic default**, not a universal pronunciation rule: consecutive vowels share a nucleus; the last consonant between nuclei begins the next group. Thus `rento` becomes `ren·to`, and `katra` becomes `kat·ra`.
@@ -111,7 +142,7 @@ The new systems have their own glyph layout rather than transforming the old SVG
 
 ## What is implemented
 
-- Nine selectable historical stages in **Appearance → Historical hand**.
+- Twelve selectable historical stages in **Appearance → Historical hand**.
 - A **Scripts and languages** explorer opened by the current hand's name next to Preview. Each stage shows its script history and the philology of its spoken variety: sound changes, grammar type, word division, cognates and example sentences drawn in that hand. Ordinary Delta, for example, appears as unspaced cursive and Island as long agglutinated words.
 - Stage-aware consonant, vowel and mark previews, SVG/PNG export, document saving and offline copies.
 - A reproducible atlas and family tree, generated from the same profile data as the editor.

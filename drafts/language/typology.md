@@ -5,7 +5,9 @@
 | Script | Variety | Ordinary morphology | Written word division | Sara perceives Lena |
 | --- | --- | --- | --- | --- |
 | Stone Register | Proto | isolating | spaced, one word per counted slot | pa tuni ta na sara ti na lena |
+| Upland Capitals | Upland | isolating, predicate-final | spaced | na sara ta na lena ti tunh |
 | Early Ink | Early | isolating | **continuous**, one ink line per formula | patunitanasaratinalena |
+| Reed Seals | Early | isolating | spaced, one cell per syllable | pa tuni ta na sara ti na lena |
 | Classical | Classical | isolating | spaced by school rule | pa tyni ta na sara ti na lena |
 | Ridge Cut | Ridge | agglutinative, dependent-marking | spaced | tini nasarata nalenati |
 | Delta Cursive | Delta | isolating | **continuous**, one ribbon per clause | saratinlena |
@@ -13,6 +15,7 @@
 | Civic Print | Civic | isolating | spaced by printers | pa tin ta na sara ti na lena |
 | Ridge Alphabet | Market Ridge | isolating, positional | spaced | tin na sara na lena |
 | Harbor Blocks | Harbor | fusional | spaced blocks | nasarata nalenati tuniw |
+| Harbor Roundels | Late Harbor | isolating, monosyllabic | circles plus `#word` ideograms | sara lena tun #we |
 
 The sheet shows the same contrast in each hand: `node drafts/language/specimens.cjs`, then `rsvg-convert drafts/language/specimens.svg -o drafts/language/specimens.png`.
 
@@ -24,6 +27,7 @@ flowchart LR
   R --> M[Market Ridge<br/>isolating again]
   C --> I[Island<br/>incorporating]
   I --> H[Harbor<br/>fusional]
+  H --> LH[Late Harbor<br/>isolating again, ideograms]
   C --> D[Delta<br/>isolating, unspaced]
   D --> K[Civic<br/>isolating, spaced]
 ```

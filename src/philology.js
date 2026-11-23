@@ -10,6 +10,8 @@
   const intro='Each hand belongs to a spoken variety of Talar, a provisional language invented for this script. Languages descend by regular sound change; scripts are copied, borrowed and reformed. The two histories are related but separate. Examples are written in each variety’s own spelling and word division, so the same sentence can look radically different.';
   const pitfalls=[
     'Do not group Ridge with Stone because both are angular. That is writing technology, not descent.',
+    'Harbor Talar is an Island language written in a script from the Reed Seals. Script descent and language descent part ways.',
+    'Upland Capitals look like a later alphabet but branch directly from the Stone Register. Upland Talar never had the Classical fronted vowels.',
     'Island loni “record” is not an unchanged proto form: it passed through Classical lœni and changed back.',
     'Delta and Market Ridge both say tin “perceive” after independent vowel loss. One shared word does not make a subgroup.',
     'Civic spelling can keep archaic forms, so conservative writing can mask sound change.',
@@ -17,13 +19,22 @@
   ];
   const stages={
     stone:{
-      language:'Proto-Talar',morphology:'Isolating',division:'Spaced: one word per counted slot',
+      language:'Proto-Talar',morphology:'Isolating',division:'Spaced: one word per counted slot; vowels raised after their consonant',
       sound:['Reconstructed citation forms, root-initial stress','Vowels /a e i o u ə/'],
       grammar:'Predicates name numbered places; prefix particles mark predication (pa), places (ta ti tu), names (na) and logical scope.',
       cognates:['tun','loni','tuni','tas','ner','zanu'],
       examples:[
         {text:'pa tuni ta na sara ti na lena',gloss:'Sara perceives Lena.',parts:'pa PREDICATE · tuni perceive · ta place-1 · na NAME sara · ti place-2 · na NAME lena'},
         {text:'pa zanu ta na lena',gloss:'Lena sleeps.',parts:'pa · zanu sleep · ta place-1 · na lena'}
+      ]},
+    capitals:{
+      language:'Upland Talar',morphology:'Isolating, predicate-final',division:'Spaced, one single-stroke letter per sound',
+      sound:['Splits from Proto-Talar before Early Talar, so it never shows the Classical vowel fronting','w → v everywhere: waro → varo “river”','a final unstressed i u after a consonant reduces to schwa (h): tuni → tunh, zanu → zanh'],
+      grammar:'Place words follow their argument as postpositions, and the predicate closes the clause. pa is lost.',
+      cognates:['tun','lonh','tunh','tas','ner','zanh'],
+      examples:[
+        {text:'na sara ta na lena ti tunh',gloss:'Sara perceives Lena.',parts:'na sara ta Sara place-1 · na lena ti Lena place-2 · tunh perceive'},
+        {text:'na lena ta zanh',gloss:'Lena sleeps.',parts:'na lena ta · zanh sleep'}
       ]},
     reed:{
       language:'Early Talar',morphology:'Isolating',division:'Continuous: a whole formula is one ink line',
@@ -33,6 +44,15 @@
       examples:[
         {text:'patunitanasaratinalena',gloss:'Sara perceives Lena.',parts:'pa · tuni · ta · na sara · ti · na lena, written without spaces'},
         {text:'pazanutanalena',gloss:'Lena sleeps.',parts:'pa · zanu · ta · na lena'}
+      ]},
+    seal:{
+      language:'Early Talar, maritime seal use',morphology:'Isolating',division:'Spaced: one seal cell per syllable',
+      sound:['Records Early Talar; seal formulas preserve old spellings long after the coast speaks Island and then Harbor Talar'],
+      grammar:'Seals hold names, owners and short formulas in the Early prefix construction. The script branch is a writing tradition, not a separate language.',
+      cognates:['tun','loni','tuni','tas','ner','zanu'],
+      examples:[
+        {text:'pa tuni ta na sara ti na lena',gloss:'Sara perceives Lena.',parts:'Early Talar formula, one cell per syllable'},
+        {text:'na lena',gloss:'Lena (an owner’s seal).',parts:'na NAME · lena'}
       ]},
     classical:{
       language:'Classical Talar',morphology:'Isolating, explicit logical register',division:'Spaced by school rule, so every scope word can be audited',
@@ -96,12 +116,22 @@
     harbor:{
       language:'Harbor Talar',morphology:'Fusional',division:'Spaced pictograms, one per syllable',
       sound:['r → l after a vowel: dar → dal','final i u lost after m n l r: tuni → tun (now homophonous with tun “person”)','the observation suffix -we contracts to -w after a vowel'],
-      grammar:'Island suffixes erode and fuse with the stem. Apocope only applies at the end of a word, so the stem alternates: bare tun, but tuni- before a suffix. One syllable can carry several categories: -tew is past and observed.',
+      grammar:'The language descends from Island Talar, but its script descends from the Reed Seals. Island suffixes erode and fuse with the stem. Apocope only applies at the end of a word, so the stem alternates: bare tun, but tuni- before a suffix. One syllable can carry several categories: -tew is past and observed.',
       cognates:['tun','lon','tun','tas','nèl','zan'],
       examples:[
         {text:'nasarata nalenati tuniw',gloss:'Sara perceives Lena (I saw it).',parts:'tuni-w: the stem keeps its vowel before the fused evidence ending'},
         {text:'nalenata zanuw',gloss:'Lena sleeps (I saw it).',parts:'zanu-w, but bare zan'},
         {text:'rutunta lontuniwutew',gloss:'(I saw that) no person perceived any record.',parts:'lon-tuni-wu-tew record-perceive-NOT-PAST.OBSERVED'}
+      ]},
+    roundel:{
+      language:'Late Harbor Talar',morphology:'Isolating, monosyllabic',division:'Spaced circles, one per syllable, plus ideograms',
+      sound:['any final vowel after a single consonant is lost: mata → mat “parent”, lena → len “rest”','most native words are now one syllable','tun “person” and tun “perceive” fall together, as do şa “hot” and şa “shine”'],
+      grammar:'The fused Harbor endings wear away and are replaced by free particles, so the language becomes isolating again: subject, object, predicate, then a final evidence word. Ideograms (written #word) separate homophones and mark the commonest words.',
+      cognates:['tun','lon','tun','tas','nèl','zan'],
+      examples:[
+        {text:'sara lena tun #we',gloss:'Sara perceives Lena (I saw it).',parts:'sara · lena · tun perceive · #we ideogram SEEN (an eye)'},
+        {text:'#ru #tun lon tun',gloss:'Every person perceives some record.',parts:'#ru EVERY · #tun PERSON ideogram, unlike the spelled tun “perceive” · lon record · tun perceive'},
+        {text:'#na lena zan #we',gloss:'Lena sleeps (I saw it).',parts:'#na NAME cartouche · lena · zan sleep · #we SEEN'}
       ]}
   };
   const get=id=>stages[id]||stages.classical;

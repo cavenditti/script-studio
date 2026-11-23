@@ -56,4 +56,4 @@ for(const stage of L.stages){
     if(stage==='delta')assert.equal(T.segmentDelta(ex.text,['sara','lena']).length,1,ex.text);
   }
 }
-console.log('PASS: 31 roots × 9 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility; Island and Market Ridge equivalence to Classical on 300 random models; Delta segmentation; Harbor fusion; app philology panel agrees with the model.');
+console.log('PASS: 31 roots × 12 stages; distinct Classical roots; scope countermodels; place ordering; rejection of free/shadowed variables and malformed predicates; evidence boundary; script compatibility; Island and Market Ridge equivalence to Classical on 300 random models; Delta segmentation; Harbor fusion; app philology panel agrees with the model.');
